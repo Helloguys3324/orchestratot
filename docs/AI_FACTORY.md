@@ -108,13 +108,15 @@ The pytest step runs when tests exist outside ignored runtime workspace director
 
 ## Secrets
 
-Never commit real API keys. Local runtime credentials should use environment variables:
+Never commit real API keys. Local runtime credentials should use environment variables (e.g. by placing them in a `.env` file at the root of the project which is parsed automatically):
 
 ```bash
 AUTOGEN_API_KEY=...
 AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
 AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
+
+The application is configured to automatically scrub the `api_key` field before saving to `data/settings.json` to prevent accidental credential leakage to disk.
 
 If a key was committed previously, rotate it immediately.
 
