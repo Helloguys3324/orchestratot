@@ -231,7 +231,7 @@ No agent may ignore these rules.
 38. Every PR must include a clear summary.
 39. Every PR must include validation information.
 40. Every PR must leave the repository better than before.
-
+41. CRITICAL: Do not modify .github/workflows/ or .github/scripts/. A CI/CD guard script is active. If you touch these paths, your PR will be automatically rejected by git diff.
 ***
 
 # 4. AI Factory Ownership Model
@@ -1217,7 +1217,6 @@ Planner must follow this exact protocol.
 ```text
 .github/ai-factory/task_queue.json
 ```
-
 2.  Validate that the JSON is valid.
 3.  Count pending tasks.
 4.  Count completed tasks if present.
@@ -1243,7 +1242,7 @@ Planner must follow this exact protocol.
 24. Preserve valid JSON.
 25. Do not modify application code.
 26. Summarize backlog changes in the PR.
-
+27. CRITICAL: The updated task_queue.json MUST be strictly valid RFC 8259 JSON. NO trailing commas. ALL strings must be properly escaped. Double-check JSON syntax before saving.
 ***
 
 # 18. Completed Task Cleanup Rules
