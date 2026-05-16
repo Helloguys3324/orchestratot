@@ -22,7 +22,7 @@ def changed_files() -> list[str]:
     if base_ref:
         subprocess.run(["git", "fetch", "origin", base_ref, "--depth=1"], check=False)
         diff_base = f"origin/{base_ref}"
-        raw = subprocess.check_output(["git", "diff", "--name-only", f"{diff_base}...HEAD"], text=True)
+        raw = subprocess.check_output(["git", "diff", "--name-only", f"{diff_base}..HEAD"], text=True)
         return [line.strip() for line in raw.splitlines() if line.strip()]
 
     raw = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1..HEAD"], text=True)
