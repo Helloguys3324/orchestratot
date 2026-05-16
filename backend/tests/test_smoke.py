@@ -23,6 +23,23 @@ def test_api_settings_route():
     assert isinstance(data, dict)
     assert "default_model" in data
 
+def test_api_404_helpers_agent():
+    # Test GET for non-existent agent
+    response = client.get("/api/agents/non_existent_123")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Agent not found"
+
+    # Test DELETE for non-existent agent
+    response = client.delete("/api/agents/non_existent_123")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Agent not found"
+
+def test_api_404_helpers_session():
+    # Test GET for non-existent session
+    response = client.get("/api/sessions/non_existent_123")
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Session not found"
+
 def test_settings_env_override(monkeypatch):
     monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "42")
     monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.9")

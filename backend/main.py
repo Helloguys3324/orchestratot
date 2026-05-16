@@ -29,6 +29,19 @@ session_manager = SessionManager(agent_manager)
 ws_manager = ConnectionManager()
 
 
+# ─── Helpers ─────────────────────────────────────────────
+def get_or_404(item, message: str):
+    if not item:
+        raise HTTPException(404, message)
+    return item
+
+
+def delete_or_404(success: bool, message: str):
+    if success:
+        return {"status": "ok"}
+    raise HTTPException(404, message)
+
+
 async def on_agent_message(session_id: str, message: dict):
     """Callback fired when an agent sends a message."""
     await ws_manager.send_message(session_id, {
@@ -99,10 +112,7 @@ async def api_list_agents():
 
 @app.get("/api/agents/{agent_id}")
 async def api_get_agent(agent_id: str):
-    agent = agent_manager.get_agent(agent_id)
-    if not agent:
-        raise HTTPException(404, "Agent not found")
-    return agent
+    return get_or_404(agent_manager.get_agent(agent_id), "Agent not found")
 
 
 @app.post("/api/agents")
@@ -114,25 +124,17 @@ async def api_create_agent(request: Request):
 @app.put("/api/agents/{agent_id}")
 async def api_update_agent(agent_id: str, request: Request):
     data = await request.json()
-    agent = agent_manager.update_agent(agent_id, data)
-    if not agent:
-        raise HTTPException(404, "Agent not found")
-    return agent
+    return get_or_404(agent_manager.update_agent(agent_id, data), "Agent not found")
 
 
 @app.delete("/api/agents/{agent_id}")
 async def api_delete_agent(agent_id: str):
-    if agent_manager.delete_agent(agent_id):
-        return {"status": "ok"}
-    raise HTTPException(404, "Agent not found")
+    return delete_or_404(agent_manager.delete_agent(agent_id), "Agent not found")
 
 
 @app.post("/api/agents/{agent_id}/duplicate")
 async def api_duplicate_agent(agent_id: str):
-    agent = agent_manager.duplicate_agent(agent_id)
-    if not agent:
-        raise HTTPException(404, "Agent not found")
-    return agent
+    return get_or_404(agent_manager.duplicate_agent(agent_id), "Agent not found")
 
 
 # ─── Models API ──────────────────────────────────────────
@@ -153,10 +155,7 @@ async def api_list_chat_models():
 
 @app.get("/api/models/{model_id}")
 async def api_get_model(model_id: str):
-    model = get_model(model_id)
-    if not model:
-        raise HTTPException(404, "Model not found")
-    return model
+    return get_or_404(get_model(model_id), "Model not found")
 
 
 # ─── Skills API ──────────────────────────────────────────
@@ -178,9 +177,7 @@ async def api_create_skill(request: Request):
 
 @app.delete("/api/skills/{skill_id}")
 async def api_delete_skill(skill_id: str):
-    if skills_manager.delete_skill(skill_id):
-        return {"status": "ok"}
-    raise HTTPException(404, "Skill not found")
+    return delete_or_404(skills_manager.delete_skill(skill_id), "Skill not found")
 
 
 @app.post("/api/skills/install")
@@ -202,10 +199,7 @@ async def api_list_sessions():
 
 @app.get("/api/sessions/{session_id}")
 async def api_get_session(session_id: str):
-    session = session_manager.get_session(session_id)
-    if not session:
-        raise HTTPException(404, "Session not found")
-    return session
+    return get_or_404(session_manager.get_session(session_id), "Session not found")
 
 
 @app.post("/api/sessions")
@@ -216,9 +210,7 @@ async def api_create_session(request: Request):
 
 @app.delete("/api/sessions/{session_id}")
 async def api_delete_session(session_id: str):
-    if session_manager.delete_session(session_id):
-        return {"status": "ok"}
-    raise HTTPException(404, "Session not found")
+    return delete_or_404(session_manager.delete_session(session_id), "Session not found")
 
 
 @app.post("/api/sessions/{session_id}/chat")
@@ -235,9 +227,7 @@ async def api_chat(session_id: str, request: Request):
 
 @app.post("/api/sessions/{session_id}/clear")
 async def api_clear_session(session_id: str):
-    if session_manager.clear_messages(session_id):
-        return {"status": "ok"}
-    raise HTTPException(404, "Session not found")
+    return delete_or_404(session_manager.clear_messages(session_id), "Session not found")
 
 
 @app.get("/api/sessions/{session_id}/files")
