@@ -1,8 +1,8 @@
 {
   "daily_budget": 100,
   "safe_scheduled_daily_budget": 100,
-  "max_concurrent": 12,
-  "main_batch_size": 12,
+  "max_concurrent": 4,
+  "main_batch_size": 4,
   "meta_batch_size": 4,
   "starting_branch": "main",
   "role_cycle": [

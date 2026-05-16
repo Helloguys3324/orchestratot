@@ -1,10 +1,10 @@
 {
   "autopilot": {
     "target_daily_tasks": 100,
-    "scheduled_pattern": "12 tasks every 3 hours plus 4 daily meta tasks",
-    "max_parallel_tasks_per_run": 12,
+    "scheduled_pattern": "4 tasks every hour plus 4 daily meta tasks",
+    "max_parallel_tasks_per_run": 4,
     "emergency_stop_file": "AUTOPILOT_STOP",
-    "status": "paused_until_stop_file_removed"
+    "status": "active_when_AUTOPILOT_STOP_is_absent"
   },
   "repository": {
     "name": "AutoGen",

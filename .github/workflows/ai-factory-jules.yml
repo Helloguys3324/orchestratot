@@ -2,7 +2,7 @@ name: AI Factory Jules
 
 on:
   schedule:
-    - cron: "7 */3 * * *"
+    - cron: "7 * * * *"
     - cron: "37 1 * * *"
   workflow_dispatch:
     inputs:
@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 12
+      max-parallel: 4
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:

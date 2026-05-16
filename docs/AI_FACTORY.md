@@ -10,17 +10,17 @@ This repository is configured to run Jules as an autonomous GitHub development f
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
 4. Confirm GitHub Actions are enabled for the repository.
-5. Remove `AUTOPILOT_STOP` when scheduled autonomous work should start.
+5. Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
 ## Schedule
 
 The workflow `.github/workflows/ai-factory-jules.yml` targets 100 Jules tasks per day:
 
-- 12 tasks every 3 hours: 96 tasks/day
+- 4 tasks every hour: 96 tasks/day
 - 4 daily meta tasks: 4 tasks/day
-- Maximum parallel tasks per run: 12
+- Maximum parallel tasks per run: 4
 
-This stays below the Pro concurrency ceiling of 15 while targeting the 100 task daily budget.
+This keeps the factory active around the clock with lower conflict risk while targeting the 100 task daily budget.
 
 ## Emergency Stop
 
