@@ -35,6 +35,34 @@ DEFAULT_HOURLY_ROLE_PLAN = [
 ]
 
 
+DEFAULT_QUARTER_HOUR_ROLE_SEQUENCE = [
+    "planner",
+    "implementer",
+    "tester",
+    "reviewer",
+    "implementer",
+    "implementer",
+    "tester",
+    "documenter",
+    "implementer",
+    "refactorer",
+    "tester",
+    "security",
+    "architect",
+    "implementer",
+    "tester",
+    "reviewer",
+    "planner",
+    "implementer",
+    "tester",
+    "security",
+    "implementer",
+    "refactorer",
+    "documenter",
+    "tester",
+]
+
+
 DEFAULT_META_ROLE_PLAN = ["planner", "architect", "reviewer", "documenter"]
 
 
@@ -85,6 +113,12 @@ def build_role_slots(config: dict, batch_size: int, schedule: str, requested_rol
     if schedule == "37 1 * * *":
         meta_roles = config.get("meta_role_plan") or DEFAULT_META_ROLE_PLAN
         return [meta_roles[index % len(meta_roles)] for index in range(batch_size)]
+
+    quarter_sequence = config.get("quarter_hour_role_sequence") or DEFAULT_QUARTER_HOUR_ROLE_SEQUENCE
+    if batch_size == 1 and schedule != "7 * * * *":
+        now = datetime.now(timezone.utc)
+        quarter_index = (now.hour * 4) + (now.minute // 15)
+        return [quarter_sequence[quarter_index % len(quarter_sequence)]]
 
     hourly_plan = config.get("hourly_role_plan") or DEFAULT_HOURLY_ROLE_PLAN
     hour = datetime.now(timezone.utc).hour

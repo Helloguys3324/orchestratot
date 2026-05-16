@@ -2,7 +2,7 @@ name: AI Factory Jules
 
 on:
   schedule:
-    - cron: "7 * * * *"
+    - cron: "7,22,37,52 * * * *"
     - cron: "37 1 * * *"
   workflow_dispatch:
     inputs:

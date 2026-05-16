@@ -16,23 +16,41 @@ This repository is configured to run Jules as an autonomous GitHub development f
 
 The workflow `.github/workflows/ai-factory-jules.yml` targets 100 Jules tasks per day:
 
-- 4 tasks every hour: 96 tasks/day
+- 1 task every 15 minutes: 96 tasks/day
 - 4 daily meta tasks: 4 tasks/day
-- Maximum parallel tasks per run: 4
+- Maximum parallel tasks per run: 1 for normal runs, 4 for the daily meta run
 
-This keeps the factory active around the clock with lower conflict risk while targeting the 100 task daily budget.
+This keeps the factory active around the clock with lower conflict risk while targeting the 100 task daily budget. It also reduces the impact of a delayed or skipped GitHub schedule event.
 
 ## Role Routing
 
-Hourly runs use a weighted role plan instead of taking the first tasks from the queue. The six-hour cycle is:
+Normal runs use a weighted 15-minute role sequence instead of taking the first tasks from the queue. The six-hour cycle is:
 
 ```text
-Hour 0: planner, implementer, tester, reviewer
-Hour 1: implementer, implementer, tester, documenter
-Hour 2: implementer, refactorer, tester, security
-Hour 3: architect, implementer, tester, reviewer
-Hour 4: planner, implementer, tester, security
-Hour 5: implementer, refactorer, documenter, tester
+Q00: planner
+Q01: implementer
+Q02: tester
+Q03: reviewer
+Q04: implementer
+Q05: implementer
+Q06: tester
+Q07: documenter
+Q08: implementer
+Q09: refactorer
+Q10: tester
+Q11: security
+Q12: architect
+Q13: implementer
+Q14: tester
+Q15: reviewer
+Q16: planner
+Q17: implementer
+Q18: tester
+Q19: security
+Q20: implementer
+Q21: refactorer
+Q22: documenter
+Q23: tester
 ```
 
 - `implementer` gets the most slots for product/backend/frontend/skills work.

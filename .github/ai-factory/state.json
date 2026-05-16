@@ -1,7 +1,7 @@
 {
   "autopilot": {
     "target_daily_tasks": 100,
-    "scheduled_pattern": "4 tasks every hour plus 4 daily meta tasks",
+    "scheduled_pattern": "1 task every 15 minutes plus 4 daily meta tasks",
     "max_parallel_tasks_per_run": 4,
     "emergency_stop_file": "AUTOPILOT_STOP",
     "status": "active_when_AUTOPILOT_STOP_is_absent"
