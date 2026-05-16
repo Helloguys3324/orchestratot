@@ -1,12 +1,13 @@
 # ARCHITECTURE_STATE.md
 
-## Genesis Protocol: Zero-State & Initial System Architecture
+## Genesis Protocol: Current System Architecture
 
 ### 1. High-Level Objective
 Build a highly scalable, fault-tolerant Multi-Agent Orchestrator operating in a continuous, zero-human-in-the-loop, multi-week execution pipeline. The system utilizes DAG-based routing, asyncio, and MCP (Model Context Protocol) integration.
 
-### 2. Current Zero-State Repository Structure
-The repository is initially structured into the following directories:
+### 2. Current Repository Structure
+The repository is structured into the following directories:
+- `.github/`: CI/CD workflows, automation scripts, and task queues for AI Factory.
 - `backend/`: Core orchestrator logic utilizing FastAPI, Uvicorn, and Pydantic v2.
   - `agents/`: Defines agent classes and behaviors.
   - `api/`: FastAPI APIRouter endpoints decoupling application routing logic.
@@ -17,8 +18,10 @@ The repository is initially structured into the following directories:
   - `tests/`: Unit and integration tests for backend modules.
   - `websocket/`: Real-time communication handlers.
   - `state.py`: Global application state and manager instantiations.
+- `docs/`: Architectural Decision Records (ADRs) and architectural state documentation.
 - `frontend/`: Web UI components (HTML/CSS/JS).
 - `skills_library/`: Reusable skills and MCP tools.
+- `tests/`: Unit tests for `skills_library` and other non-backend modules.
 - `data/`: Persistent or temporary data storage.
 - `workspace/`: Execution workspace for agents.
 
