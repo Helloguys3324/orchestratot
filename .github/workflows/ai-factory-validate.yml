@@ -1,6 +1,9 @@
 name: AI Factory Validate
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
