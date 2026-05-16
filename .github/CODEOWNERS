@@ -1,4 +1,5 @@
 .github/workflows/ @Helloguys3324
 .github/scripts/ @Helloguys3324
 .github/ai-factory/config.json @Helloguys3324
-
+/.github/ @Helloguys3324
+/backend/config.py @Helloguys3324
