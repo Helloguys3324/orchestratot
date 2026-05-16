@@ -1,0 +1,57 @@
+name: Continuous Autonomous Loop
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  validate_and_propagate:
+    runs-on: ubuntu-latest
+    # Даем скрипту права на создание Issue и слияние веток
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 1. АВТО-МЕРЖ: Сливаем код от Jules в основную ветку
+      - name: Automatically Merge PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Выполняю автоматическое слияние ветки..."
+          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch || echo "Не удалось смержить ветку"
+
+      # 2. СЛЕДУЮЩИЙ ШАГ: Создаем задачу на следующий этап
+      - name: Spawn Next Autonomous Task
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Ждем пару секунд для синхронизации
+          sleep 2
+          
+          if [ ! -f roadmap.json ]; then
+            echo "Файл roadmap.json не найден! Остановка."
+            exit 0
+          fi
+          
+          CURRENT_ID=$(jq -r '.current_task_id' roadmap.json)
+          
+          if [ "$CURRENT_ID" == "null" ] || [ "$CURRENT_ID" == "0" ]; then
+            echo "Проект полностью завершен или нет активных задач."
+            exit 0
+          fi
+          
+          # Берем данные новой задачи
+          NEXT_TITLE=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .title' roadmap.json)
+          NEXT_PROMPT=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .prompt' roadmap.json)
+          
+          echo "Запускаем следующий этап: $NEXT_TITLE"
+          
+          gh issue create \
+            --title "Jules Task: $NEXT_TITLE" \
+            --body "$NEXT_PROMPT" \
+            --label "jules" || echo "Не удалось создать Issue"
