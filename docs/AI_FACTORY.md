@@ -24,13 +24,22 @@ This keeps the factory active around the clock with lower conflict risk while ta
 
 ## Role Routing
 
-Hourly runs use a weighted role plan instead of taking the first tasks from the queue:
+Hourly runs use a weighted role plan instead of taking the first tasks from the queue. The six-hour cycle is:
+
+```text
+Hour 0: planner, implementer, tester, reviewer
+Hour 1: implementer, implementer, tester, documenter
+Hour 2: implementer, refactorer, tester, security
+Hour 3: architect, implementer, tester, reviewer
+Hour 4: planner, implementer, tester, security
+Hour 5: implementer, refactorer, documenter, tester
+```
 
 - `implementer` gets the most slots for product/backend/frontend/skills work.
-- `tester` gets frequent slots to keep validation improving.
+- `tester` appears every hour to keep validation improving.
 - `documenter`, `security`, `reviewer`, and `refactorer` rotate through smaller but regular slots.
 - `architect` runs occasionally in hourly work and again in the daily meta batch.
-- `planner` is reserved mainly for the daily meta batch, where it updates the task queue instead of touching app code.
+- `planner` appears twice per six-hour cycle plus the daily meta batch, where it updates the task queue instead of touching app code.
 
 The task planner reads `.github/ai-factory/task_queue.json`. Each task can define:
 

@@ -26,11 +26,11 @@ ROLE_PROMPTS = {
 
 
 DEFAULT_HOURLY_ROLE_PLAN = [
-    ["implementer", "tester", "documenter", "security"],
-    ["implementer", "implementer", "tester", "reviewer"],
-    ["implementer", "refactorer", "tester", "documenter"],
-    ["implementer", "architect", "tester", "security"],
-    ["implementer", "implementer", "tester", "reviewer"],
+    ["planner", "implementer", "tester", "reviewer"],
+    ["implementer", "implementer", "tester", "documenter"],
+    ["implementer", "refactorer", "tester", "security"],
+    ["architect", "implementer", "tester", "reviewer"],
+    ["planner", "implementer", "tester", "security"],
     ["implementer", "refactorer", "documenter", "tester"],
 ]
 
