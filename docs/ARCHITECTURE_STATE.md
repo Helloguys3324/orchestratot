@@ -9,10 +9,12 @@ Build a highly scalable, fault-tolerant Multi-Agent Orchestrator operating in a 
 The repository is initially structured into the following directories:
 - `backend/`: Core orchestrator logic utilizing FastAPI, Uvicorn, and Pydantic v2.
   - `agents/`: Defines agent classes and behaviors.
+  - `api/`: FastAPI APIRouter endpoints decoupling application routing logic.
   - `models/`: Pydantic data models.
   - `sessions/`: Manages orchestration sessions.
   - `skills/`: Agent capabilities.
   - `websocket/`: Real-time communication handlers.
+  - `state.py`: Global application state and manager instantiations.
 - `frontend/`: Web UI components (HTML/CSS/JS).
 - `skills_library/`: Reusable skills and MCP tools.
 - `data/`: Persistent or temporary data storage.
