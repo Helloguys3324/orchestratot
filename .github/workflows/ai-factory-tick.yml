@@ -1,0 +1,55 @@
+name: AI Factory Tick
+
+on:
+  schedule:
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    name: Dispatch Jules Run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check emergency stop
+        id: stop
+        run: |
+          if [ -f AUTOPILOT_STOP ]; then
+            echo "enabled=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "enabled=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Dispatch AI Factory Jules
+        if: steps.stop.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run ai-factory-jules.yml \
+            --ref main \
+            -f batch_size=1 \
+            -f starting_branch=main \
+            -f emergency_override=false \
+            -f run_mode=normal
+      - name: Dispatch daily meta batch
+        if: steps.stop.outputs.enabled == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
+        run: |
+          if [ "$(date -u +%H%M)" = "0137" ]; then
+            gh workflow run ai-factory-jules.yml \
+              --ref main \
+              -f batch_size=4 \
+              -f starting_branch=main \
+              -f emergency_override=false \
+              -f run_mode=meta
+          else
+            echo "Not the daily meta slot."
+          fi
+      - name: Stop reason
+        if: steps.stop.outputs.enabled != 'true'
+        run: |
+          echo "AI Factory paused because AUTOPILOT_STOP exists."

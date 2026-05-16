@@ -110,7 +110,8 @@ def build_role_slots(config: dict, batch_size: int, schedule: str, requested_rol
     if requested_role:
         return [requested_role] * batch_size
 
-    if schedule == "37 1 * * *":
+    run_mode = os.environ.get("RUN_MODE", "normal").strip().lower()
+    if run_mode == "meta" or schedule == "37 1 * * *":
         meta_roles = config.get("meta_role_plan") or DEFAULT_META_ROLE_PLAN
         return [meta_roles[index % len(meta_roles)] for index in range(batch_size)]
 

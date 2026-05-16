@@ -14,13 +14,15 @@ This repository is configured to run Jules as an autonomous GitHub development f
 
 ## Schedule
 
-The workflow `.github/workflows/ai-factory-jules.yml` targets 100 Jules tasks per day:
+The workflow `.github/workflows/ai-factory-tick.yml` targets 100 Jules tasks per day by dispatching `.github/workflows/ai-factory-jules.yml`:
 
 - 1 task every 15 minutes: 96 tasks/day
 - 4 daily meta tasks: 4 tasks/day
 - Maximum parallel tasks per run: 1 for normal runs, 4 for the daily meta run
 
 This keeps the factory active around the clock with lower conflict risk while targeting the 100 task daily budget. It also reduces the impact of a delayed or skipped GitHub schedule event.
+
+`AI Factory Jules` is intentionally `workflow_dispatch` only. This prevents duplicate Jules tasks: `AI Factory Tick` is the single scheduled heartbeat, and it dispatches normal and daily meta Jules runs through the GitHub API.
 
 ## Role Routing
 
