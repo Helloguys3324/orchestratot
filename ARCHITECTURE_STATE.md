@@ -3,7 +3,7 @@
 ## Genesis Protocol: Zero-State & Initial System Architecture
 
 ### 1. High-Level Objective
-Build a highly scalable, fault-tolerant Multi-Agent Orchestrator operating in a continuous, zero-human-in-the-loop, multi-week execution pipeline. The system utilizes DAG-based routing, asyncio, and MCP (Model Context Protocol) integration.
+Build a highly scalable, fault-tolerant Multi-Agent Orchestrator operating in a continuous, zero-human-in-the-loop, multi-week execution pipeline. The system utilizes dynamic LLM-driven routing, asyncio, and MCP (Model Context Protocol) integration.
 
 ### 2. Current Zero-State Repository Structure
 The repository is initially structured into the following directories:
@@ -24,16 +24,16 @@ The repository is initially structured into the following directories:
 - **Concurrency:** Asyncio (Python) for non-blocking operations.
 - **Environment Management:** `python-dotenv` for configuration loading.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
-- **Routing:** DAG-based (Directed Acyclic Graph) task routing.
+- **Routing:** Dynamic LLM-driven task routing.
 - **Testing:** `pytest` with heavily type-hinted, asynchronous code.
 
 ### 4. Data Flow & System Architecture
 1. **Input:** User requests or autonomous triggers initialize a session.
-2. **Orchestrator:** A central asynchronous loop manages DAG execution.
-3. **Agent Routing:** Tasks are parsed and assigned to specific agents based on capabilities.
+2. **Orchestrator:** A central asynchronous loop manages orchestration sessions.
+3. **Agent Routing:** A router model (`gemini-3-flash-live`) dynamically selects the most relevant agent to respond based on conversation history.
 4. **Execution:** Agents use skills via MCP, fetching tools and executing them safely.
 5. **Memory & State:** `ARCHITECTURE_STATE.md` maintains long-term memory for the continuous loop, alongside structured logs or databases for session memory.
-6. **Output/Feedback:** Results are aggregated, validated against constraints, and returned to the user or passed to the next DAG node. Continuous self-healing is triggered on failure.
+6. **Output/Feedback:** Results are aggregated, validated against constraints, and returned to the user or passed back to the router for the next turn. Continuous self-healing is triggered on failure.
 
 ### 5. Active Interfaces
 - **HTTP Server:** `http://localhost:8000` (FastAPI/Uvicorn) entry point via `run.py`.
