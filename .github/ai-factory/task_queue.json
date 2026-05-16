@@ -2,13 +2,6 @@
   "version": 1,
   "tasks": [
     {
-      "id": "planner-refresh-backlog",
-      "role": "planner",
-      "lane": "docs",
-      "title": "Refresh the AI Factory backlog",
-      "prompt": "Review mission.md, AGENTS.md, and .github/ai-factory/state.json. Improve .github/ai-factory/task_queue.json with focused future tasks only. Do not modify application code."
-    },
-    {
       "id": "security-secret-handling",
       "role": "security",
       "lane": "security",
@@ -28,7 +21,27 @@
       "lane": "docs",
       "title": "Document local and GitHub setup",
       "prompt": "Create or improve setup documentation for local development, required secrets, GitHub Actions, and emergency stop behavior. Do not change application code."
+    },
+    {
+      "id": "tester-websocket-coverage",
+      "role": "tester",
+      "lane": "tests",
+      "title": "Expand websocket test coverage",
+      "prompt": "Add tests to expand coverage around routing, sessions, skills, settings, and websocket behavior as specified in mission.md."
+    },
+    {
+      "id": "frontend-workflow-improvements",
+      "role": "implementer",
+      "lane": "frontend",
+      "title": "Improve frontend workflow",
+      "prompt": "Improve the frontend workflow for creating agents, sessions, skills, and model settings as specified in mission.md."
+    },
+    {
+      "id": "documenter-readme",
+      "role": "documenter",
+      "lane": "docs",
+      "title": "Create README.md",
+      "prompt": "Create a README.md file to document behavior changes and general project information, as mentioned by AGENTS.md."
     }
   ]
 }
-
