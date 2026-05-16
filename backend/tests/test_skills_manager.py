@@ -1,3 +1,4 @@
+import asyncio
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS
@@ -97,7 +98,7 @@ def test_create_skill_no_code(mock_save, manager):
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 def test_delete_skill_exists(mock_save, mock_path, manager):
-    manager._custom_skills = [{"id": "custom_1"}]
+    manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
 
     # Mock file exists and unlink
     mock_file_path = MagicMock()
@@ -114,7 +115,7 @@ def test_delete_skill_exists(mock_save, mock_path, manager):
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 def test_delete_skill_file_not_exists(mock_save, mock_path, manager):
-    manager._custom_skills = [{"id": "custom_1"}]
+    manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
 
     # Mock file does NOT exist
     mock_file_path = MagicMock()
@@ -129,18 +130,17 @@ def test_delete_skill_file_not_exists(mock_save, mock_path, manager):
     mock_save.assert_called_once()
 
 def test_delete_skill_not_found(manager):
-    manager._custom_skills = [{"id": "custom_1"}]
+    manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
     result = manager.delete_skill("non_existent_id")
 
     assert result is False
     assert len(manager._custom_skills) == 1
 
-@pytest.mark.asyncio
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 @patch("backend.skills.manager.httpx.AsyncClient")
-async def test_install_from_url_success(mock_client_class, mock_save, mock_dir, mock_uuid, manager):
+def test_install_from_url_success(mock_client_class, mock_save, mock_dir, mock_uuid, manager):
     # Setup mock UUID
     mock_uuid_instance = MagicMock()
     mock_uuid_instance.hex = "abcdef1234567890"
@@ -159,7 +159,7 @@ async def test_install_from_url_success(mock_client_class, mock_save, mock_dir, 
     mock_file_path = MagicMock()
     mock_dir.__truediv__.return_value = mock_file_path
 
-    result = await manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill")
+    result = asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
 
     # Asserts
     assert result["id"] == "imported_abcdef12"
@@ -172,9 +172,8 @@ async def test_install_from_url_success(mock_client_class, mock_save, mock_dir, 
     mock_save.assert_called_once()
     assert len(manager._custom_skills) == 1
 
-@pytest.mark.asyncio
 @patch("backend.skills.manager.httpx.AsyncClient")
-async def test_install_from_url_failure(mock_client_class, manager):
+def test_install_from_url_failure(mock_client_class, manager):
     import httpx
 
     # Mock HTTP response
@@ -186,6 +185,6 @@ async def test_install_from_url_failure(mock_client_class, manager):
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
     with pytest.raises(httpx.HTTPStatusError):
-        await manager.install_from_url("http://example.com/404.py")
+        asyncio.run(manager.install_from_url("http://example.com/404.py"))
 
     assert len(manager._custom_skills) == 0
