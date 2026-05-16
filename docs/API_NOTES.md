@@ -23,6 +23,38 @@ The backend is built with **FastAPI** and uses **asyncio** for non-blocking oper
 - `GET /api/agents`: List all agents.
 - `GET /api/agents/{agent_id}`: Get a specific agent by ID.
 - `POST /api/agents`: Create a new agent.
+  - **Request Example**:
+    ```json
+    {
+      "name": "Custom Data Analyst",
+      "icon": "📊",
+      "color": "#3B82F6",
+      "description": "Analyzes CSV data",
+      "system_prompt": "You are a data analyst.",
+      "model": "gemini-2.5-flash",
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "skills": ["file_reader"],
+      "enabled": true
+    }
+    ```
+  - **Response Example**:
+    ```json
+    {
+      "id": "a1b2c3d4",
+      "name": "Custom Data Analyst",
+      "icon": "📊",
+      "color": "#3B82F6",
+      "description": "Analyzes CSV data",
+      "system_prompt": "You are a data analyst.",
+      "skills": ["file_reader"],
+      "model": "gemini-2.5-flash",
+      "temperature": 0.2,
+      "max_tokens": 4096,
+      "enabled": true,
+      "template": "custom"
+    }
+    ```
 - `PUT /api/agents/{agent_id}`: Update an existing agent.
 - `DELETE /api/agents/{agent_id}`: Delete an agent.
 - `POST /api/agents/{agent_id}/duplicate`: Duplicate an agent.
@@ -37,6 +69,31 @@ The backend is built with **FastAPI** and uses **asyncio** for non-blocking oper
 - `GET /api/skills`: List installed skills.
 - `GET /api/skills/marketplace`: List skills available for installation.
 - `POST /api/skills`: Create a new custom skill.
+  - **Request Example**:
+    ```json
+    {
+      "name": "Format Code",
+      "icon": "✨",
+      "description": "Formats Python code using black",
+      "category": "custom",
+      "code": "def run():\n    return 'Code formatted'"
+    }
+    ```
+  - **Response Example**:
+    ```json
+    {
+      "id": "custom_1a2b3c4d",
+      "name": "Format Code",
+      "icon": "✨",
+      "description": "Formats Python code using black",
+      "category": "custom",
+      "builtin": false,
+      "enabled": true,
+      "source": "custom",
+      "code": "def run():\n    return 'Code formatted'",
+      "file": "custom_1a2b3c4d.py"
+    }
+    ```
 - `DELETE /api/skills/{skill_id}`: Delete a skill.
 - `POST /api/skills/install`: Install a skill from a URL.
 
@@ -44,6 +101,29 @@ The backend is built with **FastAPI** and uses **asyncio** for non-blocking oper
 - `GET /api/sessions`: List all sessions.
 - `GET /api/sessions/{session_id}`: Get a specific session.
 - `POST /api/sessions`: Create a new session.
+  - **Request Example**:
+    ```json
+    {
+      "name": "Data Analysis Task",
+      "agent_ids": ["a1b2c3d4", "e5f6g7h8"],
+      "strategy": "auto",
+      "max_rounds": 15
+    }
+    ```
+  - **Response Example**:
+    ```json
+    {
+      "id": "s1e2s3i4",
+      "name": "Data Analysis Task",
+      "agent_ids": ["a1b2c3d4", "e5f6g7h8"],
+      "strategy": "auto",
+      "max_rounds": 15,
+      "created_at": "2026-05-16T14:30:00.000000",
+      "messages": [],
+      "status": "idle",
+      "workspace": "workspace/s1e2s3i4"
+    }
+    ```
 - `DELETE /api/sessions/{session_id}`: Delete a session.
 - `POST /api/sessions/{session_id}/chat`: Start an orchestrated chat based on a user message. This runs asynchronously.
 - `POST /api/sessions/{session_id}/clear`: Clear the message history for a session.
