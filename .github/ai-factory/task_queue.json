@@ -6,176 +6,328 @@
       "role": "planner",
       "lane": "docs",
       "title": "Refresh AI Factory backlog",
-      "write_scope": [".github/ai-factory/task_queue.json", ".github/ai-factory/state.json"],
-      "avoid_scope": ["backend/", "frontend/", "skills_library/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS"],
+      "write_scope": [
+        ".github/ai-factory/task_queue.json",
+        ".github/ai-factory/state.json"
+      ],
+      "avoid_scope": [
+        "backend/",
+        "frontend/",
+        "skills_library/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS"
+      ],
       "risk_level": "low",
       "automerge_allowed": false,
-      "prompt": "Review mission.md, AGENTS.md, current PRs, and recent merged work. Improve task_queue.json with focused tasks that use all roles, avoid duplication, and include write_scope/avoid_scope. Do not change application code."
+      "prompt": "[INPUT STATE] Current state of mission.md, AGENTS.md, recent PRs, and merged work.\n[ATOMIC OBJECTIVE] Improve task_queue.json by ensuring all roles have focused tasks, avoiding duplication, and updating write/avoid scopes.\n[CONSTRAINTS] Use 4-part RECURSIVE META-PROMPTING PROTOCOL for prompts. Do not change application code.\n[ACCEPTANCE CRITERIA] task_queue.json is updated, properly formatted, and all new prompts follow the protocol."
     },
     {
       "id": "architect-backend-boundaries",
       "role": "architect",
       "lane": "backend",
       "title": "Improve backend architecture boundary",
-      "write_scope": ["backend/", "docs/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "backend/",
+        "docs/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "medium",
       "automerge_allowed": false,
-      "prompt": "Find one small backend architecture weakness around sessions, agents, skills, or settings. Implement a minimal improvement or document a concrete architecture decision. Keep behavior stable."
+      "prompt": "[INPUT STATE] Current backend orchestration logic for sessions, agents, skills, and settings.\n[ATOMIC OBJECTIVE] Find and implement one minimal improvement to architecture boundaries or document a concrete architecture decision.\n[CONSTRAINTS] Keep behavior stable. Touch only backend/ and docs/. Do not modify data/settings.json.\n[ACCEPTANCE CRITERIA] PR includes one clear architectural improvement or architectural decision record (ADR) in docs/."
     },
     {
       "id": "implementer-backend-api",
       "role": "implementer",
       "lane": "backend",
       "title": "Improve backend API behavior",
-      "write_scope": ["backend/", "tests/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "backend/",
+        "tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "medium",
       "automerge_allowed": false,
-      "prompt": "Implement one focused backend API improvement around agents, sessions, models, skills, or settings. Add tests when practical and keep the diff small."
-    },
-    {
-      "id": "implementer-frontend-workflow",
-      "role": "implementer",
-      "lane": "frontend",
-      "title": "Improve frontend workflow",
-      "write_scope": ["frontend/"],
-      "avoid_scope": ["backend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/"],
-      "risk_level": "medium",
-      "automerge_allowed": false,
-      "prompt": "Improve one frontend workflow for creating agents, sessions, skills, or model settings. Preserve existing API contracts and keep the UI practical."
+      "prompt": "[INPUT STATE] Current backend API endpoints for agents, sessions, models, skills, or settings.\n[ATOMIC OBJECTIVE] Implement one focused backend API improvement, adding tests if practical.\n[CONSTRAINTS] Keep the diff small. Write async, type-hinted code. Touch only backend/ and tests/.\n[ACCEPTANCE CRITERIA] One API endpoint is improved, behavior is stable, and tests pass."
     },
     {
       "id": "implementer-skills-quality",
       "role": "implementer",
       "lane": "skills",
       "title": "Improve skill implementation quality",
-      "write_scope": ["skills_library/", "custom_skills/", "tests/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "skills_library/",
+        "custom_skills/",
+        "tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "medium",
       "automerge_allowed": false,
-      "prompt": "Improve one skill implementation or add one missing guardrail around file, code execution, data analysis, or web search behavior. Avoid network-dependent tests."
+      "prompt": "[INPUT STATE] Current implementations in skills_library/ and custom_skills/.\n[ATOMIC OBJECTIVE] Improve one skill implementation or add missing guardrails for file, code execution, data analysis, or web search.\n[CONSTRAINTS] Avoid network-dependent tests. Touch only skills_library/, custom_skills/, and tests/.\n[ACCEPTANCE CRITERIA] Skill is improved with better guardrails or implementation quality, and unit tests verify the change."
     },
     {
       "id": "implementer-runtime-config",
       "role": "implementer",
       "lane": "backend",
       "title": "Improve runtime configuration handling",
-      "write_scope": ["backend/config.py", "backend/", "tests/", ".env.example"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "backend/config.py",
+        "backend/",
+        "tests/",
+        ".env.example"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "medium",
       "automerge_allowed": false,
-      "prompt": "Improve runtime configuration ergonomics while keeping secrets out of the repository. Prefer environment variables and deterministic tests."
-    },
-    {
-      "id": "tester-backend-smoke",
-      "role": "tester",
-      "lane": "tests",
-      "title": "Add backend smoke tests",
-      "write_scope": ["tests/", "backend/tests/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
-      "risk_level": "low",
-      "automerge_allowed": true,
-      "prompt": "Add focused tests for backend app import, settings loading, and one simple API route. Keep tests deterministic and avoid external network calls."
+      "prompt": "[INPUT STATE] Current configuration handling in backend/config.py and .env.example.\n[ATOMIC OBJECTIVE] Improve runtime configuration ergonomics, moving towards environment variables.\n[CONSTRAINTS] Keep secrets out of the repository. Prefer deterministic tests. Touch only backend/config.py, backend/, tests/, and .env.example.\n[ACCEPTANCE CRITERIA] Config handling is more robust, relying on env vars, and tests verify configuration parsing."
     },
     {
       "id": "tester-websocket-coverage",
       "role": "tester",
       "lane": "tests",
       "title": "Expand websocket test coverage",
-      "write_scope": ["tests/", "backend/websocket/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "tests/",
+        "backend/websocket/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "low",
       "automerge_allowed": true,
-      "prompt": "Add or improve tests around websocket connection management and message handling. Avoid real network calls."
-    },
-    {
-      "id": "tester-skills-coverage",
-      "role": "tester",
-      "lane": "tests",
-      "title": "Expand skills test coverage",
-      "write_scope": ["tests/", "skills_library/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
-      "risk_level": "low",
-      "automerge_allowed": true,
-      "prompt": "Add tests for one skills_library module. Prefer pure unit tests and temporary directories over real external services."
-    },
-    {
-      "id": "reviewer-recent-pr-quality",
-      "role": "reviewer",
-      "lane": "backend",
-      "title": "Review recent merged changes",
-      "write_scope": ["backend/", "frontend/", "skills_library/", "tests/", "docs/"],
-      "avoid_scope": [".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
-      "risk_level": "medium",
-      "automerge_allowed": false,
-      "prompt": "Review recent repository changes for one concrete regression risk, missing test, or maintainability issue. Create a small corrective PR only if the issue is real."
+      "prompt": "[INPUT STATE] Current test coverage for backend/websocket/.\n[ATOMIC OBJECTIVE] Add or improve test coverage for websocket connection management and message handling.\n[CONSTRAINTS] Avoid real network calls. Touch only tests/ and backend/websocket/.\n[ACCEPTANCE CRITERIA] New tests verify websocket behavior deterministically without external dependencies."
     },
     {
       "id": "refactorer-backend-small",
       "role": "refactorer",
       "lane": "backend",
       "title": "Refactor a small backend area",
-      "write_scope": ["backend/", "tests/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "backend/",
+        "tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "medium",
       "automerge_allowed": false,
-      "prompt": "Refactor one small backend area for readability or duplication reduction while preserving behavior. Add or update tests when practical."
-    },
-    {
-      "id": "refactorer-frontend-small",
-      "role": "refactorer",
-      "lane": "frontend",
-      "title": "Refactor a small frontend area",
-      "write_scope": ["frontend/"],
-      "avoid_scope": ["backend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/"],
-      "risk_level": "medium",
-      "automerge_allowed": false,
-      "prompt": "Refactor one small frontend area for readability or repeated logic reduction while preserving behavior and visual layout."
+      "prompt": "[INPUT STATE] Current backend codebase.\n[ATOMIC OBJECTIVE] Refactor one small backend area to improve readability or reduce duplication.\n[CONSTRAINTS] Preserve existing behavior. Add or update tests when practical. Touch only backend/ and tests/.\n[ACCEPTANCE CRITERIA] Code is refactored for better readability/maintainability, and all tests pass."
     },
     {
       "id": "documenter-setup",
       "role": "documenter",
       "lane": "docs",
       "title": "Document setup and operations",
-      "write_scope": ["README.md", "docs/", "AGENTS.md", "mission.md"],
-      "avoid_scope": ["backend/", "frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "README.md",
+        "docs/",
+        "AGENTS.md",
+        "mission.md"
+      ],
+      "avoid_scope": [
+        "backend/",
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "low",
       "automerge_allowed": true,
-      "prompt": "Improve setup documentation for local development, required secrets, GitHub Actions, emergency stop behavior, and validation. Do not change application code."
-    },
-    {
-      "id": "documenter-api-notes",
-      "role": "documenter",
-      "lane": "docs",
-      "title": "Document API and architecture notes",
-      "write_scope": ["docs/", "README.md"],
-      "avoid_scope": ["backend/", "frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
-      "risk_level": "low",
-      "automerge_allowed": true,
-      "prompt": "Document one area of the backend API, session flow, agent templates, or skill system based on the current code. Do not change application code."
-    },
-    {
-      "id": "security-secret-handling",
-      "role": "security",
-      "lane": "security",
-      "title": "Harden runtime secret handling",
-      "write_scope": ["backend/config.py", ".env.example", ".gitignore", ".github/scripts/scan_secrets.py", "docs/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
-      "risk_level": "high",
-      "automerge_allowed": false,
-      "prompt": "Audit configuration and runtime data for secret exposure. Prefer environment variables and placeholders. Do not commit real credentials. Keep the diff small and include validation results."
+      "prompt": "[INPUT STATE] Current README.md, docs/, AGENTS.md, and mission.md.\n[ATOMIC OBJECTIVE] Improve setup documentation for local development, secrets, GitHub Actions, and validation.\n[CONSTRAINTS] Do not change application code. Touch only docs-related files.\n[ACCEPTANCE CRITERIA] Setup instructions are clearer, more comprehensive, and accurate based on current repository state."
     },
     {
       "id": "security-input-hardening",
       "role": "security",
       "lane": "security",
       "title": "Harden user input handling",
-      "write_scope": ["backend/", "skills_library/", "tests/"],
-      "avoid_scope": ["frontend/", ".github/workflows/", ".github/scripts/", ".github/CODEOWNERS", "data/settings.json"],
+      "write_scope": [
+        "backend/",
+        "skills_library/",
+        "tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
       "risk_level": "high",
       "automerge_allowed": false,
-      "prompt": "Find one concrete input validation, path handling, command execution, or file access risk. Implement a narrow fix with tests where practical."
+      "prompt": "[INPUT STATE] Current user input handling in backend/ and skills_library/.\n[ATOMIC OBJECTIVE] Find and fix one concrete input validation, path handling, command execution, or file access risk.\n[CONSTRAINTS] Implement a narrow fix. Add tests where practical. Touch only backend/, skills_library/, and tests/.\n[ACCEPTANCE CRITERIA] One specific security risk related to input handling is resolved and verified with tests."
+    },
+    {
+      "id": "tester-backend-smoke-v2",
+      "role": "tester",
+      "lane": "tests",
+      "title": "Add secondary backend smoke tests",
+      "write_scope": [
+        "tests/",
+        "backend/tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "[INPUT STATE] Current backend smoke tests in backend/tests/test_smoke.py.\n[ATOMIC OBJECTIVE] Add more focused tests for agent retrieval and basic model fetching. Avoid external network calls.\n[CONSTRAINTS] Keep tests deterministic. Use 4-part RECURSIVE META-PROMPTING PROTOCOL for memory alignment. Touch only tests/ and backend/tests/.\n[ACCEPTANCE CRITERIA] Additional deterministic smoke tests are present and passing."
+    },
+    {
+      "id": "implementer-frontend-ui-feedback",
+      "role": "implementer",
+      "lane": "frontend",
+      "title": "Improve frontend feedback mechanisms",
+      "write_scope": [
+        "frontend/"
+      ],
+      "avoid_scope": [
+        "backend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/"
+      ],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "[INPUT STATE] Current frontend UI feedback in modals (loading states and error displays).\n[ATOMIC OBJECTIVE] Improve error handling by displaying contextual error messages returned from the API, rather than generic strings.\n[CONSTRAINTS] Preserve visual layout. Touch only frontend/.\n[ACCEPTANCE CRITERIA] Error messages from API are parsed and displayed gracefully in the frontend modals."
+    },
+    {
+      "id": "documenter-api-examples",
+      "role": "documenter",
+      "lane": "docs",
+      "title": "Document API payload examples",
+      "write_scope": [
+        "docs/",
+        "README.md"
+      ],
+      "avoid_scope": [
+        "backend/",
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "[INPUT STATE] Current API documentation in docs/API_NOTES.md.\n[ATOMIC OBJECTIVE] Expand documentation to include clear JSON payload examples for creating agents, sessions, and skills.\n[CONSTRAINTS] Do not change application code. Touch only docs/ and README.md.\n[ACCEPTANCE CRITERIA] docs/API_NOTES.md includes accurate request and response payload examples based on the current implementation."
+    },
+    {
+      "id": "security-secret-validation",
+      "role": "security",
+      "lane": "security",
+      "title": "Harden secret validation logic",
+      "write_scope": [
+        "backend/config.py",
+        "backend/tests/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
+      "risk_level": "high",
+      "automerge_allowed": false,
+      "prompt": "[INPUT STATE] Current runtime secret parsing logic in backend/config.py.\n[ATOMIC OBJECTIVE] Add stricter validation logic to ensure API keys are not accidentally logged or included in basic configuration dumps.\n[CONSTRAINTS] Prefer environment variables and placeholders. Do not commit real credentials. Touch only backend/config.py and tests.\n[ACCEPTANCE CRITERIA] config.py strictly validates API keys and explicitly filters them from being stringified, with unit tests confirming behavior."
+    },
+    {
+      "id": "tester-skills-manager-coverage",
+      "role": "tester",
+      "lane": "tests",
+      "title": "Expand skills manager test coverage",
+      "write_scope": [
+        "tests/",
+        "backend/skills/"
+      ],
+      "avoid_scope": [
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "[INPUT STATE] Current test coverage for backend/skills/manager.py.\n[ATOMIC OBJECTIVE] Add unit tests for skill loading, validation, and error handling in the skills manager.\n[CONSTRAINTS] Prefer pure unit tests and mocking. Touch only tests/ and backend/skills/.\n[ACCEPTANCE CRITERIA] backend/skills/manager.py has improved test coverage for core edge cases."
+    },
+    {
+      "id": "refactorer-frontend-js",
+      "role": "refactorer",
+      "lane": "frontend",
+      "title": "Refactor frontend JS components",
+      "write_scope": [
+        "frontend/"
+      ],
+      "avoid_scope": [
+        "backend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/"
+      ],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "[INPUT STATE] Current JS in frontend/ (e.g., app.js, agents.js).\n[ATOMIC OBJECTIVE] Extract further common utility functions (like API fetching wrappers or common DOM manipulations) into frontend/js/ui.js.\n[CONSTRAINTS] Preserve existing behavior and visual layout. Touch only frontend/.\n[ACCEPTANCE CRITERIA] Duplicated API or DOM logic is centralized in ui.js, and app continues to function correctly."
+    },
+    {
+      "id": "reviewer-architecture-drift",
+      "role": "reviewer",
+      "lane": "backend",
+      "title": "Review architecture drift",
+      "write_scope": [
+        "docs/ARCHITECTURE_STATE.md",
+        "docs/"
+      ],
+      "avoid_scope": [
+        "backend/",
+        "frontend/",
+        ".github/workflows/",
+        ".github/scripts/",
+        ".github/CODEOWNERS",
+        "data/settings.json"
+      ],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "[INPUT STATE] Current state of the backend and ARCHITECTURE_STATE.md.\n[ATOMIC OBJECTIVE] Review recent structural changes and update ARCHITECTURE_STATE.md to accurately reflect the current orchestration, module boundaries, and dependencies.\n[CONSTRAINTS] Do not modify application code. Touch only docs/.\n[ACCEPTANCE CRITERIA] ARCHITECTURE_STATE.md is updated to match the current backend structure."
     }
   ]
 }
