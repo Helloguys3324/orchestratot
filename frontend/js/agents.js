@@ -59,15 +59,8 @@ const AgentsPage = {
         <div class="t-name">${t.name}</div>
       </div>`).join('');
 
-    const modelOpts = models.map(m => {
-      const rl = m.rate_limits || {};
-      const rpm = rl.rpm === null ? '-' : (rl.rpm || 0);
-      return `<option value="${m.id}">${m.icon} ${m.name} (${rpm} RPM)</option>`;
-    }).join('');
-    const skillChecks = skills.map(s => `
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
-        <input type="checkbox" class="skill-check" value="${s.id}"> ${s.icon} ${s.name}
-      </label>`).join('');
+    const modelOpts = UI.renderModelOptions(models);
+    const skillChecks = UI.renderSkillCheckboxes(skills, [], 'skill-check');
 
     const html = `
       <div class="modal-overlay" id="agent-modal" onclick="if(event.target===this)this.remove()">
@@ -148,15 +141,8 @@ const AgentsPage = {
     const a = await API.getAgent(id);
     const models = await API.getChatModels();
     const skills = await API.getSkills();
-    const modelOpts = models.map(m => {
-      const rl = m.rate_limits || {};
-      const rpm = rl.rpm === null ? '-' : (rl.rpm || 0);
-      return `<option value="${m.id}" ${m.id===a.model?'selected':''}>${m.icon} ${m.name} (${rpm} RPM)</option>`;
-    }).join('');
-    const skillChecks = skills.map(s => `
-      <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:4px 0">
-        <input type="checkbox" class="skill-check-edit" value="${s.id}" ${(a.skills||[]).includes(s.id)?'checked':''}> ${s.icon} ${s.name}
-      </label>`).join('');
+    const modelOpts = UI.renderModelOptions(models, a.model);
+    const skillChecks = UI.renderSkillCheckboxes(skills, a.skills || [], 'skill-check-edit');
 
     const html = `
       <div class="modal-overlay" id="agent-edit-modal" onclick="if(event.target===this)this.remove()">
