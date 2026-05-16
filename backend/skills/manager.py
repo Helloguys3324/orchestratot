@@ -171,6 +171,12 @@ class SkillsManager:
 
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
+        from urllib.parse import urlparse
+        parsed_url = urlparse(url)
+        if parsed_url.scheme not in ("http", "https"):
+            raise ValueError("Invalid URL scheme. Only http and https are allowed.")
+        if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
+            raise ValueError("Invalid URL hostname. Localhost is not allowed.")
         async with httpx.AsyncClient() as client:
             resp = await client.get(url)
             resp.raise_for_status()
