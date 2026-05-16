@@ -108,9 +108,11 @@ const AgentsPage = {
             <div style="max-height:120px;overflow-y:auto">${skillChecks}</div>
           </div>
 
+          <div id="ag-error" style="color:var(--danger);font-size:13px;display:none;margin-bottom:12px"></div>
+
           <div class="modal-footer">
             <button class="btn" onclick="document.getElementById('agent-modal').remove()">Cancel</button>
-            <button class="btn btn-primary" onclick="AgentsPage.create()">Create Agent</button>
+            <button class="btn btn-primary" id="ag-create-btn" onclick="AgentsPage.create()">Create Agent</button>
           </div>
         </div>
       </div>`;
@@ -129,19 +131,49 @@ const AgentsPage = {
   },
 
   async create() {
+    const errDiv = document.getElementById('ag-error');
+    errDiv.style.display = 'none';
+
+    const name = document.getElementById('ag-name').value.trim();
+    const system_prompt = document.getElementById('ag-prompt').value.trim();
+
+    if (!name) {
+      errDiv.textContent = 'Name is required.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    if (!system_prompt) {
+      errDiv.textContent = 'System Prompt is required.';
+      errDiv.style.display = 'block';
+      return;
+    }
+
     const data = {
       template: this._selectedTemplate || 'custom',
-      name: document.getElementById('ag-name').value,
+      name: name,
       icon: document.getElementById('ag-icon').value || '🤖',
       model: document.getElementById('ag-model').value,
-      system_prompt: document.getElementById('ag-prompt').value,
+      system_prompt: system_prompt,
       temperature: parseFloat(document.getElementById('ag-temp').value),
       skills: [...document.querySelectorAll('.skill-check:checked')].map(c => c.value),
     };
-    await API.createAgent(data);
-    document.getElementById('agent-modal')?.remove();
-    this._selectedTemplate = null;
-    App.navigate('agents');
+
+    const btn = document.getElementById('ag-create-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Creating...';
+    btn.disabled = true;
+
+    try {
+      await API.createAgent(data);
+      document.getElementById('agent-modal')?.remove();
+      this._selectedTemplate = null;
+      App.navigate('agents');
+    } catch (e) {
+      errDiv.textContent = e.message;
+      errDiv.style.display = 'block';
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
   },
 
   async showEditModal(id) {
@@ -194,9 +226,12 @@ const AgentsPage = {
             <label class="form-label" style="margin:0">Enabled</label>
             <div class="toggle ${a.enabled?'active':''}" id="age-enabled" onclick="this.classList.toggle('active')"></div>
           </div>
+
+          <div id="age-error" style="color:var(--danger);font-size:13px;display:none;margin-bottom:12px"></div>
+
           <div class="modal-footer">
             <button class="btn" onclick="document.getElementById('agent-edit-modal').remove()">Cancel</button>
-            <button class="btn btn-primary" onclick="AgentsPage.update('${a.id}')">Save</button>
+            <button class="btn btn-primary" id="age-save-btn" onclick="AgentsPage.update('${a.id}')">Save</button>
           </div>
         </div>
       </div>`;
@@ -204,18 +239,48 @@ const AgentsPage = {
   },
 
   async update(id) {
+    const errDiv = document.getElementById('age-error');
+    errDiv.style.display = 'none';
+
+    const name = document.getElementById('age-name').value.trim();
+    const system_prompt = document.getElementById('age-prompt').value.trim();
+
+    if (!name) {
+      errDiv.textContent = 'Name is required.';
+      errDiv.style.display = 'block';
+      return;
+    }
+    if (!system_prompt) {
+      errDiv.textContent = 'System Prompt is required.';
+      errDiv.style.display = 'block';
+      return;
+    }
+
     const data = {
-      name: document.getElementById('age-name').value,
+      name: name,
       icon: document.getElementById('age-icon').value,
       model: document.getElementById('age-model').value,
-      system_prompt: document.getElementById('age-prompt').value,
+      system_prompt: system_prompt,
       temperature: parseFloat(document.getElementById('age-temp').value),
       skills: [...document.querySelectorAll('.skill-check-edit:checked')].map(c => c.value),
       enabled: document.getElementById('age-enabled').classList.contains('active'),
     };
-    await API.updateAgent(id, data);
-    document.getElementById('agent-edit-modal')?.remove();
-    App.navigate('agents');
+
+    const btn = document.getElementById('age-save-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Saving...';
+    btn.disabled = true;
+
+    try {
+      await API.updateAgent(id, data);
+      document.getElementById('agent-edit-modal')?.remove();
+      App.navigate('agents');
+    } catch (e) {
+      errDiv.textContent = e.message;
+      errDiv.style.display = 'block';
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
   },
 
   async duplicate(id) {
