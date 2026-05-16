@@ -57,6 +57,14 @@ def get_settings() -> dict:
     for key, value in DEFAULT_SETTINGS.items():
         if key not in settings:
             settings[key] = value
+    env_overrides = {
+        "api_key": os.getenv("AUTOGEN_API_KEY"),
+        "default_model": os.getenv("AUTOGEN_DEFAULT_MODEL"),
+        "base_url": os.getenv("AUTOGEN_BASE_URL"),
+    }
+    for key, value in env_overrides.items():
+        if value:
+            settings[key] = value
     return settings
 
 

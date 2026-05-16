@@ -1,0 +1,109 @@
+name: AI Factory Jules
+
+on:
+  schedule:
+    - cron: "7 */3 * * *"
+    - cron: "37 1 * * *"
+  workflow_dispatch:
+    inputs:
+      batch_size:
+        description: "How many Jules tasks to start in this run"
+        required: false
+        default: "4"
+      role:
+        description: "Optional role override, for example tester or documenter"
+        required: false
+        default: ""
+      starting_branch:
+        description: "Branch Jules should start from"
+        required: false
+        default: "main"
+      emergency_override:
+        description: "Run even when AUTOPILOT_STOP exists"
+        required: false
+        default: "false"
+
+concurrency:
+  group: ai-factory-jules
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  plan:
+    name: Plan Jules Batch
+    runs-on: ubuntu-latest
+    outputs:
+      enabled: ${{ steps.plan.outputs.enabled }}
+      matrix: ${{ steps.plan.outputs.matrix }}
+      batch_size: ${{ steps.plan.outputs.batch_size }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: plan
+        env:
+          GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
+          REQUESTED_BATCH_SIZE: ${{ inputs.batch_size }}
+          REQUESTED_ROLE: ${{ inputs.role }}
+          EMERGENCY_OVERRIDE: ${{ inputs.emergency_override }}
+        run: python .github/scripts/ai_factory_plan.py
+
+  invoke:
+    name: Jules ${{ matrix.slot }} - ${{ matrix.role }} / ${{ matrix.lane }}
+    needs: plan
+    if: needs.plan.outputs.enabled == 'true' && needs.plan.outputs.batch_size != '0'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      max-parallel: 12
+      matrix:
+        include: ${{ fromJson(needs.plan.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Invoke Jules
+        uses: google-labs-code/jules-invoke@v1
+        with:
+          jules_api_key: ${{ secrets.JULES_API_KEY }}
+          starting_branch: ${{ inputs.starting_branch || 'main' }}
+          include_commit_log: "true"
+          include_last_commit: "false"
+          prompt: |
+            You are part of the AutoGen AI Factory.
+
+            Task id: ${{ matrix.task_id }}
+            Role: ${{ matrix.role }}
+            Lane: ${{ matrix.lane }}
+            Title: ${{ matrix.title }}
+
+            Mission:
+            Read mission.md and AGENTS.md first. Make one meaningful, focused improvement.
+
+            Role instructions:
+            ${{ matrix.role_prompt }}
+
+            Lane constraints:
+            ${{ matrix.lane_rules }}
+
+            Assigned task:
+            ${{ matrix.task_prompt }}
+
+            Hard rules:
+            - Keep the PR focused and normally under 300 changed lines.
+            - Do not commit API keys, tokens, credentials, .env files, local databases, caches, or generated pyc files.
+            - Do not modify data/settings.json except to remove secrets or preserve placeholders.
+            - Do not modify .github/workflows unless this task is explicitly about CI or AI Factory operations.
+            - Do not create cosmetic-only PRs.
+            - If no meaningful safe change exists, report that and do not open a PR.
+
+            Validation:
+            Run these commands where possible and include results in the PR body:
+            python -m compileall backend skills_library run.py
+            python .github/scripts/scan_secrets.py
+            python -m pytest -q
+
+            PR title:
+            ai-factory(${{ matrix.role }}): ${{ matrix.title }}
+
+            Safe automerge:
+            Only add label ai-factory:safe-automerge when the PR is docs-only or tests-only and validation passed.
+

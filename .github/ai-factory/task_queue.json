@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "planner-refresh-backlog",
+      "role": "planner",
+      "lane": "docs",
+      "title": "Refresh the AI Factory backlog",
+      "prompt": "Review mission.md, AGENTS.md, and .github/ai-factory/state.json. Improve .github/ai-factory/task_queue.json with focused future tasks only. Do not modify application code."
+    },
+    {
+      "id": "security-secret-handling",
+      "role": "security",
+      "lane": "security",
+      "title": "Harden runtime secret handling",
+      "prompt": "Audit configuration and runtime data for secret exposure. Prefer environment variables and placeholders. Do not commit real credentials. Keep the diff small and include validation results."
+    },
+    {
+      "id": "tester-backend-smoke",
+      "role": "tester",
+      "lane": "tests",
+      "title": "Add backend smoke tests",
+      "prompt": "Add focused tests for backend app import, settings loading, and one simple API route. Keep tests deterministic and avoid external network calls."
+    },
+    {
+      "id": "documenter-setup",
+      "role": "documenter",
+      "lane": "docs",
+      "title": "Document local and GitHub setup",
+      "prompt": "Create or improve setup documentation for local development, required secrets, GitHub Actions, and emergency stop behavior. Do not change application code."
+    }
+  ]
+}
+

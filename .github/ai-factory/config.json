@@ -1,0 +1,36 @@
+{
+  "daily_budget": 100,
+  "safe_scheduled_daily_budget": 100,
+  "max_concurrent": 12,
+  "main_batch_size": 12,
+  "meta_batch_size": 4,
+  "starting_branch": "main",
+  "role_cycle": [
+    "planner",
+    "architect",
+    "implementer",
+    "implementer",
+    "implementer",
+    "tester",
+    "tester",
+    "reviewer",
+    "refactorer",
+    "documenter",
+    "security",
+    "documenter"
+  ],
+  "lanes": [
+    "backend",
+    "frontend",
+    "skills",
+    "tests",
+    "docs",
+    "security"
+  ],
+  "validation_commands": [
+    "python -m compileall backend skills_library run.py",
+    "python .github/scripts/scan_secrets.py",
+    "python -m pytest -q"
+  ]
+}
+

@@ -1,0 +1,21 @@
+# AutoGen Mission
+
+Build and continuously improve AutoGen as an autonomous AI orchestration platform.
+
+Primary goals:
+
+- Keep the FastAPI backend stable, secure, and easy to operate.
+- Improve the frontend workflow for creating agents, sessions, skills, and model settings.
+- Expand test coverage around routing, sessions, skills, settings, and websocket behavior.
+- Keep secrets out of source control and move runtime credentials to environment variables.
+- Make every autonomous change small, reviewable, measurable, and reversible.
+
+Operating rules:
+
+- Prefer small pull requests with one clear purpose.
+- Run the repository validation commands before opening a PR.
+- Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
+- Do not modify unrelated files.
+- Do not rewrite project history.
+- Treat `AUTOPILOT_STOP` as a hard stop for autonomous work.
+

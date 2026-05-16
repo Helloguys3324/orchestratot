@@ -1,0 +1,25 @@
+{
+  "autopilot": {
+    "target_daily_tasks": 100,
+    "scheduled_pattern": "12 tasks every 3 hours plus 4 daily meta tasks",
+    "max_parallel_tasks_per_run": 12,
+    "emergency_stop_file": "AUTOPILOT_STOP",
+    "status": "paused_until_stop_file_removed"
+  },
+  "repository": {
+    "name": "AutoGen",
+    "default_branch": "main",
+    "primary_runtime": "python",
+    "backend": "FastAPI",
+    "frontend": "static HTML/CSS/JS"
+  },
+  "guardrails": [
+    "No committed secrets",
+    "Small focused PRs",
+    "Validation before PR",
+    "Automerge only for safe docs/tests changes",
+    "No workflow edits unless assigned"
+  ],
+  "last_reviewed": "2026-05-16"
+}
+

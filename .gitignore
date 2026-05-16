@@ -1,4 +1,28 @@
+# Python
 __pycache__/
 *.pyc
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
 venv/
+
+# Runtime data
+data/settings.local.json
+data/*.db
+data/*.sqlite
+workspace/
+
+# Environment and secrets
 .env
+.env.*
+!.env.example
+
+# Frontend/editor artifacts
+node_modules/
+dist/
+build/
+.idea/
+.vscode/
+
