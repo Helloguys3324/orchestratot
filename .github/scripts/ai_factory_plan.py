@@ -25,6 +25,19 @@ ROLE_PROMPTS = {
 }
 
 
+DEFAULT_HOURLY_ROLE_PLAN = [
+    ["implementer", "tester", "documenter", "security"],
+    ["implementer", "implementer", "tester", "reviewer"],
+    ["implementer", "refactorer", "tester", "documenter"],
+    ["implementer", "architect", "tester", "security"],
+    ["implementer", "implementer", "tester", "reviewer"],
+    ["implementer", "refactorer", "documenter", "tester"],
+]
+
+
+DEFAULT_META_ROLE_PLAN = ["planner", "architect", "reviewer", "documenter"]
+
+
 LANE_RULES = {
     "backend": "Prefer backend/ and backend tests. Avoid frontend-only edits.",
     "frontend": "Prefer frontend/ files. Avoid backend behavior changes.",
@@ -48,6 +61,43 @@ def output(name: str, value: str) -> None:
             handle.write(f"{name}={value}\n")
     else:
         print(f"{name}={value}")
+
+
+def task_matches(task: dict, role: str) -> bool:
+    return task.get("role") == role
+
+
+def select_task(tasks: list[dict], role: str, global_index: int) -> dict:
+    matching = [task for task in tasks if task_matches(task, role)]
+    if matching:
+        return matching[global_index % len(matching)]
+
+    if tasks:
+        return tasks[global_index % len(tasks)]
+
+    return {}
+
+
+def build_role_slots(config: dict, batch_size: int, schedule: str, requested_role: str) -> list[str]:
+    if requested_role:
+        return [requested_role] * batch_size
+
+    if schedule == "37 1 * * *":
+        meta_roles = config.get("meta_role_plan") or DEFAULT_META_ROLE_PLAN
+        return [meta_roles[index % len(meta_roles)] for index in range(batch_size)]
+
+    hourly_plan = config.get("hourly_role_plan") or DEFAULT_HOURLY_ROLE_PLAN
+    hour = datetime.now(timezone.utc).hour
+    hour_roles = hourly_plan[hour % len(hourly_plan)]
+    return [hour_roles[index % len(hour_roles)] for index in range(batch_size)]
+
+
+def format_scope(value) -> str:
+    if not value:
+        return "No extra scope specified. Follow the lane constraints and AGENTS.md."
+    if isinstance(value, list):
+        return ", ".join(value)
+    return str(value)
 
 
 def main() -> int:
@@ -76,14 +126,15 @@ def main() -> int:
     max_concurrent = int(config.get("max_concurrent", 12))
     batch_size = max(0, min(batch_size, max_concurrent))
 
-    role_cycle = config.get("role_cycle") or list(ROLE_PROMPTS)
+    role_slots = build_role_slots(config, batch_size, schedule, requested_role)
     lanes = config.get("lanes") or ["backend", "frontend", "tests", "docs"]
     now = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+    global_index = int(datetime.now(timezone.utc).strftime("%j%H")) * max(batch_size, 1)
 
     matrix = []
     for index in range(batch_size):
-        queued = tasks[index % len(tasks)] if tasks else {}
-        role = requested_role or queued.get("role") or role_cycle[index % len(role_cycle)]
+        role = role_slots[index]
+        queued = select_task(tasks, role, global_index + index)
         lane = queued.get("lane") or lanes[index % len(lanes)]
         title = queued.get("title") or f"{role.title()} improvement {index + 1}"
         task_prompt = queued.get("prompt") or "Find one meaningful improvement and implement it safely."
@@ -99,6 +150,10 @@ def main() -> int:
                 "role_prompt": ROLE_PROMPTS.get(role, ROLE_PROMPTS["implementer"]),
                 "lane_rules": LANE_RULES.get(lane, "Keep changes focused and small."),
                 "task_prompt": task_prompt,
+                "write_scope": format_scope(queued.get("write_scope")),
+                "avoid_scope": format_scope(queued.get("avoid_scope")),
+                "risk_level": queued.get("risk_level", "medium"),
+                "automerge_allowed": str(queued.get("automerge_allowed", False)).lower(),
             }
         )
 

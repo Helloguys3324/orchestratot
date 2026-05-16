@@ -5,18 +5,18 @@
   "main_batch_size": 4,
   "meta_batch_size": 4,
   "starting_branch": "main",
-  "role_cycle": [
+  "hourly_role_plan": [
+    ["implementer", "tester", "documenter", "security"],
+    ["implementer", "implementer", "tester", "reviewer"],
+    ["implementer", "refactorer", "tester", "documenter"],
+    ["implementer", "architect", "tester", "security"],
+    ["implementer", "implementer", "tester", "reviewer"],
+    ["implementer", "refactorer", "documenter", "tester"]
+  ],
+  "meta_role_plan": [
     "planner",
     "architect",
-    "implementer",
-    "implementer",
-    "implementer",
-    "tester",
-    "tester",
     "reviewer",
-    "refactorer",
-    "documenter",
-    "security",
     "documenter"
   ],
   "lanes": [

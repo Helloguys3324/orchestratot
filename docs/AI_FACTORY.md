@@ -22,6 +22,28 @@ The workflow `.github/workflows/ai-factory-jules.yml` targets 100 Jules tasks pe
 
 This keeps the factory active around the clock with lower conflict risk while targeting the 100 task daily budget.
 
+## Role Routing
+
+Hourly runs use a weighted role plan instead of taking the first tasks from the queue:
+
+- `implementer` gets the most slots for product/backend/frontend/skills work.
+- `tester` gets frequent slots to keep validation improving.
+- `documenter`, `security`, `reviewer`, and `refactorer` rotate through smaller but regular slots.
+- `architect` runs occasionally in hourly work and again in the daily meta batch.
+- `planner` is reserved mainly for the daily meta batch, where it updates the task queue instead of touching app code.
+
+The task planner reads `.github/ai-factory/task_queue.json`. Each task can define:
+
+- `role`
+- `lane`
+- `write_scope`
+- `avoid_scope`
+- `risk_level`
+- `automerge_allowed`
+- `prompt`
+
+Jules receives these fields directly in the prompt, so each task has a role, a purpose, and path boundaries.
+
 ## Emergency Stop
 
 Create or keep this file in the repository root:

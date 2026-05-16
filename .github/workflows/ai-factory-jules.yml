@@ -84,11 +84,22 @@ jobs:
             Lane constraints:
             ${{ matrix.lane_rules }}
 
+            Write scope:
+            ${{ matrix.write_scope }}
+
+            Avoid scope:
+            ${{ matrix.avoid_scope }}
+
+            Risk level: ${{ matrix.risk_level }}
+            Automerge allowed: ${{ matrix.automerge_allowed }}
+
             Assigned task:
             ${{ matrix.task_prompt }}
 
             Hard rules:
             - Keep the PR focused and normally under 300 changed lines.
+            - Touch only files allowed by Write scope unless the task is impossible without a small adjacent change.
+            - Do not touch files listed in Avoid scope.
             - Do not commit API keys, tokens, credentials, .env files, local databases, caches, or generated pyc files.
             - Do not modify data/settings.json except to remove secrets or preserve placeholders.
             - Do not modify .github/workflows unless this task is explicitly about CI or AI Factory operations.

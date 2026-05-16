@@ -1,47 +1,181 @@
 {
-  "version": 1,
+  "version": 2,
   "tasks": [
     {
-      "id": "security-secret-handling",
-      "role": "security",
-      "lane": "security",
-      "title": "Harden runtime secret handling",
-      "prompt": "Audit configuration and runtime data for secret exposure. Prefer environment variables and placeholders. Do not commit real credentials. Keep the diff small and include validation results."
+      "id": "planner-refresh-backlog",
+      "role": "planner",
+      "lane": "docs",
+      "title": "Refresh AI Factory backlog",
+      "write_scope": [".github/ai-factory/task_queue.json", ".github/ai-factory/state.json"],
+      "avoid_scope": ["backend/", "frontend/", "skills_library/", ".github/workflows/"],
+      "risk_level": "low",
+      "automerge_allowed": false,
+      "prompt": "Review mission.md, AGENTS.md, current PRs, and recent merged work. Improve task_queue.json with focused tasks that use all roles, avoid duplication, and include write_scope/avoid_scope. Do not change application code."
+    },
+    {
+      "id": "architect-backend-boundaries",
+      "role": "architect",
+      "lane": "backend",
+      "title": "Improve backend architecture boundary",
+      "write_scope": ["backend/", "docs/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Find one small backend architecture weakness around sessions, agents, skills, or settings. Implement a minimal improvement or document a concrete architecture decision. Keep behavior stable."
+    },
+    {
+      "id": "implementer-backend-api",
+      "role": "implementer",
+      "lane": "backend",
+      "title": "Improve backend API behavior",
+      "write_scope": ["backend/", "tests/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Implement one focused backend API improvement around agents, sessions, models, skills, or settings. Add tests when practical and keep the diff small."
+    },
+    {
+      "id": "implementer-frontend-workflow",
+      "role": "implementer",
+      "lane": "frontend",
+      "title": "Improve frontend workflow",
+      "write_scope": ["frontend/"],
+      "avoid_scope": ["backend/", ".github/workflows/", "data/"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Improve one frontend workflow for creating agents, sessions, skills, or model settings. Preserve existing API contracts and keep the UI practical."
+    },
+    {
+      "id": "implementer-skills-quality",
+      "role": "implementer",
+      "lane": "skills",
+      "title": "Improve skill implementation quality",
+      "write_scope": ["skills_library/", "custom_skills/", "tests/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Improve one skill implementation or add one missing guardrail around file, code execution, data analysis, or web search behavior. Avoid network-dependent tests."
+    },
+    {
+      "id": "implementer-runtime-config",
+      "role": "implementer",
+      "lane": "backend",
+      "title": "Improve runtime configuration handling",
+      "write_scope": ["backend/config.py", "backend/", "tests/", ".env.example"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Improve runtime configuration ergonomics while keeping secrets out of the repository. Prefer environment variables and deterministic tests."
     },
     {
       "id": "tester-backend-smoke",
       "role": "tester",
       "lane": "tests",
       "title": "Add backend smoke tests",
+      "write_scope": ["tests/", "backend/tests/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "low",
+      "automerge_allowed": true,
       "prompt": "Add focused tests for backend app import, settings loading, and one simple API route. Keep tests deterministic and avoid external network calls."
-    },
-    {
-      "id": "documenter-setup",
-      "role": "documenter",
-      "lane": "docs",
-      "title": "Document local and GitHub setup",
-      "prompt": "Create or improve setup documentation for local development, required secrets, GitHub Actions, and emergency stop behavior. Do not change application code."
     },
     {
       "id": "tester-websocket-coverage",
       "role": "tester",
       "lane": "tests",
       "title": "Expand websocket test coverage",
-      "prompt": "Add tests to expand coverage around routing, sessions, skills, settings, and websocket behavior as specified in mission.md."
+      "write_scope": ["tests/", "backend/websocket/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "Add or improve tests around websocket connection management and message handling. Avoid real network calls."
     },
     {
-      "id": "frontend-workflow-improvements",
-      "role": "implementer",
+      "id": "tester-skills-coverage",
+      "role": "tester",
+      "lane": "tests",
+      "title": "Expand skills test coverage",
+      "write_scope": ["tests/", "skills_library/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "Add tests for one skills_library module. Prefer pure unit tests and temporary directories over real external services."
+    },
+    {
+      "id": "reviewer-recent-pr-quality",
+      "role": "reviewer",
+      "lane": "backend",
+      "title": "Review recent merged changes",
+      "write_scope": ["backend/", "frontend/", "skills_library/", "tests/", "docs/"],
+      "avoid_scope": [".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Review recent repository changes for one concrete regression risk, missing test, or maintainability issue. Create a small corrective PR only if the issue is real."
+    },
+    {
+      "id": "refactorer-backend-small",
+      "role": "refactorer",
+      "lane": "backend",
+      "title": "Refactor a small backend area",
+      "write_scope": ["backend/", "tests/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Refactor one small backend area for readability or duplication reduction while preserving behavior. Add or update tests when practical."
+    },
+    {
+      "id": "refactorer-frontend-small",
+      "role": "refactorer",
       "lane": "frontend",
-      "title": "Improve frontend workflow",
-      "prompt": "Improve the frontend workflow for creating agents, sessions, skills, and model settings as specified in mission.md."
+      "title": "Refactor a small frontend area",
+      "write_scope": ["frontend/"],
+      "avoid_scope": ["backend/", ".github/workflows/", "data/"],
+      "risk_level": "medium",
+      "automerge_allowed": false,
+      "prompt": "Refactor one small frontend area for readability or repeated logic reduction while preserving behavior and visual layout."
     },
     {
-      "id": "documenter-readme",
+      "id": "documenter-setup",
       "role": "documenter",
       "lane": "docs",
-      "title": "Create README.md",
-      "prompt": "Create a README.md file to document behavior changes and general project information, as mentioned by AGENTS.md."
+      "title": "Document setup and operations",
+      "write_scope": ["README.md", "docs/", "AGENTS.md", "mission.md"],
+      "avoid_scope": ["backend/", "frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "Improve setup documentation for local development, required secrets, GitHub Actions, emergency stop behavior, and validation. Do not change application code."
+    },
+    {
+      "id": "documenter-api-notes",
+      "role": "documenter",
+      "lane": "docs",
+      "title": "Document API and architecture notes",
+      "write_scope": ["docs/", "README.md"],
+      "avoid_scope": ["backend/", "frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "low",
+      "automerge_allowed": true,
+      "prompt": "Document one area of the backend API, session flow, agent templates, or skill system based on the current code. Do not change application code."
+    },
+    {
+      "id": "security-secret-handling",
+      "role": "security",
+      "lane": "security",
+      "title": "Harden runtime secret handling",
+      "write_scope": ["backend/config.py", ".env.example", ".gitignore", ".github/scripts/scan_secrets.py", "docs/"],
+      "avoid_scope": ["frontend/", "data/settings.json"],
+      "risk_level": "high",
+      "automerge_allowed": false,
+      "prompt": "Audit configuration and runtime data for secret exposure. Prefer environment variables and placeholders. Do not commit real credentials. Keep the diff small and include validation results."
+    },
+    {
+      "id": "security-input-hardening",
+      "role": "security",
+      "lane": "security",
+      "title": "Harden user input handling",
+      "write_scope": ["backend/", "skills_library/", "tests/"],
+      "avoid_scope": ["frontend/", ".github/workflows/", "data/settings.json"],
+      "risk_level": "high",
+      "automerge_allowed": false,
+      "prompt": "Find one concrete input validation, path handling, command execution, or file access risk. Implement a narrow fix with tests where practical."
     }
   ]
 }
