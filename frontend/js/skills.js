@@ -59,16 +59,14 @@ const SkillsPage = {
   },
 
   async create() {
-    const errDiv = document.getElementById('sk-error');
-    errDiv.style.display = 'none';
+    UI.hideError('sk-error');
 
     const name = document.getElementById('sk-name').value.trim();
     const description = document.getElementById('sk-desc').value.trim();
     const code = document.getElementById('sk-code').value.trim();
 
     if (!name || !description || !code) {
-      errDiv.textContent = 'Name, Description, and Python Code are required.';
-      errDiv.style.display = 'block';
+      UI.showError('sk-error', 'Name, Description, and Python Code are required.');
       return;
     }
 
@@ -79,21 +77,15 @@ const SkillsPage = {
       code: code,
     };
 
-    const btn = document.getElementById('sk-create-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Creating...';
-    btn.disabled = true;
-
-    try {
-      await API.createSkill(data);
-      document.getElementById('skill-modal')?.remove();
-      App.navigate('skills');
-    } catch (e) {
-      errDiv.textContent = e.message;
-      errDiv.style.display = 'block';
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
+    await UI.withLoading('sk-create-btn', '⏳ Creating...', async () => {
+      try {
+        await API.createSkill(data);
+        document.getElementById('skill-modal')?.remove();
+        App.navigate('skills');
+      } catch (e) {
+        UI.showError('sk-error', e.message);
+      }
+    });
   },
 
   async remove(id) {

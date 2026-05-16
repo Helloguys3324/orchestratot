@@ -5,13 +5,12 @@ const SessionsPage = {
     const sessions = await API.getSessions();
 
     if (!sessions.length) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="icon">📋</div>
-          <h3>No Sessions</h3>
-          <p>Create a session to start a multi-agent conversation.</p>
-          <button class="btn btn-primary" onclick="SessionsPage.showCreateModal()">+ Create Session</button>
-        </div>`;
+      container.innerHTML = UI.renderEmptyState(
+        '📋',
+        'No Sessions',
+        'Create a session to start a multi-agent conversation.',
+        `<button class="btn btn-primary" onclick="SessionsPage.showCreateModal()">+ Create Session</button>`
+      );
       return;
     }
 
@@ -107,13 +106,11 @@ const SessionsPage = {
   },
 
   async create() {
-    const errDiv = document.getElementById('sess-error');
-    errDiv.style.display = 'none';
+    UI.hideError('sess-error');
 
     const agentIds = [...document.querySelectorAll('.session-agent-check:checked')].map(c => c.value);
     if (!agentIds.length) {
-      errDiv.textContent = 'Select at least one agent';
-      errDiv.style.display = 'block';
+      UI.showError('sess-error', 'Select at least one agent');
       return;
     }
     const data = {
@@ -123,21 +120,15 @@ const SessionsPage = {
       max_rounds: parseInt(document.getElementById('sess-rounds').value),
     };
 
-    const btn = document.getElementById('sess-create-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Creating...';
-    btn.disabled = true;
-
-    try {
-      const session = await API.createSession(data);
-      document.getElementById('session-modal')?.remove();
-      App.openSession(session.id);
-    } catch (e) {
-      errDiv.textContent = e.message;
-      errDiv.style.display = 'block';
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
+    await UI.withLoading('sess-create-btn', '⏳ Creating...', async () => {
+      try {
+        const session = await API.createSession(data);
+        document.getElementById('session-modal')?.remove();
+        App.openSession(session.id);
+      } catch (e) {
+        UI.showError('sess-error', e.message);
+      }
+    });
   },
 
   async remove(id) {
