@@ -95,7 +95,8 @@ class SessionManager:
             return
 
         settings = get_settings()
-        api_key = settings.get("api_key", "")
+        api_key_obj = settings.get("api_key", "")
+        api_key = api_key_obj.get_secret_value() if hasattr(api_key_obj, "get_secret_value") else str(api_key_obj)
 
         session["status"] = "running"
         self._save()
