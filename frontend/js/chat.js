@@ -8,13 +8,12 @@ const ChatPage = {
       // Show session picker
       const sessions = await API.getSessions();
       if (!sessions.length) {
-        container.innerHTML = `
-          <div class="empty-state">
-            <div class="icon">💬</div>
-            <h3>No Active Sessions</h3>
-            <p>Create a session with agents to start chatting.</p>
-            <button class="btn btn-primary" onclick="App.navigate('sessions')">Go to Sessions</button>
-          </div>`;
+        container.innerHTML = UI.renderEmptyState(
+          '💬',
+          'No Active Sessions',
+          'Create a session with agents to start chatting.',
+          `<button class="btn btn-primary" onclick="App.navigate('sessions')">Go to Sessions</button>`
+        );
         return;
       }
       container.innerHTML = `
@@ -183,7 +182,7 @@ const ChatPage = {
     
     let content;
     if (!files.length) {
-      content = '<div class="empty-state" style="padding:20px"><div class="icon">📂</div><h3>No files yet</h3><p>Agents will create files here as they work.</p></div>';
+      content = UI.renderEmptyState('📂', 'No files yet', 'Agents will create files here as they work.');
     } else {
       content = files.map(f => `
         <div style="margin-bottom:12px">

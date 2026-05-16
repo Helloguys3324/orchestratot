@@ -17,5 +17,48 @@ const UI = {
         <input type="checkbox" class="${className}" value="${s.id}" ${isChecked}> ${s.icon} ${s.name}
       </label>`;
     }).join('');
+  },
+
+  renderEmptyState(icon, title, message, actionHtml = '') {
+    return `
+      <div class="empty-state">
+        <div class="icon">${icon}</div>
+        <h3>${title}</h3>
+        <p>${message}</p>
+        ${actionHtml}
+      </div>`;
+  },
+
+  showError(elementId, message) {
+    const errDiv = document.getElementById(elementId);
+    if (errDiv) {
+      errDiv.textContent = message;
+      errDiv.style.display = 'block';
+    }
+  },
+
+  hideError(elementId) {
+    const errDiv = document.getElementById(elementId);
+    if (errDiv) {
+      errDiv.style.display = 'none';
+    }
+  },
+
+  async withLoading(btnId, loadingText, actionFn) {
+    const btn = document.getElementById(btnId);
+    let originalText = '';
+    if (btn) {
+      originalText = btn.textContent;
+      btn.textContent = loadingText;
+      btn.disabled = true;
+    }
+    try {
+      await actionFn();
+    } finally {
+      if (btn) {
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
   }
 };

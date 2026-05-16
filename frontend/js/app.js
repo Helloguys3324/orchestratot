@@ -72,12 +72,7 @@ const App = {
           break;
       }
     } catch (e) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="icon">⚠️</div>
-          <h3>Error</h3>
-          <p>${e.message}</p>
-        </div>`;
+      container.innerHTML = UI.renderEmptyState('⚠️', 'Error', e.message);
     }
   },
 
@@ -153,10 +148,7 @@ const App = {
   },
 
   async saveSettings() {
-    const btn = document.getElementById('save-settings-btn');
     const status = document.getElementById('save-status');
-    btn.textContent = '⏳ Saving...';
-    btn.disabled = true;
 
     const data = {
       api_key: document.getElementById('set-apikey').value.trim(),
@@ -167,20 +159,19 @@ const App = {
       max_rounds: parseInt(document.getElementById('set-maxrounds').value),
     };
 
-    try {
-      await API.saveSettings(data);
-      btn.textContent = '💾 Save Settings';
-      btn.disabled = false;
-      status.style.display = 'inline';
-      status.textContent = '✅ Saved!';
-      setTimeout(() => { status.style.display = 'none'; }, 3000);
-    } catch (e) {
-      btn.textContent = '💾 Save Settings';
-      btn.disabled = false;
-      status.style.display = 'inline';
-      status.style.color = 'var(--danger)';
-      status.textContent = '❌ Error: ' + e.message;
-    }
+    await UI.withLoading('save-settings-btn', '⏳ Saving...', async () => {
+      try {
+        await API.saveSettings(data);
+        status.style.display = 'inline';
+        status.style.color = 'var(--success)';
+        status.textContent = '✅ Saved!';
+        setTimeout(() => { status.style.display = 'none'; }, 3000);
+      } catch (e) {
+        status.style.display = 'inline';
+        status.style.color = 'var(--danger)';
+        status.textContent = '❌ Error: ' + e.message;
+      }
+    });
   },
 };
 

@@ -8,13 +8,12 @@ const AgentsPage = {
     document.getElementById('agents-count').textContent = agents.length;
 
     if (!agents.length) {
-      container.innerHTML = `
-        <div class="empty-state">
-          <div class="icon">🤖</div>
-          <h3>No Agents Yet</h3>
-          <p>Create your first AI agent to start building your orchestrator team.</p>
-          <button class="btn btn-primary" onclick="AgentsPage.showCreateModal()">+ Create Agent</button>
-        </div>`;
+      container.innerHTML = UI.renderEmptyState(
+        '🤖',
+        'No Agents Yet',
+        'Create your first AI agent to start building your orchestrator team.',
+        `<button class="btn btn-primary" onclick="AgentsPage.showCreateModal()">+ Create Agent</button>`
+      );
       return;
     }
 
@@ -124,20 +123,17 @@ const AgentsPage = {
   },
 
   async create() {
-    const errDiv = document.getElementById('ag-error');
-    errDiv.style.display = 'none';
+    UI.hideError('ag-error');
 
     const name = document.getElementById('ag-name').value.trim();
     const system_prompt = document.getElementById('ag-prompt').value.trim();
 
     if (!name) {
-      errDiv.textContent = 'Name is required.';
-      errDiv.style.display = 'block';
+      UI.showError('ag-error', 'Name is required.');
       return;
     }
     if (!system_prompt) {
-      errDiv.textContent = 'System Prompt is required.';
-      errDiv.style.display = 'block';
+      UI.showError('ag-error', 'System Prompt is required.');
       return;
     }
 
@@ -151,22 +147,16 @@ const AgentsPage = {
       skills: [...document.querySelectorAll('.skill-check:checked')].map(c => c.value),
     };
 
-    const btn = document.getElementById('ag-create-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Creating...';
-    btn.disabled = true;
-
-    try {
-      await API.createAgent(data);
-      document.getElementById('agent-modal')?.remove();
-      this._selectedTemplate = null;
-      App.navigate('agents');
-    } catch (e) {
-      errDiv.textContent = e.message;
-      errDiv.style.display = 'block';
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
+    await UI.withLoading('ag-create-btn', '⏳ Creating...', async () => {
+      try {
+        await API.createAgent(data);
+        document.getElementById('agent-modal')?.remove();
+        this._selectedTemplate = null;
+        App.navigate('agents');
+      } catch (e) {
+        UI.showError('ag-error', e.message);
+      }
+    });
   },
 
   async showEditModal(id) {
@@ -225,20 +215,17 @@ const AgentsPage = {
   },
 
   async update(id) {
-    const errDiv = document.getElementById('age-error');
-    errDiv.style.display = 'none';
+    UI.hideError('age-error');
 
     const name = document.getElementById('age-name').value.trim();
     const system_prompt = document.getElementById('age-prompt').value.trim();
 
     if (!name) {
-      errDiv.textContent = 'Name is required.';
-      errDiv.style.display = 'block';
+      UI.showError('age-error', 'Name is required.');
       return;
     }
     if (!system_prompt) {
-      errDiv.textContent = 'System Prompt is required.';
-      errDiv.style.display = 'block';
+      UI.showError('age-error', 'System Prompt is required.');
       return;
     }
 
@@ -252,21 +239,15 @@ const AgentsPage = {
       enabled: document.getElementById('age-enabled').classList.contains('active'),
     };
 
-    const btn = document.getElementById('age-save-btn');
-    const originalText = btn.textContent;
-    btn.textContent = '⏳ Saving...';
-    btn.disabled = true;
-
-    try {
-      await API.updateAgent(id, data);
-      document.getElementById('agent-edit-modal')?.remove();
-      App.navigate('agents');
-    } catch (e) {
-      errDiv.textContent = e.message;
-      errDiv.style.display = 'block';
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
+    await UI.withLoading('age-save-btn', '⏳ Saving...', async () => {
+      try {
+        await API.updateAgent(id, data);
+        document.getElementById('agent-edit-modal')?.remove();
+        App.navigate('agents');
+      } catch (e) {
+        UI.showError('age-error', e.message);
+      }
+    });
   },
 
   async duplicate(id) {
