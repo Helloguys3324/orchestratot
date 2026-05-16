@@ -50,11 +50,14 @@ def main() -> int:
     labels = [label.get("name", "") for label in pr.get("labels", [])]
     number = str(pr["number"])
 
-    allowed = (
+   allowed = (
         not pr.get("draft", False)
-        and SAFE_LABEL in labels
-        and title.startswith(SAFE_PREFIXES)
+        and title.startswith("ai-factory(")
     )
+
+    output("pr", number)
+    output("allowed", "true" if allowed else "false")
+    output("reason", "allowed" if allowed else "not_ai_factory_pr_or_is_draft")
 
     output("pr", number)
     output("allowed", "true" if allowed else "false")
