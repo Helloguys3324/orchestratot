@@ -1,5 +1,156 @@
 {
   "global_goal": "ROLE: Elite Principal Systems Architect & Autonomous Agent. OBJECTIVE: Build a highly scalable, fault-tolerant Multi-Agent Orchestrator. You are operating in a continuous, zero-human-in-the-loop, multi-week execution pipeline. \n\nCOGNITIVE & ARCHITECTURAL FRAMEWORK:\n1. [TECH-AGNOSTIC & OPTIMIZED]: Autonomously select the absolute best stack per module. Ruthlessly optimize algorithmic complexity (prefer O(1)/O(N)), memory management, and execution speed.\n2. [ZERO-TRUST VERIFICATION]: You MUST write and execute tests (unit/integration) via MCP. Validate data boundaries and performance. NEVER commit code if a test, compiler, or linter fails. Read stderr to self-heal.\n3. [LONG-TERM MEMORY PROTOCOL]: To survive context degradation over hundreds of cycles, you MUST maintain a file named 'ARCHITECTURE_STATE.md' in the root. After every task, update this file with the current system state, data flow DAG, and active interfaces. ALWAYS read this file before starting a new task.\n\nRECURSIVE META-PROMPTING PROTOCOL (CRITICAL):\nYou are responsible for dynamically generating your own future micro-tasks. EVERY new task you append to the 'tasks' array in this roadmap.json MUST have a 'prompt' field formatted EXACTLY as this strict contract:\n- [INPUT STATE]: Brief description of the codebase reality based on ARCHITECTURE_STATE.md.\n- [ATOMIC OBJECTIVE]: One hyper-focused, measurable implementation goal.\n- [CONSTRAINTS]: Specific algorithmic, memory, type-safety, or architectural limits for this exact task.\n- [ACCEPTANCE CRITERIA]: Exact terminal commands, test assertions, or MCP checks required to prove flawless execution before marking 'completed'.\n\nWORKFLOW: Read ARCHITECTURE_STATE.md -> Execute current task -> Verify flawlessly -> Update ARCHITECTURE_STATE.md -> Append new structured tasks if needed -> Mark current 'completed' -> Increment current_task_id -> Open Pull Request.",
-  "current_task_id": 0,
-  "tasks": []
+  "current_task_id": 1,
+  "tasks": [
+    {
+      "id": 1,
+      "prompt": "[INPUT STATE]: Blank FastAPI/Uvicorn backend setup. [ATOMIC OBJECTIVE]: Implement basic FastAPI app initialization and health check endpoint. [CONSTRAINTS]: Must use FastAPI, Pydantic v2. Must be async. [ACCEPTANCE CRITERIA]: `pytest` tests pass for /health endpoint returning 200 OK.",
+      "status": "pending"
+    },
+    {
+      "id": 2,
+      "prompt": "[INPUT STATE]: Basic FastAPI app exists. [ATOMIC OBJECTIVE]: Configure strict CORS middleware and global exception handlers. [CONSTRAINTS]: Restrict origins appropriately, return standard JSON error formats. [ACCEPTANCE CRITERIA]: Unit tests verifying CORS headers and 422/500 exception formats.",
+      "status": "pending"
+    },
+    {
+      "id": 3,
+      "prompt": "[INPUT STATE]: FastAPI setup with error handling. [ATOMIC OBJECTIVE]: Setup Pytest fixtures and async test client environment. [CONSTRAINTS]: Use pytest-asyncio. Ensure clean state between tests. [ACCEPTANCE CRITERIA]: A dummy async test passes using the configured client.",
+      "status": "pending"
+    },
+    {
+      "id": 4,
+      "prompt": "[INPUT STATE]: Test environment ready. [ATOMIC OBJECTIVE]: Implement core configuration manager (config.py) using Pydantic BaseSettings. [CONSTRAINTS]: Must load from .env, strict type checking. [ACCEPTANCE CRITERIA]: Tests verify environment variables map to correct types and raise on missing required vars.",
+      "status": "pending"
+    },
+    {
+      "id": 5,
+      "prompt": "[INPUT STATE]: Config manager implemented. [ATOMIC OBJECTIVE]: Create base abstract Pydantic v2 models for `Agent` and `Task`. [CONSTRAINTS]: Strict mode enabled, immutable fields where appropriate. [ACCEPTANCE CRITERIA]: Tests verify schema validation and serialization.",
+      "status": "pending"
+    },
+    {
+      "id": 6,
+      "prompt": "[INPUT STATE]: Base models exist. [ATOMIC OBJECTIVE]: Implement core `Session` Pydantic model for tracking orchestration state. [CONSTRAINTS]: Must support DAG state tracking (e.g., node status). [ACCEPTANCE CRITERIA]: Schema validation tests pass for Session model.",
+      "status": "pending"
+    },
+    {
+      "id": 7,
+      "prompt": "[INPUT STATE]: Session model created. [ATOMIC OBJECTIVE]: Create base WebSocket manager for real-time frontend streaming. [CONSTRAINTS]: Asyncio queues, handle disconnects gracefully. [ACCEPTANCE CRITERIA]: Test client can connect, receive ping, and disconnect cleanly.",
+      "status": "pending"
+    },
+    {
+      "id": 8,
+      "prompt": "[INPUT STATE]: WebSocket manager base created. [ATOMIC OBJECTIVE]: Implement structured logging system for the application. [CONSTRAINTS]: JSON formatting for production, colorized for dev. Async logging if possible. [ACCEPTANCE CRITERIA]: Test verifies logs are written in correct JSON format.",
+      "status": "pending"
+    },
+    {
+      "id": 9,
+      "prompt": "[INPUT STATE]: Logging implemented. [ATOMIC OBJECTIVE]: Scaffold basic HTML/JS frontend to connect to the WebSocket and display status. [CONSTRAINTS]: Vanilla JS, module pattern. [ACCEPTANCE CRITERIA]: Frontend connects to WS backend without errors in browser console (verified manually or via basic playwright test).",
+      "status": "pending"
+    },
+    {
+      "id": 10,
+      "prompt": "[INPUT STATE]: Basic frontend and backend WS exist. [ATOMIC OBJECTIVE]: Implement standard message protocol (JSON schema) for WS communication. [CONSTRAINTS]: Use Pydantic models to validate incoming/outgoing WS messages. [ACCEPTANCE CRITERIA]: WS tests verify rejection of invalid JSON and acceptance of valid schema.",
+      "status": "pending"
+    },
+    {
+      "id": 11,
+      "prompt": "[INPUT STATE]: Basic models and communication ready. [ATOMIC OBJECTIVE]: Implement DAG node and edge data structures. [CONSTRAINTS]: O(1) or O(N) lookup. Cycle detection required. [ACCEPTANCE CRITERIA]: Unit tests verifying acyclic property and topological sort logic.",
+      "status": "pending"
+    },
+    {
+      "id": 12,
+      "prompt": "[INPUT STATE]: DAG structures exist. [ATOMIC OBJECTIVE]: Implement the central asynchronous orchestration loop (`Orchestrator` class). [CONSTRAINTS]: Asyncio primitives (Tasks, Queues). Non-blocking. [ACCEPTANCE CRITERIA]: Test verifies the loop can start, process a dummy task, and stop cleanly.",
+      "status": "pending"
+    },
+    {
+      "id": 13,
+      "prompt": "[INPUT STATE]: Orchestrator loop base created. [ATOMIC OBJECTIVE]: Integrate DAG topological sort into Orchestrator task execution queue. [CONSTRAINTS]: Ensure dependencies run sequentially, independent nodes concurrently. [ACCEPTANCE CRITERIA]: Test with mock async tasks proves correct execution order and concurrency.",
+      "status": "pending"
+    },
+    {
+      "id": 14,
+      "prompt": "[INPUT STATE]: Orchestrator supports DAG execution. [ATOMIC OBJECTIVE]: Implement Agent registry to hold available Agent instances. [CONSTRAINTS]: Thread-safe/Async-safe singleton or dependency injection. [ACCEPTANCE CRITERIA]: Tests verify adding, retrieving, and removing agents.",
+      "status": "pending"
+    },
+    {
+      "id": 15,
+      "prompt": "[INPUT STATE]: Agent registry exists. [ATOMIC OBJECTIVE]: Implement dynamic routing logic in Orchestrator to assign Tasks to specific Agents based on capability metadata. [CONSTRAINTS]: O(1) capability matching. [ACCEPTANCE CRITERIA]: Router tests prove tasks map to correct agents.",
+      "status": "pending"
+    },
+    {
+      "id": 16,
+      "prompt": "[INPUT STATE]: Routing logic implemented. [ATOMIC OBJECTIVE]: Implement task state transition logic (Pending -> Running -> Completed/Failed). [CONSTRAINTS]: Atomic updates, must emit WS events on transition. [ACCEPTANCE CRITERIA]: Mock task execution verifies state transitions and WS event emission.",
+      "status": "pending"
+    },
+    {
+      "id": 17,
+      "prompt": "[INPUT STATE]: Task state transitions exist. [ATOMIC OBJECTIVE]: Implement Orchestrator fault-tolerance: retry mechanism for failed tasks. [CONSTRAINTS]: Exponential backoff, max retries limit. [ACCEPTANCE CRITERIA]: Test verifies a failing mock task is retried exactly N times before permanent failure.",
+      "status": "pending"
+    },
+    {
+      "id": 18,
+      "prompt": "[INPUT STATE]: Retry mechanism implemented. [ATOMIC OBJECTIVE]: Implement Orchestrator continuous self-healing interface (placeholder for LLM self-correction). [CONSTRAINTS]: Async hook when max retries hit. [ACCEPTANCE CRITERIA]: Test verifies hook is called upon permanent task failure.",
+      "status": "pending"
+    },
+    {
+      "id": 19,
+      "prompt": "[INPUT STATE]: Self-healing hook created. [ATOMIC OBJECTIVE]: Implement session persistence interface (abstract base class for DB). [CONSTRAINTS]: Async methods for save/load session. [ACCEPTANCE CRITERIA]: Interface tests ensure concrete implementations enforce required methods.",
+      "status": "pending"
+    },
+    {
+      "id": 20,
+      "prompt": "[INPUT STATE]: DB interface created. [ATOMIC OBJECTIVE]: Implement in-memory SQLite/JSON persistence for session state. [CONSTRAINTS]: Fast, async-compatible wrapper. [ACCEPTANCE CRITERIA]: Tests verify session state survives Orchestrator restart via persistence.",
+      "status": "pending"
+    },
+    {
+      "id": 21,
+      "prompt": "[INPUT STATE]: Orchestrator core complete. [ATOMIC OBJECTIVE]: Implement base `LLMAgent` class integrating with a mock LLM provider. [CONSTRAINTS]: Async execution, strictly typed inputs/outputs. [ACCEPTANCE CRITERIA]: Test verifies Agent processes a prompt and returns a Pydantic validated response.",
+      "status": "pending"
+    },
+    {
+      "id": 22,
+      "prompt": "[INPUT STATE]: Base LLMAgent exists. [ATOMIC OBJECTIVE]: Implement standard MCP (Model Context Protocol) client stub in backend. [CONSTRAINTS]: Adhere to MCP spec for tool calling. [ACCEPTANCE CRITERIA]: Test verifies client can parse MCP tool definitions into JSON schema.",
+      "status": "pending"
+    },
+    {
+      "id": 23,
+      "prompt": "[INPUT STATE]: MCP client stub created. [ATOMIC OBJECTIVE]: Connect `LLMAgent` to the MCP client to fetch available tools dynamically. [CONSTRAINTS]: Caching of tools to prevent unnecessary network calls. [ACCEPTANCE CRITERIA]: Agent successfully retrieves and caches tools from MCP stub.",
+      "status": "pending"
+    },
+    {
+      "id": 24,
+      "prompt": "[INPUT STATE]: Agent connected to MCP tools. [ATOMIC OBJECTIVE]: Implement skill execution engine to run local Python functions securely based on MCP tool calls. [CONSTRAINTS]: Sandboxed execution or strict param validation. [ACCEPTANCE CRITERIA]: Engine successfully parses tool call and executes a dummy local python function.",
+      "status": "pending"
+    },
+    {
+      "id": 25,
+      "prompt": "[INPUT STATE]: Skill execution engine ready. [ATOMIC OBJECTIVE]: Create the 'CodeAnalyzer' default skill in `skills_library/`. [CONSTRAINTS]: Read-only file system access. [ACCEPTANCE CRITERIA]: Skill test passes, successfully reading and parsing an AST of a dummy Python file.",
+      "status": "pending"
+    },
+    {
+      "id": 26,
+      "prompt": "[INPUT STATE]: CodeAnalyzer skill exists. [ATOMIC OBJECTIVE]: Create the 'CodeWriter' default skill. [CONSTRAINTS]: Restricted to writing files only in `workspace/`. [ACCEPTANCE CRITERIA]: Skill test verifies file creation in workspace and denies writes outside it.",
+      "status": "pending"
+    },
+    {
+      "id": 27,
+      "prompt": "[INPUT STATE]: Code skills exist. [ATOMIC OBJECTIVE]: Create the 'BashRunner' default skill. [CONSTRAINTS]: Must capture stdout/stderr asynchronously. Timeouts enforced. [ACCEPTANCE CRITERIA]: Skill correctly runs `echo` and captures output, and times out on `sleep 10`.",
+      "status": "pending"
+    },
+    {
+      "id": 28,
+      "prompt": "[INPUT STATE]: All base skills exist. [ATOMIC OBJECTIVE]: End-to-end integration: Agent uses BashRunner skill via MCP inside the Orchestrator loop. [CONSTRAINTS]: Full async path from task -> agent -> skill -> result. [ACCEPTANCE CRITERIA]: E2E test runs a mock task that successfully invokes a bash command via the agent.",
+      "status": "pending"
+    },
+    {
+      "id": 29,
+      "prompt": "[INPUT STATE]: E2E Agent execution works. [ATOMIC OBJECTIVE]: Finalize frontend UI to visualize the DAG execution state in real-time. [CONSTRAINTS]: Efficient DOM updates. [ACCEPTANCE CRITERIA]: UI updates node colors (pending, running, complete) based on WS events without full page reload.",
+      "status": "pending"
+    },
+    {
+      "id": 30,
+      "prompt": "[INPUT STATE]: Full system E2E functional. [ATOMIC OBJECTIVE]: Implement system benchmarking and memory profiling suite. [CONSTRAINTS]: Minimal overhead. [ACCEPTANCE CRITERIA]: Suite runs and outputs performance metrics (memory usage, execution time per DAG node).",
+      "status": "pending"
+    }
+  ]
 }
