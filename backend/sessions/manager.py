@@ -12,6 +12,7 @@ from pathlib import Path
 from backend.config import SESSIONS_FILE, BASE_DIR, load_json, save_json, get_settings
 from backend.agents.manager import AgentManager
 from backend.models.registry import get_config_list
+from backend.llm.provider import call_llm
 
 try:
     import autogen
@@ -127,74 +128,6 @@ class SessionManager:
         session["status"] = "idle"
         self._save()
 
-    async def _call_llm(self, api_key, base_url, model, messages, temperature=0.7, max_tokens=4096):
-        """Async call to Gemini. Auto-routes to Live API for live models."""
-        from backend.models.registry import get_model as get_model_info
-        model_info = get_model_info(model)
-        
-        # Use Live API for live models (unlimited rate limits!)
-        if model_info and model_info.get("live_api"):
-            return await self._call_live_api(api_key, model, messages, temperature)
-        
-        # Standard OpenAI-compatible API
-        import openai
-        client = openai.AsyncOpenAI(api_key=api_key, base_url=base_url)
-        response = await client.chat.completions.create(
-            model=model,
-            messages=messages,
-            temperature=temperature,
-            max_tokens=max_tokens,
-        )
-        return response.choices[0].message.content or ""
-
-    async def _call_live_api(self, api_key, model, messages, temperature=0.7):
-        """Call Gemini via the Live API (WebSocket) — unlimited RPM/RPD."""
-        from google import genai
-        from google.genai import types
-
-        client = genai.Client(api_key=api_key)
-
-        # Extract system prompt and build conversation text
-        system_text = ""
-        conversation = ""
-        for msg in messages:
-            if msg["role"] == "system":
-                system_text = msg["content"]
-            elif msg["role"] == "user":
-                conversation += f"User: {msg['content']}\n\n"
-            elif msg["role"] == "assistant":
-                conversation += f"Assistant: {msg['content']}\n\n"
-
-        config = types.LiveConnectConfig(
-            response_modalities=[types.Modality.TEXT],
-            system_instruction=types.Content(
-                parts=[types.Part(text=system_text)]
-            ) if system_text else None,
-            temperature=temperature,
-        )
-
-        full_response = ""
-        try:
-            async with client.aio.live.connect(
-                model="gemini-3-flash-live",
-                config=config,
-            ) as session:
-                await session.send(input=conversation.strip(), end_of_turn=True)
-                async for response in session.receive():
-                    if response.server_content:
-                        model_turn = response.server_content.model_turn
-                        if model_turn:
-                            for part in model_turn.parts:
-                                if part.text:
-                                    full_response += part.text
-                        # Check if turn is complete
-                        if response.server_content.turn_complete:
-                            break
-        except Exception as e:
-            return f"Live API error: {type(e).__name__}: {str(e)}"
-
-        return full_response or "(empty response)"
-
     async def _run_orchestrated_chat(self, session, user_message, api_key, settings):
         """Smart orchestrated chat: router picks agents, agents write files."""
         agent_configs = []
@@ -242,7 +175,7 @@ class SessionManager:
             ] + conv_history[-12:]
 
             try:
-                next_agent_name = await self._call_llm(
+                next_agent_name = await call_llm(
                     api_key, base_url, router_model, router_messages,
                     temperature=0.1, max_tokens=50,
                 )
@@ -299,7 +232,7 @@ class SessionManager:
             ] + conv_history[-12:]
 
             try:
-                content = await self._call_llm(
+                content = await call_llm(
                     api_key, base_url, agent_model, agent_messages,
                     temperature=ac.get("temperature", 0.7),
                     max_tokens=ac.get("max_tokens", 4096),
