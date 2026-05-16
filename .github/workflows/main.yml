@@ -1,4 +1,4 @@
-name: Continuous Autonomous Loop
+name: Jules PR Auto-Loop
 
 on:
   pull_request:
@@ -6,52 +6,61 @@ on:
 
 jobs:
   validate_and_propagate:
+    # Защита: скрипт не должен реагировать на собственные действия, чтобы не уйти в бесконечный цикл
+    if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
-    # Даем скрипту права на создание Issue и слияние веток
     permissions:
       contents: write
       pull-requests: write
-      issues: write
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }} # Берем свежий код прямо из ветки агента
 
-      # 1. АВТО-МЕРЖ: Сливаем код от Jules в основную ветку
-      - name: Automatically Merge PR
+      - name: Automatically Merge Finished PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "Выполняю автоматическое слияние ветки..."
-          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch || echo "Не удалось смержить ветку"
+          echo "Принимаем работу от Jules..."
+          # Сливаем код в main и удаляем отработанную ветку
+          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch || true
 
-      # 2. СЛЕДУЮЩИЙ ШАГ: Создаем задачу на следующий этап
-      - name: Spawn Next Autonomous Task
+      - name: Switch to main & sync
+        run: |
+          git checkout main
+          git pull origin main
+
+      - name: Spawn Next PR for Jules
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # Ждем пару секунд для синхронизации
-          sleep 2
-          
-          if [ ! -f roadmap.json ]; then
-            echo "Файл roadmap.json не найден! Остановка."
-            exit 0
-          fi
-          
+          # Читаем, какую задачу делать следующей
           CURRENT_ID=$(jq -r '.current_task_id' roadmap.json)
           
           if [ "$CURRENT_ID" == "null" ] || [ "$CURRENT_ID" == "0" ]; then
-            echo "Проект полностью завершен или нет активных задач."
+            echo "Конвейер остановлен: Все задачи выполнены!"
             exit 0
           fi
           
-          # Берем данные новой задачи
           NEXT_TITLE=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .title' roadmap.json)
           NEXT_PROMPT=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .prompt' roadmap.json)
           
-          echo "Запускаем следующий этап: $NEXT_TITLE"
+          BRANCH_NAME="jules-task-$CURRENT_ID"
           
-          gh issue create \
-            --title "Jules Task: $NEXT_TITLE" \
-            --body "@jules Please complete this phase: $NEXT_PROMPT" \
-            --label "jules" || echo "Не удалось создать Issue"
+          # Настраиваем системного Git-пользователя
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Создаем новую ветку и технический пустой коммит
+          git checkout -b "$BRANCH_NAME"
+          git commit --allow-empty -m "Initialize workspace for Task $CURRENT_ID"
+          git push origin "$BRANCH_NAME"
+          
+          # Открываем новый PR и прямо в теле зовем бота полным именем!
+          gh pr create \
+            --title "Jules Task $CURRENT_ID: $NEXT_TITLE" \
+            --body "@google-labs-jules Wake up and execute! Directive: $NEXT_PROMPT. When finished, update roadmap.json and push your code to this branch." \
+            --head "$BRANCH_NAME" \
+            --base main
