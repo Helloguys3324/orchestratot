@@ -46,9 +46,12 @@ const SkillsPage = {
             <label class="form-label">Python Code</label>
             <textarea class="form-textarea" id="sk-code" rows="10" placeholder="def my_skill(input: str) -> str:\n    return 'result'" style="font-family:monospace"></textarea>
           </div>
+
+          <div id="sk-error" style="color:var(--danger);font-size:13px;display:none;margin-bottom:12px"></div>
+
           <div class="modal-footer">
             <button class="btn" onclick="document.getElementById('skill-modal').remove()">Cancel</button>
-            <button class="btn btn-primary" onclick="SkillsPage.create()">Create Skill</button>
+            <button class="btn btn-primary" id="sk-create-btn" onclick="SkillsPage.create()">Create Skill</button>
           </div>
         </div>
       </div>`;
@@ -56,15 +59,41 @@ const SkillsPage = {
   },
 
   async create() {
+    const errDiv = document.getElementById('sk-error');
+    errDiv.style.display = 'none';
+
+    const name = document.getElementById('sk-name').value.trim();
+    const description = document.getElementById('sk-desc').value.trim();
+    const code = document.getElementById('sk-code').value.trim();
+
+    if (!name || !description || !code) {
+      errDiv.textContent = 'Name, Description, and Python Code are required.';
+      errDiv.style.display = 'block';
+      return;
+    }
+
     const data = {
-      name: document.getElementById('sk-name').value,
+      name: name,
       icon: document.getElementById('sk-icon').value || '🔧',
-      description: document.getElementById('sk-desc').value,
-      code: document.getElementById('sk-code').value,
+      description: description,
+      code: code,
     };
-    await API.createSkill(data);
-    document.getElementById('skill-modal')?.remove();
-    App.navigate('skills');
+
+    const btn = document.getElementById('sk-create-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Creating...';
+    btn.disabled = true;
+
+    try {
+      await API.createSkill(data);
+      document.getElementById('skill-modal')?.remove();
+      App.navigate('skills');
+    } catch (e) {
+      errDiv.textContent = e.message;
+      errDiv.style.display = 'block';
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
   },
 
   async remove(id) {

@@ -94,9 +94,12 @@ const SessionsPage = {
             <input type="range" class="range-slider" id="sess-rounds" min="3" max="50" value="15"
               oninput="document.getElementById('sess-rounds-val').textContent=this.value">
           </div>
+
+          <div id="sess-error" style="color:var(--danger);font-size:13px;display:none;margin-bottom:12px"></div>
+
           <div class="modal-footer">
             <button class="btn" onclick="document.getElementById('session-modal').remove()">Cancel</button>
-            <button class="btn btn-primary" onclick="SessionsPage.create()">Create Session</button>
+            <button class="btn btn-primary" id="sess-create-btn" onclick="SessionsPage.create()">Create Session</button>
           </div>
         </div>
       </div>`;
@@ -104,17 +107,37 @@ const SessionsPage = {
   },
 
   async create() {
+    const errDiv = document.getElementById('sess-error');
+    errDiv.style.display = 'none';
+
     const agentIds = [...document.querySelectorAll('.session-agent-check:checked')].map(c => c.value);
-    if (!agentIds.length) return alert('Select at least one agent');
+    if (!agentIds.length) {
+      errDiv.textContent = 'Select at least one agent';
+      errDiv.style.display = 'block';
+      return;
+    }
     const data = {
       name: document.getElementById('sess-name').value || 'New Session',
       agent_ids: agentIds,
       strategy: document.getElementById('sess-strategy').value,
       max_rounds: parseInt(document.getElementById('sess-rounds').value),
     };
-    const session = await API.createSession(data);
-    document.getElementById('session-modal')?.remove();
-    App.openSession(session.id);
+
+    const btn = document.getElementById('sess-create-btn');
+    const originalText = btn.textContent;
+    btn.textContent = '⏳ Creating...';
+    btn.disabled = true;
+
+    try {
+      const session = await API.createSession(data);
+      document.getElementById('session-modal')?.remove();
+      App.openSession(session.id);
+    } catch (e) {
+      errDiv.textContent = e.message;
+      errDiv.style.display = 'block';
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }
   },
 
   async remove(id) {
