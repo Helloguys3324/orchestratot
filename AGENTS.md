@@ -30,7 +30,7 @@ python -m pytest -q
 - Keep changes focused and under 300 changed lines unless the task explicitly requires more.
 - Do not touch `data/settings.json` except to remove secrets or preserve the placeholder structure.
 - Do not create cosmetic-only PRs.
-- Do not update `.github/workflows/` unless assigned a DevOps or planner task.
+- Do not update `.github/workflows/`, `.github/scripts/`, or `.github/CODEOWNERS`. AI Factory infrastructure changes require a human-reviewed PR.
 - Document behavior changes in `mission.md`, `README.md`, or `.github/ai-factory/state.json` when relevant.
 
 ## Pull Request Rules

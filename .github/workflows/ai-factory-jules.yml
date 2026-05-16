@@ -104,7 +104,7 @@ jobs:
             - Do not touch files listed in Avoid scope.
             - Do not commit API keys, tokens, credentials, .env files, local databases, caches, or generated pyc files.
             - Do not modify data/settings.json except to remove secrets or preserve placeholders.
-            - Do not modify .github/workflows unless this task is explicitly about CI or AI Factory operations.
+            - Never modify .github/workflows, .github/scripts, or .github/CODEOWNERS. Infrastructure changes require a human PR outside AI Factory.
             - Do not create cosmetic-only PRs.
             - If no meaningful safe change exists, report that and do not open a PR.
 
