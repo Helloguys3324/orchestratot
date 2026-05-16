@@ -3,6 +3,7 @@ AutoGen AI Orchestrator — Main FastAPI Application.
 """
 import sys
 import asyncio
+import json
 from pathlib import Path
 from contextlib import asynccontextmanager
 
@@ -56,6 +57,16 @@ app.add_middleware(
 )
 
 # Serve frontend static files
+
+async def get_request_json(request: Request) -> dict:
+    """Safely parse JSON from a request, raising 400 if the body is empty or invalid."""
+    try:
+        return await request.json()
+    except json.JSONDecodeError:
+        raise HTTPException(status_code=400, detail="Invalid or empty JSON body")
+
+
+# Serve frontend static files
 frontend_dir = Path(__file__).resolve().parent.parent / "frontend"
 if frontend_dir.exists():
     app.mount("/static", StaticFiles(directory=str(frontend_dir)), name="static")
@@ -78,7 +89,7 @@ async def api_get_settings():
 
 @app.post("/api/settings")
 async def api_save_settings(request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     settings = get_settings()
     settings.update(data)
     save_settings(settings)
@@ -107,13 +118,13 @@ async def api_get_agent(agent_id: str):
 
 @app.post("/api/agents")
 async def api_create_agent(request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     return agent_manager.create_agent(data)
 
 
 @app.put("/api/agents/{agent_id}")
 async def api_update_agent(agent_id: str, request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     agent = agent_manager.update_agent(agent_id, data)
     if not agent:
         raise HTTPException(404, "Agent not found")
@@ -172,7 +183,7 @@ async def api_list_marketplace():
 
 @app.post("/api/skills")
 async def api_create_skill(request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     return skills_manager.create_skill(data)
 
 
@@ -185,7 +196,7 @@ async def api_delete_skill(skill_id: str):
 
 @app.post("/api/skills/install")
 async def api_install_skill(request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     url = data.get("url")
     name = data.get("name")
     if not url:
@@ -210,7 +221,7 @@ async def api_get_session(session_id: str):
 
 @app.post("/api/sessions")
 async def api_create_session(request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     return session_manager.create_session(data)
 
 
@@ -223,7 +234,7 @@ async def api_delete_session(session_id: str):
 
 @app.post("/api/sessions/{session_id}/chat")
 async def api_chat(session_id: str, request: Request):
-    data = await request.json()
+    data = await get_request_json(request)
     message = data.get("message", "")
     if not message:
         raise HTTPException(400, "Message is required")
