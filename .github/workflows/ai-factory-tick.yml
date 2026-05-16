@@ -39,7 +39,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: |
-          if [ "$(date -u +%H%M)" = "0137" ]; then
+          if [ "$(date -u +%H)" = "01" ] && [ "$(date -u +%M)" -ge 30 ] && [ "$(date -u +%M)" -le 45 ]; then
             gh workflow run ai-factory-jules.yml \
               --ref main \
               -f batch_size=4 \
