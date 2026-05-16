@@ -1,66 +1,13 @@
 name: Jules PR Auto-Loop
 
 on:
-  pull_request:
-    types: [opened, synchronize]
+  workflow_dispatch:
 
 jobs:
-  validate_and_propagate:
-    if: github.actor != 'github-actions[bot]'
+  disabled:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          # ИСПРАВЛЕНИЕ: заставляем GitHub скачать абсолютно все ветки и всю историю
-          fetch-depth: 0 
-
-      - name: Automatically Merge Finished PR
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Disabled legacy workflow
         run: |
-          echo "Принимаем работу от Jules..."
-          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch || true
-
-      - name: Switch to main & sync
-        run: |
-          # ИСПРАВЛЕНИЕ: Принудительно связываем локальный main с удаленным
-          git checkout -B main origin/main
-          git pull origin main
-
-      - name: Spawn Next PR for Jules
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Читаем, какую задачу делать следующей
-          CURRENT_ID=$(jq -r '.current_task_id' roadmap.json)
-          
-          if [ "$CURRENT_ID" == "null" ] || [ "$CURRENT_ID" == "0" ]; then
-            echo "Конвейер остановлен: Все задачи выполнены!"
-            exit 0
-          fi
-          
-          NEXT_TITLE=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .title' roadmap.json)
-          NEXT_PROMPT=$(jq -r --arg id "$CURRENT_ID" '.tasks[] | select(.id == ($id | tonumber)) | .prompt' roadmap.json)
-          
-          BRANCH_NAME="jules-task-$CURRENT_ID"
-          
-          # Настраиваем системного Git-пользователя
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # Создаем новую ветку и технический пустой коммит
-          git checkout -b "$BRANCH_NAME"
-          git commit --allow-empty -m "Initialize workspace for Task $CURRENT_ID"
-          git push origin "$BRANCH_NAME"
-          
-          # Открываем новый PR и зовем бота полным именем!
-          gh pr create \
-            --title "Jules Task $CURRENT_ID: $NEXT_TITLE" \
-            --body "@google-labs-jules Wake up and execute! Directive: $NEXT_PROMPT. When finished, update roadmap.json, ARCHITECTURE_STATE.md, and push your code to this branch." \
-            --head "$BRANCH_NAME" \
-            --base main
+          echo "Legacy Jules PR Auto-Loop is disabled."
+          echo "AI Factory workflows handle automation now."
