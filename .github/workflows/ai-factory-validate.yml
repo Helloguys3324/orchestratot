@@ -48,3 +48,12 @@ jobs:
           else
             echo "No root tests found."
           fi
+      - name: YOLO Auto-Merge 🚀
+        # Сработает только если тесты зеленые и это пулл-реквест
+        if: success() && github.event_name == 'pull_request'
+        env:
+          # ВАЖНО: Используем твой токен, чтобы у бота были права админа!
+          GH_TOKEN: ${{ secrets.GH_PAT }} 
+        run: |
+          echo "Все проверки пройдены! Вливаем код в main..."
+          gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch --admin
