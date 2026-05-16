@@ -96,12 +96,7 @@ const App = {
   async renderSettings(container) {
     const settings = await API.getSettings();
     const chatModels = await API.getChatModels();
-    const modelOpts = chatModels.map(m => {
-      const rl = m.rate_limits || {};
-      const rpm = rl.rpm === null ? '-' : (rl.rpm || 0);
-      const sel = settings.default_model === m.id ? 'selected' : '';
-      return `<option value="${m.id}" ${sel}>${m.icon} ${m.name} (${rpm} RPM)</option>`;
-    }).join('');
+    const modelOpts = UI.renderModelOptions(chatModels, settings.default_model);
 
     // Show actual key value so user can see/edit it
     const apiKey = settings.api_key || '';
