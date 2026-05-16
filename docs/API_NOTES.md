@@ -23,7 +23,41 @@ The backend is built with **FastAPI** and uses **asyncio** for non-blocking oper
 - `GET /api/agents`: List all agents.
 - `GET /api/agents/{agent_id}`: Get a specific agent by ID.
 - `POST /api/agents`: Create a new agent.
-- `PUT /api/agents/{agent_id}`: Update an existing agent.
+  <details>
+  <summary>Payload Examples</summary>
+
+  **Request:**
+  ```json
+  {
+    "name": "Reviewer Agent",
+    "description": "Reviews code for security issues.",
+    "system_prompt": "You are a senior security reviewer...",
+    "skills": ["code_executor"],
+    "model": "gemini-2.5-flash",
+    "temperature": 0.5,
+    "max_tokens": 8192,
+    "enabled": true
+  }
+  ```
+  **Response:**
+  ```json
+  {
+    "id": "a1b2c3d4",
+    "name": "Reviewer Agent",
+    "icon": "🤖",
+    "color": "#64748B",
+    "description": "Reviews code for security issues.",
+    "system_prompt": "You are a senior security reviewer...",
+    "skills": ["code_executor"],
+    "model": "gemini-2.5-flash",
+    "temperature": 0.5,
+    "max_tokens": 8192,
+    "enabled": true,
+    "template": "custom"
+  }
+  ```
+  </details>
+- `PUT /api/agents/{agent_id}`: Update an existing agent. *(Accepts the same structure as `POST` request)*
 - `DELETE /api/agents/{agent_id}`: Delete an agent.
 - `POST /api/agents/{agent_id}/duplicate`: Duplicate an agent.
 
@@ -37,13 +71,80 @@ The backend is built with **FastAPI** and uses **asyncio** for non-blocking oper
 - `GET /api/skills`: List installed skills.
 - `GET /api/skills/marketplace`: List skills available for installation.
 - `POST /api/skills`: Create a new custom skill.
+  <details>
+  <summary>Payload Examples</summary>
+
+  **Request:**
+  ```json
+  {
+    "name": "Calculator",
+    "icon": "🧮",
+    "description": "Basic arithmetic operations",
+    "category": "custom",
+    "code": "def evaluate(expression):\n    return eval(expression)"
+  }
+  ```
+  **Response:**
+  ```json
+  {
+    "id": "custom_1a2b3c4d",
+    "name": "Calculator",
+    "icon": "🧮",
+    "description": "Basic arithmetic operations",
+    "category": "custom",
+    "builtin": false,
+    "enabled": true,
+    "source": "custom",
+    "code": "def evaluate(expression):\n    return eval(expression)",
+    "file": "custom_1a2b3c4d.py"
+  }
+  ```
+  </details>
 - `DELETE /api/skills/{skill_id}`: Delete a skill.
 - `POST /api/skills/install`: Install a skill from a URL.
+  <details>
+  <summary>Payload Examples</summary>
+
+  **Request:**
+  ```json
+  {
+    "url": "https://raw.githubusercontent.com/example/skills/main/api_caller.py",
+    "name": "API Caller Skill"
+  }
+  ```
+  </details>
 
 ### Sessions
 - `GET /api/sessions`: List all sessions.
 - `GET /api/sessions/{session_id}`: Get a specific session.
 - `POST /api/sessions`: Create a new session.
+  <details>
+  <summary>Payload Examples</summary>
+
+  **Request:**
+  ```json
+  {
+    "name": "Refactoring Session",
+    "agent_ids": ["a1b2c3d4", "e5f6g7h8"],
+    "strategy": "auto",
+    "max_rounds": 20
+  }
+  ```
+  **Response:**
+  ```json
+  {
+    "id": "s1e2s3s4",
+    "name": "Refactoring Session",
+    "agent_ids": ["a1b2c3d4", "e5f6g7h8"],
+    "strategy": "auto",
+    "max_rounds": 20,
+    "created_at": "2026-05-16T20:00:00.000000",
+    "messages": [],
+    "status": "idle",
+    "workspace": "/path/to/workspace/s1e2s3s4"
+  }
+  ```
+  </details>
 - `DELETE /api/sessions/{session_id}`: Delete a session.
 - `POST /api/sessions/{session_id}/chat`: Start an orchestrated chat based on a user message. This runs asynchronously.
 - `POST /api/sessions/{session_id}/clear`: Clear the message history for a session.
