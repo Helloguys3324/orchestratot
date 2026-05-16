@@ -33,3 +33,21 @@ def test_settings_env_override(monkeypatch):
     assert settings["max_rounds"] == 42
     assert settings["temperature"] == 0.9
     assert settings["max_tokens"] == 2048
+
+def test_api_agents_route():
+    response = client.get("/api/agents")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+
+def test_api_models_route():
+    response = client.get("/api/models")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+
+def test_api_models_categories_route():
+    response = client.get("/api/models/categories")
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, dict)
