@@ -120,3 +120,6 @@ The application is configured to automatically scrub the `api_key` field before 
 
 If a key was committed previously, rotate it immediately.
 
+## Developer Notes
+
+For a high-level overview of the backend API endpoints and architecture (including the session message flow and websocket integration), please refer to [API & Architecture Notes](API_NOTES.md).
