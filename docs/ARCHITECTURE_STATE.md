@@ -10,9 +10,11 @@ The repository is initially structured into the following directories:
 - `backend/`: Core orchestrator logic utilizing FastAPI, Uvicorn, and Pydantic v2.
   - `agents/`: Defines agent classes and behaviors.
   - `api/`: FastAPI APIRouter endpoints decoupling application routing logic.
+  - `llm/`: Decoupled low-level LLM API integrations (e.g., Gemini Live API and OpenAI compatible endpoints) enforcing strict architectural boundaries.
   - `models/`: Pydantic data models.
   - `sessions/`: Manages orchestration sessions.
   - `skills/`: Agent capabilities.
+  - `tests/`: Unit and integration tests for backend modules.
   - `websocket/`: Real-time communication handlers.
   - `state.py`: Global application state and manager instantiations.
 - `frontend/`: Web UI components (HTML/CSS/JS).
