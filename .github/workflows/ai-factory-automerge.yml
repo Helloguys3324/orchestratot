@@ -20,13 +20,13 @@ jobs:
       - uses: actions/checkout@v4
       - id: guard
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
           WORKFLOW_HEAD_SHA: ${{ github.event.workflow_run.head_sha }}
         run: python .github/scripts/automerge_guard.py
       - name: Merge safe PR
         if: steps.guard.outputs.allowed == 'true'
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT || secrets.GITHUB_TOKEN }}
         run: gh pr merge ${{ steps.guard.outputs.pr }} --squash --delete-branch
       - name: Skip reason
         if: steps.guard.outputs.allowed != 'true'
