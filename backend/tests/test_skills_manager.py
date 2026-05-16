@@ -188,3 +188,20 @@ def test_install_from_url_failure(mock_client_class, manager):
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
 
     assert len(manager._custom_skills) == 0
+
+def test_install_from_url_invalid_schema(manager):
+    with pytest.raises(ValueError, match="Invalid URL scheme"):
+        asyncio.run(manager.install_from_url("file:///etc/passwd"))
+
+    with pytest.raises(ValueError, match="Invalid URL scheme"):
+        asyncio.run(manager.install_from_url("ftp://example.com/skill.py"))
+
+def test_install_from_url_invalid_hostname(manager):
+    with pytest.raises(ValueError, match="Invalid URL hostname"):
+        asyncio.run(manager.install_from_url("http://localhost:8080/skill.py"))
+
+    with pytest.raises(ValueError, match="Invalid URL hostname"):
+        asyncio.run(manager.install_from_url("https://127.0.0.1/skill.py"))
+
+    with pytest.raises(ValueError, match="Invalid URL hostname"):
+        asyncio.run(manager.install_from_url("http://0.0.0.0:5000/skill.py"))
