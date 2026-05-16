@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AutoGen AI Orchestrator</title>
+  <meta name="description" content="Professional AI Agent Orchestrator with multi-agent collaboration">
+  <link rel="stylesheet" href="/static/css/styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <h1>🤖 AutoGen AI</h1>
+        <div class="subtitle">Orchestrator v1.0</div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">Workspace</div>
+        <div class="nav-item active" data-page="chat" id="nav-chat">
+          <span class="icon">💬</span>
+          <span>Chat</span>
+        </div>
+        <div class="nav-item" data-page="agents" id="nav-agents">
+          <span class="icon">🤖</span>
+          <span>Agents</span>
+          <span class="badge" id="agents-count">0</span>
+        </div>
+        <div class="nav-item" data-page="sessions" id="nav-sessions">
+          <span class="icon">📋</span>
+          <span>Sessions</span>
+        </div>
+
+        <div class="nav-section">Configuration</div>
+        <div class="nav-item" data-page="models" id="nav-models">
+          <span class="icon">🧬</span>
+          <span>Models</span>
+        </div>
+        <div class="nav-item" data-page="skills" id="nav-skills">
+          <span class="icon">⚡</span>
+          <span>Skills</span>
+        </div>
+        <div class="nav-item" data-page="marketplace" id="nav-marketplace">
+          <span class="icon">🏪</span>
+          <span>Marketplace</span>
+        </div>
+
+        <div class="nav-section">System</div>
+        <div class="nav-item" data-page="settings" id="nav-settings">
+          <span class="icon">⚙️</span>
+          <span>Settings</span>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <header class="main-header">
+        <h2 id="page-title">💬 Chat</h2>
+        <div class="header-actions" id="header-actions"></div>
+      </header>
+      <div class="main-content" id="main-content">
+        <!-- Dynamic content loaded here -->
+      </div>
+    </main>
+  </div>
+
+  <script src="/static/js/api.js"></script>
+  <script src="/static/js/websocket.js"></script>
+  <script src="/static/js/agents.js"></script>
+  <script src="/static/js/models.js"></script>
+  <script src="/static/js/skills.js"></script>
+  <script src="/static/js/sessions.js"></script>
+  <script src="/static/js/chat.js"></script>
+  <script src="/static/js/app.js"></script>
+</body>
+</html>
