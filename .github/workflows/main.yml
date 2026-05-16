@@ -53,5 +53,5 @@ jobs:
           
           gh issue create \
             --title "Jules Task: $NEXT_TITLE" \
-            --body "$NEXT_PROMPT" \
+            --body "@jules Please complete this phase: $NEXT_PROMPT" \
             --label "jules" || echo "Не удалось создать Issue"
