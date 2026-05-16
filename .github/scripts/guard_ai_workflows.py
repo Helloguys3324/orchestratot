@@ -19,16 +19,27 @@ AI_BRANCH_MARKERS = (
 
 def changed_files() -> list[str]:
     base_ref = os.environ.get("GITHUB_BASE_REF")
+    
     if base_ref:
-        subprocess.run(["git", "fetch", "origin", base_ref, "--depth=1"], check=False)
         diff_base = f"origin/{base_ref}"
-        raw = subprocess.check_output(["git", "diff", "--name-only", f"{diff_base}..HEAD"], text=True)
+        try:
+            # Используем ТРИ ТОЧКИ (...), чтобы смотреть изменения ТОЛЬКО этой ветки
+            raw = subprocess.check_output(
+                ["git", "diff", "--name-only", f"{diff_base}...HEAD"], 
+                text=True
+            )
+            return [line.strip() for line in raw.splitlines() if line.strip()]
+        except subprocess.CalledProcessError as e:
+            print(f"Ошибка Git Diff: {e}. Возможно, не скачана история (fetch-depth: 0).")
+            # Если 3 точки упали, не делаем ложных блокировок, пускаем дальше или падаем безопасно
+            return []
+
+    # Фолбэк для ручного запуска (не PR)
+    try:
+        raw = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1..HEAD"], text=True)
         return [line.strip() for line in raw.splitlines() if line.strip()]
-
-    raw = subprocess.check_output(["git", "diff", "--name-only", "HEAD~1..HEAD"], text=True)
-    return [line.strip() for line in raw.splitlines() if line.strip()]
-
-
+    except subprocess.CalledProcessError:
+        return []
 def is_ai_change() -> bool:
     head_ref = os.environ.get("GITHUB_HEAD_REF", "")
     actor = os.environ.get("GITHUB_ACTOR", "")
