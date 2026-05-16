@@ -6,7 +6,7 @@ on:
 
 jobs:
   validate_and_propagate:
-    # Защита: скрипт не должен реагировать на собственные действия, чтобы не уйти в бесконечный цикл
+    # Защита: скрипт не должен реагировать на собственные действия
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
     permissions:
@@ -16,21 +16,20 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref }} # Берем свежий код прямо из ветки агента
 
       - name: Automatically Merge Finished PR
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Принимаем работу от Jules..."
-          # Сливаем код в main и удаляем отработанную ветку
           gh pr merge ${{ github.event.pull_request.number }} --merge --delete-branch || true
 
-      - name: Switch to main & sync
+      - name: Fetch and Switch to Main
         run: |
+          # Принудительно скачиваем свежий main с GitHub после мержа
+          git fetch origin main
           git checkout main
-          git pull origin main
+          git reset --hard origin/main
 
       - name: Spawn Next PR for Jules
         env:
@@ -58,9 +57,9 @@ jobs:
           git commit --allow-empty -m "Initialize workspace for Task $CURRENT_ID"
           git push origin "$BRANCH_NAME"
           
-          # Открываем новый PR и прямо в теле зовем бота полным именем!
+          # Открываем новый PR и зовем бота полным именем, напоминая про файл памяти!
           gh pr create \
             --title "Jules Task $CURRENT_ID: $NEXT_TITLE" \
-            --body "@google-labs-jules Wake up and execute! Directive: $NEXT_PROMPT. When finished, update roadmap.json and push your code to this branch." \
+            --body "@google-labs-jules Wake up and execute! Directive: $NEXT_PROMPT. When finished, update roadmap.json, ARCHITECTURE_STATE.md, and push your code to this branch." \
             --head "$BRANCH_NAME" \
             --base main
