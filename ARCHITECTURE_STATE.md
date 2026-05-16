@@ -22,6 +22,7 @@ The repository is initially structured into the following directories:
 - **Backend Framework:** FastAPI, Uvicorn (async HTTP server)
 - **Data Validation:** Pydantic v2
 - **Concurrency:** Asyncio (Python) for non-blocking operations.
+- **Environment Management:** `python-dotenv` for configuration loading.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
 - **Testing:** `pytest` with heavily type-hinted, asynchronous code.
