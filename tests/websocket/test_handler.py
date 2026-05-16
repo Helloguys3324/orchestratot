@@ -82,3 +82,85 @@ def test_broadcast(manager):
 
     ws1.send_json.assert_awaited_once_with(message)
     ws2.send_json.assert_awaited_once_with(message)
+
+def test_connect_multiple_websockets_same_session(manager, mock_websocket):
+    ws2 = MagicMock(spec=WebSocket)
+    ws2.accept = AsyncMock()
+    ws2.send_json = AsyncMock()
+
+    session_id = "test_session_1"
+    asyncio.run(manager.connect(mock_websocket, session_id))
+    asyncio.run(manager.connect(ws2, session_id))
+
+    assert len(manager.active_connections[session_id]) == 2
+    assert mock_websocket in manager.active_connections[session_id]
+    assert ws2 in manager.active_connections[session_id]
+
+def test_disconnect_one_of_multiple(manager, mock_websocket):
+    ws2 = MagicMock(spec=WebSocket)
+    ws2.accept = AsyncMock()
+    ws2.send_json = AsyncMock()
+
+    session_id = "test_session_1"
+    asyncio.run(manager.connect(mock_websocket, session_id))
+    asyncio.run(manager.connect(ws2, session_id))
+
+    manager.disconnect(mock_websocket, session_id)
+
+    assert session_id in manager.active_connections
+    assert len(manager.active_connections[session_id]) == 1
+    assert mock_websocket not in manager.active_connections[session_id]
+    assert ws2 in manager.active_connections[session_id]
+
+def test_disconnect_not_in_session(manager, mock_websocket):
+    ws2 = MagicMock(spec=WebSocket)
+    ws2.accept = AsyncMock()
+    ws2.send_json = AsyncMock()
+
+    session_id = "test_session_1"
+    asyncio.run(manager.connect(mock_websocket, session_id))
+
+    # Disconnect a websocket that is not in the session
+    manager.disconnect(ws2, session_id)
+
+    assert session_id in manager.active_connections
+    assert len(manager.active_connections[session_id]) == 1
+    assert mock_websocket in manager.active_connections[session_id]
+
+def test_send_message_nonexistent_session(manager):
+    session_id = "nonexistent_session"
+    message = {"type": "test_message", "data": "hello"}
+
+    # Should not raise an error
+    asyncio.run(manager.send_message(session_id, message))
+    assert session_id not in manager.active_connections
+
+def test_send_message_partial_failure(manager, mock_websocket):
+    ws2 = MagicMock(spec=WebSocket)
+    ws2.accept = AsyncMock()
+    ws2.send_json = AsyncMock()
+
+    session_id = "test_session_1"
+    asyncio.run(manager.connect(mock_websocket, session_id))
+    asyncio.run(manager.connect(ws2, session_id))
+
+    # mock_websocket throws exception, ws2 succeeds
+    mock_websocket.send_json.side_effect = Exception("Connection closed")
+
+    message = {"type": "test_message", "data": "hello"}
+    asyncio.run(manager.send_message(session_id, message))
+
+    # ws2 should have received the message
+    ws2.send_json.assert_awaited_once_with(message)
+
+    # mock_websocket should be removed, ws2 should remain
+    assert mock_websocket not in manager.active_connections[session_id]
+    assert ws2 in manager.active_connections[session_id]
+    assert len(manager.active_connections[session_id]) == 1
+
+def test_broadcast_empty(manager):
+    message = {"type": "broadcast", "data": "hello all"}
+
+    # Should not raise an error
+    asyncio.run(manager.broadcast(message))
+    assert len(manager.active_connections) == 0
