@@ -22,3 +22,14 @@ def test_api_settings_route():
     data = response.json()
     assert isinstance(data, dict)
     assert "default_model" in data
+
+def test_settings_env_override(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "42")
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.9")
+    monkeypatch.setenv("AUTOGEN_MAX_TOKENS", "2048")
+
+    settings = get_settings()
+
+    assert settings["max_rounds"] == 42
+    assert settings["temperature"] == 0.9
+    assert settings["max_tokens"] == 2048

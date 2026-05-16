@@ -22,17 +22,11 @@ SESSIONS_FILE = DATA_DIR / "sessions.json"
 SKILLS_FILE = DATA_DIR / "skills.json"
 SETTINGS_FILE = DATA_DIR / "settings.json"
 
-# ─── Load .env manually ─────────────────────────────────
+# ─── Load .env ──────────────────────────────────────────
+from dotenv import load_dotenv
+
 ENV_FILE = BASE_DIR / ".env"
-if ENV_FILE.exists():
-    with open(ENV_FILE, "r", encoding="utf-8") as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
-                continue
-            if "=" in line:
-                key, value = line.split("=", 1)
-                os.environ[key.strip()] = value.strip()
+load_dotenv(dotenv_path=ENV_FILE)
 
 # ─── Default settings ───────────────────────────────────
 DEFAULT_SETTINGS = {
@@ -69,14 +63,32 @@ def get_settings() -> dict:
     for key, value in DEFAULT_SETTINGS.items():
         if key not in settings:
             settings[key] = value
+
+    # Load and typecast overrides from env vars
     env_overrides = {
         "api_key": os.getenv("AUTOGEN_API_KEY"),
         "default_model": os.getenv("AUTOGEN_DEFAULT_MODEL"),
         "base_url": os.getenv("AUTOGEN_BASE_URL"),
+        "max_rounds": os.getenv("AUTOGEN_MAX_ROUNDS"),
+        "temperature": os.getenv("AUTOGEN_TEMPERATURE"),
+        "max_tokens": os.getenv("AUTOGEN_MAX_TOKENS"),
     }
+
     for key, value in env_overrides.items():
-        if value:
-            settings[key] = value
+        if value is not None:
+            if key == "max_rounds" or key == "max_tokens":
+                try:
+                    settings[key] = int(value)
+                except ValueError:
+                    pass
+            elif key == "temperature":
+                try:
+                    settings[key] = float(value)
+                except ValueError:
+                    pass
+            else:
+                settings[key] = value
+
     return settings
 
 
