@@ -8,7 +8,16 @@ const API = {
     const resp = await fetch(this.base + path, opts);
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({ detail: resp.statusText }));
-      throw new Error(err.detail || 'Request failed');
+      let errMsg = err.detail || 'Request failed';
+      if (Array.isArray(err.detail)) {
+        errMsg = err.detail.map(e => {
+          const loc = e.loc ? e.loc.join('.') : '';
+          return `${loc ? loc + ': ' : ''}${e.msg || e}`;
+        }).join('\n');
+      } else if (typeof err.detail === 'object' && err.detail !== null) {
+        errMsg = JSON.stringify(err.detail);
+      }
+      throw new Error(errMsg);
     }
     return resp.json();
   },
