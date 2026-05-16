@@ -27,6 +27,7 @@ PATTERNS = [
     re.compile(r"ghp_[A-Za-z0-9_]{20,}"),
     re.compile(r"github_pat_[A-Za-z0-9_]{20,}"),
     re.compile(r"JULES_API_KEY\s*=\s*['\"]?[^'\"\s]+"),
+    re.compile(r"AUTOGEN_API_KEY\s*=\s*['\"]?[^'\"\s\.]{2,}"),
 ]
 
 

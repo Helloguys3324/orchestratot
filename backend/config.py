@@ -22,6 +22,18 @@ SESSIONS_FILE = DATA_DIR / "sessions.json"
 SKILLS_FILE = DATA_DIR / "skills.json"
 SETTINGS_FILE = DATA_DIR / "settings.json"
 
+# ─── Load .env manually ─────────────────────────────────
+ENV_FILE = BASE_DIR / ".env"
+if ENV_FILE.exists():
+    with open(ENV_FILE, "r", encoding="utf-8") as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            if "=" in line:
+                key, value = line.split("=", 1)
+                os.environ[key.strip()] = value.strip()
+
 # ─── Default settings ───────────────────────────────────
 DEFAULT_SETTINGS = {
     "api_key": "",
@@ -69,5 +81,9 @@ def get_settings() -> dict:
 
 
 def save_settings(settings: dict):
-    """Save application settings."""
-    save_json(SETTINGS_FILE, settings)
+    """Save application settings, scrubbing sensitive data."""
+    # Create a copy so we don't modify the runtime state
+    safe_settings = dict(settings)
+    if "api_key" in safe_settings:
+        safe_settings["api_key"] = ""
+    save_json(SETTINGS_FILE, safe_settings)
