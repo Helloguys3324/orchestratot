@@ -1,23 +1,38 @@
+
 # Agent Instructions
 
 This repository is maintained by autonomous coding agents and humans.
 
-## Project Shape
+This file is the operating manual for all autonomous agents working in this repository.
+
+Every agent must read this file before making changes.
+
+Every agent must identify its assigned role and follow the rules for that role.
+
+Every agent must respect task scopes, AI Factory ownership rules, validation requirements, and safety constraints.
+
+---
+
+# Project Shape
 
 - `backend/` contains the FastAPI application and orchestration logic.
 - `frontend/` contains static HTML/CSS/JS UI files.
 - `skills_library/` and `custom_skills/` contain skill implementations.
 - `data/` stores runtime JSON state. Do not commit real secrets.
 - `.github/ai-factory/` contains autonomous development state and task planning files.
+- `.github/workflows/` contains GitHub Actions workflows. Autonomous agents must not modify this directory unless explicitly assigned by a human-reviewed infrastructure task.
+- `.github/scripts/` contains CI/CD helper scripts. Autonomous agents must not modify this directory unless explicitly assigned by a human-reviewed infrastructure task.
 
-## Required Checks
+---
 
-Run these before proposing a code PR:
+# Required Checks
+
+Run these before proposing a code PR when practical:
 
 ```bash
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
-```
+````
 
 If tests are added or available, also run:
 
@@ -25,28 +40,63 @@ If tests are added or available, also run:
 python -m pytest -q
 ```
 
-## Change Rules
+If validation cannot be run, the PR body must clearly explain why.
 
-- Keep changes focused and under 300 changed lines unless the task explicitly requires more.
-- Do not touch `data/settings.json` except to remove secrets or preserve the placeholder structure.
-- Do not create cosmetic-only PRs.
-- Do not update `.github/workflows/`, `.github/scripts/`, or `.github/CODEOWNERS`. AI Factory infrastructure changes require a human-reviewed PR.
-- Document behavior changes in `mission.md`, `README.md`, or `.github/ai-factory/state.json` when relevant.
+Do not claim validation passed unless validation was actually run.
 
-## Pull Request Rules
+GitHub Actions validation is authoritative.
 
-- Use a clear PR title beginning with one of:
-  - `ai-factory(planner):`
-  - `ai-factory(architect):`
-  - `ai-factory(implementer):`
-  - `ai-factory(tester):`
-  - `ai-factory(reviewer):`
-  - `ai-factory(refactorer):`
-  - `ai-factory(documenter):`
-  - `ai-factory(security):`
-- Include validation commands and results in the PR body.
-- Add the label `ai-factory:safe-automerge` only for docs-only or tests-only PRs that passed validation.
+Agent-written validation claims are informational only.
 
+***
+
+# Change Rules
+
+*   Keep changes focused and under 300 changed lines unless the task explicitly requires more.
+*   Do not touch `data/settings.json` except to remove secrets or preserve the placeholder structure.
+*   Do not create cosmetic-only PRs.
+*   Do not update `.github/workflows/`, `.github/scripts/`, or `.github/CODEOWNERS`. AI Factory infrastructure changes require a human-reviewed PR.
+*   Document behavior changes in `mission.md`, `README.md`, or `docs/ARCHITECTURE_STATE.md` when relevant.
+*   Do not modify AI Factory global config unless the task explicitly allows it.
+*   Do not modify task queue files unless the assigned role is `planner`.
+
+***
+
+# Pull Request Rules
+
+Use a clear PR title beginning with one of:
+
+```text
+ai-factory(planner):
+ai-factory(architect):
+ai-factory(implementer):
+ai-factory(tester):
+ai-factory(reviewer):
+ai-factory(refactorer):
+ai-factory(documenter):
+ai-factory(security):
+```
+
+Every PR must include:
+
+```text
+summary of changes
+reason for changes
+files changed
+validation commands run
+validation results
+known limitations if any
+```
+
+Add the label:
+
+```text
+ai-factory:safe-automerge
+```
+
+only for docs-only or tests-only PRs that passed validation.
+
+***
 
 # Autonomous AI Factory Operating Manual
 
@@ -54,23 +104,17 @@ This repository is an autonomous AI Factory experiment.
 
 The goal of this repository is to let multiple AI coding agents continuously improve the project through structured roles, scoped tasks, GitHub Actions, Jules, pull requests, validation workflows, and controlled automerge.
 
-This file is the main instruction manual for every agent working in this repository.
-
-Every agent must read this file before making changes.
-
-Every agent must identify its assigned role and follow the rules for that role.
-
-Every agent must respect the AI Factory task queue, scopes, safety rules, and repository architecture.
-
 The goal is not to maximize commits.
-
-The goal is to maximize long-term project value.
 
 The goal is not to create noise.
 
+The goal is to maximize long-term project value.
+
 The goal is to continuously make the repository better, safer, more tested, more documented, more maintainable, and more useful.
 
----
+Every PR must leave the repository better than before.
+
+***
 
 # 1. Core Repository Mission
 
@@ -78,38 +122,41 @@ The repository is an autonomous multi-agent orchestrator project.
 
 The project is expected to evolve through small, focused, reviewable tasks.
 
-The project contains backend code, frontend code, skills, data, workspace files, GitHub Actions, and AI Factory control files.
-
 The AI Factory should continuously improve:
 
-- backend reliability
-- frontend usability
-- test coverage
-- documentation quality
-- security posture
-- architecture clarity
-- skill implementation quality
-- runtime configuration
-- developer experience
-- automation quality
-- validation reliability
+```text
+backend reliability
+frontend usability
+test coverage
+documentation quality
+security posture
+architecture clarity
+skill implementation quality
+runtime configuration
+developer experience
+automation quality
+validation reliability
+```
 
 The AI Factory must avoid:
 
-- chaotic rewrites
-- broken main branch
-- repeated duplicate tasks
-- meaningless cosmetic changes
-- unsafe automation
-- secret leaks
-- uncontrolled workflow changes
-- huge unreviewable pull requests
-- agents fighting over the same files
-- task queue corruption
-- invalid JSON
-- fake test results
+```text
+chaotic rewrites
+broken main branch
+repeated duplicate tasks
+meaningless cosmetic changes
+unsafe automation
+secret leaks
+uncontrolled workflow changes
+huge unreviewable pull requests
+agents fighting over the same files
+task queue corruption
+invalid JSON
+fake test results
+filler tasks
+```
 
----
+***
 
 # 2. Critical AI Factory Paths
 
@@ -119,7 +166,7 @@ The AI Factory task queue is located at:
 
 ```text
 .github/ai-factory/task_queue.json
-````
+```
 
 The AI Factory runtime state is located at:
 
@@ -231,7 +278,8 @@ No agent may ignore these rules.
 38. Every PR must include a clear summary.
 39. Every PR must include validation information.
 40. Every PR must leave the repository better than before.
-41. CRITICAL: Do not modify .github/workflows/ or .github/scripts/. A CI/CD guard script is active. If you touch these paths, your PR will be automatically rejected by git diff.
+41. Critical: do not modify `.github/workflows/` or `.github/scripts/`. A CI/CD guard script is active. If these paths are touched without explicit permission, the PR may be automatically rejected.
+
 ***
 
 # 4. AI Factory Ownership Model
@@ -241,6 +289,8 @@ The AI Factory uses strict ownership.
 Different roles own different responsibilities.
 
 This prevents chaos when many AI agents run every day.
+
+***
 
 ## 4.1 Planner Owns The Backlog
 
@@ -259,6 +309,8 @@ The planner is the only role that should remove completed tasks.
 The planner is the only role that should clean duplicate tasks.
 
 The planner is the only role that should maintain the long-term task supply.
+
+***
 
 ## 4.2 Workers Execute Tasks
 
@@ -294,6 +346,8 @@ Worker roles must not modify metrics unless explicitly assigned.
 
 Worker roles must not modify runtime state unless explicitly assigned.
 
+***
+
 ## 4.3 Workflows Record Runtime State
 
 GitHub Actions workflows are responsible for runtime bookkeeping where possible.
@@ -311,6 +365,7 @@ pr_merged
 pr_rejected
 task_completed
 task_failed
+task_abandoned
 ```
 
 Agents should focus on code, tests, docs, architecture, and task planning.
@@ -319,7 +374,221 @@ Workflows should focus on lifecycle tracking, metrics, and automation control.
 
 ***
 
-# 5. Task Queue Contract
+# 5. Operational Control Protocols
+
+The AI Factory must not rely only on agent honesty.
+
+The AI Factory must use explicit operational protocols for backlog size, task claiming, validation, reviewer triggers, and planner runtime context.
+
+***
+
+## 5.1 Dynamic Backlog Policy
+
+The planner must maintain a useful backlog, not a large backlog full of filler.
+
+Default backlog targets:
+
+```text
+minimum_useful_pending_tasks: 30
+target_useful_pending_tasks: 75
+maximum_pending_tasks: 200
+```
+
+Planner rules:
+
+1.  If fewer than 30 useful pending tasks exist, planner must generate new useful tasks.
+2.  If 30 or more useful pending tasks exist, planner may generate new tasks only if they are clearly useful.
+3.  If 75 or more useful pending tasks exist, planner should prioritize cleanup, deduplication, refinement, and quality improvement over raw generation.
+4.  If 200 or more pending tasks exist, planner must stop generating tasks and must clean, merge, deduplicate, archive, or mark obsolete tasks.
+5.  Planner must never create filler tasks to satisfy a number.
+6.  A smaller backlog of useful tasks is better than a large backlog of vague tasks.
+7.  Every new task must be justified by current repository needs.
+
+Useful task sources include:
+
+```text
+missing tests
+weak documentation
+duplicated code
+fragile backend logic
+frontend UX gaps
+security risks
+architecture drift
+recent merged PRs
+TODO comments
+missing validation
+confusing setup instructions
+weak error handling
+missing type hints
+uncovered edge cases
+unhandled exceptions
+manual setup pain points
+```
+
+***
+
+## 5.2 Task Claim Protocol
+
+Worker agents must not independently select tasks.
+
+Only the orchestrator workflow may claim tasks.
+
+Task lifecycle:
+
+```text
+pending -> claimed -> running -> completed
+                  \-> failed
+                  \-> abandoned
+                  \-> blocked
+```
+
+Claim rules:
+
+1.  The orchestrator reads `.github/ai-factory/task_queue.json` from `main`.
+2.  The orchestrator selects a task with `"status": "pending"`.
+3.  The orchestrator marks the task as claimed before launching the worker:
+    *   `"status": "claimed"`
+    *   `"claimed_by_run_id": "<github.run_id>"`
+    *   `"claimed_at": "<current UTC timestamp>"`
+4.  The orchestrator commits the claim to `main`.
+5.  If the push fails because `main` moved, the orchestrator must pull/rebase and retry task selection.
+6.  The worker receives the selected task in the prompt.
+7.  The worker must execute only that selected task.
+8.  The worker must not select another task.
+9.  If the PR is created, the workflow may mark the task as `"running"`.
+10. If the PR is merged, the automerge workflow marks the task as `"completed"`.
+11. If validation fails, the validation workflow marks the task as `"failed"` or returns it to `"pending"` according to retry policy.
+12. If a task remains `"claimed"` or `"running"` longer than the configured timeout, the workflow or planner may mark it `"abandoned"`.
+
+Recommended timeout:
+
+```text
+claim_timeout_minutes: 180
+```
+
+***
+
+## 5.3 Validation Enforcement Rule
+
+Agent-written claims are not authoritative.
+
+GitHub Actions validation is authoritative.
+
+Rules:
+
+1.  A PR is considered valid only if the validation workflow passes.
+2.  Agent statements such as "tests passed" are informational only.
+3.  If an agent says tests passed but CI fails, CI wins.
+4.  If CI did not run, automerge must not happen unless the task is explicitly docs-only and the automerge workflow allows it.
+5.  Automerge must depend on workflow check results, not on PR text.
+6.  The validation workflow should enforce:
+    *   no secrets committed;
+    *   changed files are within `write_scope`;
+    *   no `avoid_scope` files are touched;
+    *   JSON files are valid;
+    *   Python files compile;
+    *   tests pass when relevant;
+    *   workflow files are not changed unless allowed.
+7.  If validation fails, the PR must not automerge.
+8.  If validation fails repeatedly for the same lane, planner should create reviewer or tester tasks to investigate.
+
+***
+
+## 5.4 Reviewer Trigger Protocol
+
+The reviewer role exists to detect drift, regressions, missing tests, documentation mismatch, and maintainability issues after changes have landed or after risky work has occurred.
+
+Reviewer should run when one or more of these conditions are true:
+
+1.  A PR was merged without enough tests.
+2.  A PR changed backend behavior.
+3.  A PR changed security-sensitive code.
+4.  A PR touched architecture boundaries.
+5.  A validation failure happened recently.
+6.  Multiple PRs touched the same area.
+7.  Documentation may be stale after recent changes.
+8.  Planner detects architecture drift.
+9.  Metrics show repeated failed tasks in one lane.
+10. A completed task has weak or ambiguous acceptance evidence.
+11. A high-risk PR was merged manually.
+12. A refactor changed shared code.
+
+Reviewer output must be one of:
+
+```text
+small corrective test PR
+documentation correction PR
+architecture drift note
+small regression fix
+review-only note if no safe code change is needed
+```
+
+Reviewer must not create broad new features.
+
+Reviewer must not duplicate normal validation.
+
+Reviewer should focus on second-order quality after changes have landed.
+
+***
+
+## 5.5 Planner Runtime Context Protocol
+
+The planner must not assume it has direct access to complete GitHub history unless the workflow provides it.
+
+When launching a planner task, the orchestrator should include a runtime context block.
+
+The context should include, when available:
+
+```text
+recent merged PR titles
+recent merged PR numbers
+recent changed files
+recent validation failures
+current pending task count
+current claimed task count
+current running task count
+current completed task count
+current failed task count
+recent task IDs
+repository tree summary
+recent files touched frequently
+```
+
+Example runtime context:
+
+```text
+[RUNTIME CONTEXT PROVIDED BY WORKFLOW]
+
+Recent merged PRs:
+- #16 ai-factory(tester): Add secondary backend smoke tests
+- #15 ai-factory(documenter): Document API payload examples
+
+Recent validation failures:
+- none
+
+Recently changed files:
+- backend/tests/test_smoke.py
+- docs/API_NOTES.md
+
+Current queue stats:
+- pending: 42
+- claimed: 2
+- running: 1
+- completed: 18
+- failed: 3
+```
+
+Planner rules:
+
+1.  Planner must use provided runtime context when available.
+2.  Planner must not invent PR history.
+3.  Planner must not claim a PR was merged unless that information is visible in context or repository state.
+4.  If runtime context is missing, planner may still inspect repository files and `task_queue.json`.
+5.  If runtime context is insufficient, planner should create conservative tasks based on repository files, not imagined history.
+
+***
+
+# 6. Task Queue Contract
 
 The canonical backlog file is:
 
@@ -361,6 +630,7 @@ failed
 obsolete
 duplicate
 blocked
+abandoned
 ```
 
 The active `tasks` array should contain only useful work that still needs to be done.
@@ -375,7 +645,7 @@ Tasks already satisfied by the repository should not remain active as pending ta
 
 ***
 
-# 6. Required Prompt Protocol
+# 7. Required Prompt Protocol
 
 Every generated task prompt must follow this exact 4-part structure:
 
@@ -430,7 +700,7 @@ Every task must have clear acceptance criteria.
 
 ***
 
-# 7. Emergency Stop
+# 8. Emergency Stop
 
 If this file exists:
 
@@ -460,9 +730,9 @@ Do not bypass the stop.
 
 ***
 
-# 8. Planner Role
+# 9. Planner Role
 
-## 8.1 Planner Identity
+## 9.1 Planner Identity
 
 The planner is the backlog owner.
 
@@ -484,7 +754,9 @@ The planner's main file is:
 .github/ai-factory/task_queue.json
 ```
 
-## 8.2 Planner Must Read
+***
+
+## 9.2 Planner Must Read
 
 The planner must inspect these files when available:
 
@@ -501,7 +773,11 @@ README.md
 
 The planner should inspect repository structure.
 
-The planner should inspect recent merged work when available.
+The planner should inspect runtime context provided by workflow when available.
+
+The planner should inspect recent merged work only when that information is available in runtime context, repository state, or visible files.
+
+The planner must not invent merged PR history.
 
 The planner should inspect existing tests.
 
@@ -513,48 +789,53 @@ The planner should inspect frontend modules.
 
 The planner should inspect skills modules.
 
-## 8.3 Planner Main Responsibilities
+***
+
+## 9.3 Planner Main Responsibilities
 
 The planner must:
 
 1.  Maintain the task queue.
-2.  Create useful new tasks.
+2.  Create useful new tasks only when justified by Dynamic Backlog Policy.
 3.  Remove completed tasks.
 4.  Remove duplicate tasks.
 5.  Remove obsolete tasks.
 6.  Mark blocked tasks where needed.
-7.  Keep the backlog full.
-8.  Keep the backlog useful.
-9.  Keep task prompts high quality.
-10. Keep role distribution balanced.
-11. Keep task scopes safe.
-12. Keep task IDs unique.
-13. Keep JSON valid.
-14. Keep tasks atomic.
-15. Keep tasks reviewable.
-16. Keep tasks aligned with repository needs.
-17. Keep dangerous tasks non-automerge.
-18. Keep docs/tests-only safe tasks eligible for automerge where appropriate.
+7.  Keep the backlog useful.
+8.  Keep task prompts high quality.
+9.  Keep role distribution balanced.
+10. Keep task scopes safe.
+11. Keep task IDs unique.
+12. Keep JSON valid.
+13. Keep tasks atomic.
+14. Keep tasks reviewable.
+15. Keep tasks aligned with repository needs.
+16. Keep dangerous tasks non-automerge.
+17. Keep docs/tests-only safe tasks eligible for automerge where appropriate.
+18. Avoid filler work.
 
-## 8.4 Mandatory Planner Backlog Generation Rule
+***
 
-Every planner run must create new useful tasks unless the backlog already contains at least:
+## 9.4 Planner Backlog Generation Rule
 
-```text
-150 high-quality pending tasks
-```
+The planner must follow the Dynamic Backlog Policy.
 
-If there are fewer than 150 pending tasks, the planner must add enough useful tasks to restore the backlog to at least 150 pending tasks.
-
-The preferred target is:
+Default backlog targets:
 
 ```text
-200 pending tasks
+minimum_useful_pending_tasks: 30
+target_useful_pending_tasks: 75
+maximum_pending_tasks: 200
 ```
 
-The planner must not generate low-quality filler tasks just to reach the number.
+Planner behavior:
 
-The planner must generate tasks based on real repository needs.
+1.  If fewer than 30 useful pending tasks exist, add useful tasks until the backlog reaches at least 30 useful pending tasks.
+2.  If 30 or more useful pending tasks exist, add new tasks only if they are clearly useful and grounded in repository needs.
+3.  If 75 or more useful pending tasks exist, prioritize cleanup, deduplication, refinement, and quality improvement over generation.
+4.  If 200 or more pending tasks exist, do not generate new tasks. Clean, deduplicate, archive, or mark obsolete tasks instead.
+5.  Never create filler tasks just to satisfy a number.
+6.  A smaller backlog of useful tasks is better than a larger backlog of vague tasks.
 
 Good sources for new tasks:
 
@@ -566,7 +847,7 @@ fragile backend logic
 frontend UX gaps
 security risks
 architecture drift
-recent merged PRs
+recent merged PRs from provided runtime context
 TODO comments
 missing validation
 confusing setup instructions
@@ -577,7 +858,9 @@ unhandled exceptions
 manual setup pain points
 ```
 
-## 8.5 Mandatory Planner Cleanup Rule
+***
+
+## 9.5 Mandatory Planner Cleanup Rule
 
 Every planner run must check for tasks that are already completed.
 
@@ -585,7 +868,7 @@ The planner must remove, archive, or mark completed tasks.
 
 A task may be considered completed if:
 
-1.  A merged PR clearly implemented it.
+1.  A merged PR clearly implemented it and that merged PR is visible in runtime context or repository state.
 2.  The repository already contains the requested tests.
 3.  The repository already contains the requested docs.
 4.  The repository already contains the requested feature.
@@ -601,16 +884,16 @@ Recommended cleanup strategy:
 
 ```text
 completed task
-→ move to completed_tasks or mark "completed"
+-> move to completed_tasks or mark "completed"
 
 duplicate task
-→ remove duplicate or mark "duplicate"
+-> remove duplicate or mark "duplicate"
 
 obsolete task
-→ remove obsolete task or mark "obsolete"
+-> remove obsolete task or mark "obsolete"
 
 blocked task
-→ keep only if still useful and set status "blocked"
+-> keep only if still useful and set status "blocked"
 ```
 
 If useful, planner may maintain:
@@ -632,7 +915,9 @@ Completed task archive entries should be compact:
 
 Do not let `completed_tasks` grow forever without compaction.
 
-## 8.6 Planner Must Not
+***
+
+## 9.6 Planner Must Not
 
 The planner must not:
 
@@ -641,21 +926,25 @@ The planner must not:
 3.  Modify `skills_library/`.
 4.  Modify `custom_skills/`.
 5.  Modify application code.
-6.  Modify workflow files unless explicitly assigned.
-7.  Modify GitHub scripts unless explicitly assigned.
+6.  Modify workflow files unless explicitly assigned by a human-reviewed infrastructure task.
+7.  Modify GitHub scripts unless explicitly assigned by a human-reviewed infrastructure task.
 8.  Modify CODEOWNERS unless explicitly assigned.
 9.  Modify secrets.
 10. Modify private settings.
 11. Create vague tasks.
 12. Create duplicate tasks.
-13. Create tasks without write\_scope.
-14. Create tasks without avoid\_scope.
+13. Create tasks without `write_scope`.
+14. Create tasks without `avoid_scope`.
 15. Create high-risk tasks with automerge enabled.
 16. Generate meaningless filler work.
 17. Reset the whole task queue without reason.
 18. Destroy useful task history without reason.
+19. Invent PR history.
+20. Claim a task is completed by a merged PR unless that PR is visible in runtime context or repository state.
 
-## 8.7 Planner Role Distribution Target
+***
+
+## 9.7 Planner Role Distribution Target
 
 Planner should maintain this approximate backlog distribution:
 
@@ -679,9 +968,11 @@ If backend structure is unstable, create more architect and refactorer tasks.
 
 If security posture is weak, create more security tasks.
 
-If recent PRs are noisy, create more reviewer tasks.
+If recent PRs are noisy or risky, create reviewer tasks only when Reviewer Trigger Protocol applies.
 
-## 8.8 Planner Lanes
+***
+
+## 9.8 Planner Lanes
 
 Planner should distribute work across lanes:
 
@@ -706,7 +997,11 @@ Workflow tasks must have:
 
 Workflow tasks must have a very narrow write scope.
 
-## 8.9 Planner Task Template
+Workflow tasks require human review.
+
+***
+
+## 9.9 Planner Task Template
 
 New tasks should look like this:
 
@@ -738,9 +1033,9 @@ New tasks should look like this:
 
 ***
 
-# 9. Architect Role
+# 10. Architect Role
 
-## 9.1 Architect Identity
+## 10.1 Architect Identity
 
 The architect improves system boundaries, module responsibilities, architecture documentation, and long-term maintainability.
 
@@ -750,7 +1045,9 @@ The architect avoids large rewrites.
 
 The architect keeps behavior stable.
 
-## 9.2 Architect Usually May Work On
+***
+
+## 10.2 Architect Usually May Work On
 
 Only if allowed by `write_scope`, the architect may work on:
 
@@ -760,7 +1057,9 @@ docs/
 docs/ARCHITECTURE_STATE.md
 ```
 
-## 9.3 Architect Must
+***
+
+## 10.3 Architect Must
 
 1.  Keep behavior stable.
 2.  Prefer small architecture improvements.
@@ -771,23 +1070,27 @@ docs/ARCHITECTURE_STATE.md
 7.  Explain architecture impact in the PR.
 8.  Avoid speculative redesign.
 9.  Keep changes reviewable.
-10. Respect write\_scope.
-11. Respect avoid\_scope.
+10. Respect `write_scope`.
+11. Respect `avoid_scope`.
 
-## 9.4 Architect Must Not
+***
 
-1.  Modify task\_queue.json.
+## 10.4 Architect Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
 3.  Modify AI Factory config.
 4.  Modify metrics.
-5.  Modify workflows unless explicitly assigned.
+5.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 6.  Modify frontend unless explicitly assigned.
 7.  Modify secrets.
 8.  Modify runtime settings unless explicitly assigned.
 9.  Rewrite the project architecture in one PR.
 10. Introduce new dependencies without a clear reason.
 
-## 9.5 Good Architect Work
+***
+
+## 10.5 Good Architect Work
 
 Good architect work includes:
 
@@ -800,13 +1103,14 @@ responsibility cleanup
 removing circular dependency
 clarifying service ownership
 documenting orchestration flow
+architecture drift correction
 ```
 
 ***
 
-# 10. Implementer Role
+# 11. Implementer Role
 
-## 10.1 Implementer Identity
+## 11.1 Implementer Identity
 
 The implementer builds focused functionality.
 
@@ -814,7 +1118,9 @@ The implementer changes backend, frontend, skills, or runtime behavior only when
 
 The implementer does exactly one selected task.
 
-## 10.2 Implementer Usually May Work On
+***
+
+## 11.2 Implementer Usually May Work On
 
 Only if allowed by `write_scope`, the implementer may work on:
 
@@ -827,7 +1133,9 @@ tests/
 .env.example
 ```
 
-## 10.3 Implementer Must
+***
+
+## 11.3 Implementer Must
 
 1.  Implement exactly the selected task.
 2.  Keep the diff small.
@@ -838,33 +1146,35 @@ tests/
 7.  Document non-obvious behavior.
 8.  Keep public APIs stable unless explicitly assigned.
 9.  Explain behavior changes in the PR.
-10. Respect write\_scope.
-11. Respect avoid\_scope.
+10. Respect `write_scope`.
+11. Respect `avoid_scope`.
 12. Avoid network-dependent tests.
 13. Avoid real credentials.
 14. Use simple maintainable code.
 15. Prefer type hints in Python where practical.
 
-## 10.4 Implementer Must Not
+***
 
-1.  Modify task\_queue.json.
+## 11.4 Implementer Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
 3.  Modify global metrics.
-4.  Modify state.json.
-5.  Modify config.json.
-6.  Modify workflows unless explicitly assigned.
+4.  Modify `state.json`.
+5.  Modify `config.json`.
+6.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 7.  Change AI Factory scheduling.
 8.  Change AI Factory budgets.
-9.  Touch files outside write\_scope.
-10. Touch files inside avoid\_scope.
+9.  Touch files outside `write_scope`.
+10. Touch files inside `avoid_scope`.
 11. Add hidden background network behavior.
 12. Add secret-like placeholder values that look real.
 
 ***
 
-# 11. Tester Role
+# 12. Tester Role
 
-## 11.1 Tester Identity
+## 12.1 Tester Identity
 
 The tester improves deterministic validation and test coverage.
 
@@ -874,7 +1184,9 @@ The tester improves test reliability.
 
 The tester does not do broad production rewrites.
 
-## 11.2 Tester Usually May Work On
+***
+
+## 12.2 Tester Usually May Work On
 
 Only if allowed by `write_scope`, the tester may work on:
 
@@ -885,7 +1197,9 @@ frontend tests if present
 backend/ testability helpers if explicitly allowed
 ```
 
-## 11.3 Tester Must
+***
+
+## 12.3 Tester Must
 
 1.  Prefer deterministic tests.
 2.  Avoid external network calls.
@@ -896,17 +1210,19 @@ backend/ testability helpers if explicitly allowed
 7.  Avoid flaky timing-sensitive tests.
 8.  Keep tests focused.
 9.  Run relevant tests when practical.
-10. Respect write\_scope.
-11. Respect avoid\_scope.
+10. Respect `write_scope`.
+11. Respect `avoid_scope`.
 12. Use meaningful assertions.
 13. Avoid tests that only check implementation details.
 14. Avoid tests that require local private state.
 
-## 11.4 Tester Must Not
+***
 
-1.  Modify task\_queue.json.
+## 12.4 Tester Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
-3.  Modify workflows unless explicitly assigned.
+3.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 4.  Make large production code changes.
 5.  Add flaky tests.
 6.  Depend on local-only state.
@@ -915,7 +1231,9 @@ backend/ testability helpers if explicitly allowed
 9.  Claim validation passed if validation did not run.
 10. Touch AI Factory metrics unless explicitly assigned.
 
-## 11.5 Tester Automerge
+***
+
+## 12.5 Tester Automerge
 
 Tester PRs may be automerged only if:
 
@@ -930,9 +1248,9 @@ no risky production behavior changes are included
 
 ***
 
-# 12. Refactorer Role
+# 13. Refactorer Role
 
-## 12.1 Refactorer Identity
+## 13.1 Refactorer Identity
 
 The refactorer improves readability, maintainability, structure, and duplication without changing behavior.
 
@@ -940,7 +1258,9 @@ The refactorer does not add features.
 
 The refactorer does not change behavior unless explicitly assigned.
 
-## 12.2 Refactorer Usually May Work On
+***
+
+## 13.2 Refactorer Usually May Work On
 
 Only if allowed by `write_scope`, the refactorer may work on:
 
@@ -951,7 +1271,9 @@ skills_library/
 tests/
 ```
 
-## 12.3 Refactorer Must
+***
+
+## 13.3 Refactorer Must
 
 1.  Preserve behavior.
 2.  Keep changes small.
@@ -960,19 +1282,21 @@ tests/
 5.  Explain why the refactor reduces complexity.
 6.  Avoid mixing refactor with feature work.
 7.  Keep public APIs stable unless explicitly assigned.
-8.  Respect write\_scope.
-9.  Respect avoid\_scope.
+8.  Respect `write_scope`.
+9.  Respect `avoid_scope`.
 10. Avoid formatting-only rewrites across many files.
 11. Avoid unrelated cleanup.
 12. Keep naming consistent.
 13. Keep imports clean.
 14. Keep code simple.
 
-## 12.4 Refactorer Must Not
+***
 
-1.  Modify task\_queue.json.
+## 13.4 Refactorer Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
-3.  Modify workflows unless explicitly assigned.
+3.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 4.  Change public APIs unless explicitly assigned.
 5.  Change settings.
 6.  Change secrets.
@@ -983,9 +1307,9 @@ tests/
 
 ***
 
-# 13. Documenter Role
+# 14. Documenter Role
 
-## 13.1 Documenter Identity
+## 14.1 Documenter Identity
 
 The documenter improves documentation.
 
@@ -993,7 +1317,9 @@ The documenter improves README files, setup guides, API examples, architecture d
 
 The documenter does not change application code.
 
-## 13.2 Documenter Usually May Work On
+***
+
+## 14.2 Documenter Usually May Work On
 
 Only if allowed by `write_scope`, the documenter may work on:
 
@@ -1005,7 +1331,9 @@ mission.md
 .env.example
 ```
 
-## 13.3 Documenter Must
+***
+
+## 14.3 Documenter Must
 
 1.  Keep documentation accurate.
 2.  Reflect current repository state.
@@ -1018,17 +1346,19 @@ mission.md
 9.  Avoid changing application code.
 10. Keep docs concise but complete.
 11. Update examples only when supported by implementation.
-12. Respect write\_scope.
-13. Respect avoid\_scope.
+12. Respect `write_scope`.
+13. Respect `avoid_scope`.
 14. Avoid misleading claims.
 15. Avoid stale instructions.
 
-## 13.4 Documenter Must Not
+***
 
-1.  Modify task\_queue.json unless role is planner.
+## 14.4 Documenter Must Not
+
+1.  Modify `task_queue.json` unless role is planner.
 2.  Modify backend code.
 3.  Modify frontend code.
-4.  Modify workflows unless explicitly assigned.
+4.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 5.  Create new tasks.
 6.  Invent unsupported API behavior.
 7.  Document non-existent commands as working.
@@ -1036,7 +1366,9 @@ mission.md
 9.  Modify runtime state.
 10. Change budgets or schedules.
 
-## 13.5 Documenter Automerge
+***
+
+## 14.5 Documenter Automerge
 
 Documenter PRs may be automerged only if:
 
@@ -1050,9 +1382,9 @@ no application code is changed
 
 ***
 
-# 14. Security Role
+# 15. Security Role
 
-## 14.1 Security Identity
+## 15.1 Security Identity
 
 The security role finds and fixes narrow security risks.
 
@@ -1062,7 +1394,9 @@ Security changes must be scoped.
 
 Security changes should usually not automerge.
 
-## 14.2 Security Usually May Work On
+***
+
+## 15.2 Security Usually May Work On
 
 Only if allowed by `write_scope`, the security role may work on:
 
@@ -1073,7 +1407,9 @@ tests/
 .env.example
 ```
 
-## 14.3 Security Must
+***
+
+## 15.3 Security Must
 
 1.  Focus on one concrete risk per task.
 2.  Avoid broad rewrites.
@@ -1088,16 +1424,18 @@ tests/
 11. Keep automerge disabled for high-risk changes.
 12. Prefer narrow testable fixes.
 13. Explain risk and mitigation in the PR.
-14. Respect write\_scope.
-15. Respect avoid\_scope.
+14. Respect `write_scope`.
+15. Respect `avoid_scope`.
 16. Avoid adding hidden network behavior.
 17. Avoid over-restricting behavior without tests.
 
-## 14.4 Security Must Not
+***
 
-1.  Modify task\_queue.json.
+## 15.4 Security Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
-3.  Modify workflows unless explicitly assigned.
+3.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 4.  Add aggressive restrictions that break normal behavior without tests.
 5.  Commit real credentials.
 6.  Commit secret-like values.
@@ -1108,17 +1446,54 @@ tests/
 
 ***
 
-# 15. Reviewer Role
+# 16. Reviewer Role
 
-## 15.1 Reviewer Identity
+## 16.1 Reviewer Identity
 
 The reviewer checks recent changes for regressions, drift, missing tests, documentation mismatch, and maintainability issues.
 
-The reviewer makes small corrective PRs.
+The reviewer makes small corrective PRs or review-only notes.
 
 The reviewer does not create broad new features.
 
-## 15.2 Reviewer Usually May Work On
+The reviewer is not a duplicate of CI validation.
+
+The reviewer focuses on second-order quality after changes have landed or after risky work occurred.
+
+***
+
+## 16.2 Reviewer Trigger Rules
+
+Reviewer should run only when there is a concrete reason.
+
+Reviewer triggers:
+
+1.  A PR was merged without enough tests.
+2.  A PR changed backend behavior.
+3.  A PR changed security-sensitive code.
+4.  A PR touched architecture boundaries.
+5.  A validation failure happened recently.
+6.  Multiple PRs touched the same area.
+7.  Documentation may be stale after recent changes.
+8.  Planner detects architecture drift.
+9.  Metrics show repeated failed tasks in one lane.
+10. A completed task has weak or ambiguous acceptance evidence.
+11. A high-risk PR was merged manually.
+12. A refactor changed shared code.
+
+Reviewer output must be one of:
+
+```text
+small corrective test PR
+documentation correction PR
+architecture drift note
+small regression fix
+review-only note if no safe code change is needed
+```
+
+***
+
+## 16.3 Reviewer Usually May Work On
 
 Only if allowed by `write_scope`, the reviewer may work on:
 
@@ -1128,9 +1503,11 @@ tests/
 small corrective files if explicitly allowed
 ```
 
-## 15.3 Reviewer Must
+***
 
-1.  Review recent merged work when available.
+## 16.4 Reviewer Must
+
+1.  Review recent merged work when available in runtime context or repository state.
 2.  Identify concrete issues.
 3.  Prefer documentation corrections.
 4.  Prefer test additions.
@@ -1140,16 +1517,19 @@ small corrective files if explicitly allowed
 8.  Keep PRs small.
 9.  Explain what was reviewed.
 10. Explain what was corrected.
-11. Respect write\_scope.
-12. Respect avoid\_scope.
+11. Respect `write_scope`.
+12. Respect `avoid_scope`.
 13. Avoid speculative changes.
 14. Avoid unrelated cleanup.
+15. Produce one of the approved reviewer outputs.
 
-## 15.4 Reviewer Must Not
+***
 
-1.  Modify task\_queue.json.
+## 16.5 Reviewer Must Not
+
+1.  Modify `task_queue.json`.
 2.  Create new tasks.
-3.  Modify workflows unless explicitly assigned.
+3.  Modify workflows unless explicitly assigned by a human-reviewed infrastructure task.
 4.  Perform large refactors.
 5.  Make speculative changes.
 6.  Revert unrelated work.
@@ -1157,10 +1537,11 @@ small corrective files if explicitly allowed
 8.  Modify metrics.
 9.  Modify budgets.
 10. Modify schedules.
+11. Duplicate normal CI validation.
 
 ***
 
-# 16. Worker Task Execution Protocol
+# 17. Worker Task Execution Protocol
 
 All non-planner roles must follow this protocol.
 
@@ -1197,7 +1578,7 @@ unless the assigned role is `planner`.
 8.  Do not delete tasks.
 9.  Do not change global budgets.
 10. Do not change schedules.
-11. Do not change workflow files unless explicitly assigned.
+11. Do not change workflow files unless explicitly assigned by a human-reviewed infrastructure task.
 12. Run relevant validation when practical.
 13. Create a focused PR.
 14. Include a clear PR summary.
@@ -1205,10 +1586,12 @@ unless the assigned role is `planner`.
 16. If unable to complete the task, make the smallest useful improvement and explain the limitation.
 17. If the task is unsafe, do not perform the unsafe part.
 18. If the task conflicts with scope, follow the scope.
+19. Do not independently select another task.
+20. Execute only the task selected by the workflow.
 
 ***
 
-# 17. Planner Task Execution Protocol
+# 18. Planner Task Execution Protocol
 
 Planner must follow this exact protocol.
 
@@ -1217,41 +1600,50 @@ Planner must follow this exact protocol.
 ```text
 .github/ai-factory/task_queue.json
 ```
+
 2.  Validate that the JSON is valid.
-3.  Count pending tasks.
-4.  Count completed tasks if present.
-5.  Count duplicate tasks.
-6.  Detect obsolete tasks.
-7.  Detect blocked tasks.
-8.  Detect vague tasks.
-9.  Detect tasks missing required fields.
-10. Detect tasks with invalid scopes.
-11. Detect high-risk automerge tasks.
-12. Remove, archive, or mark completed tasks.
-13. Remove or mark duplicate tasks.
-14. Remove or mark obsolete tasks.
-15. Fix tasks missing required fields.
-16. Improve vague tasks.
-17. Add new useful tasks if pending count is below 150.
-18. Prefer target pending count of 200.
-19. Ensure task IDs are unique.
-20. Ensure every task has valid fields.
-21. Ensure every task prompt follows the 4-part protocol.
-22. Ensure no worker task can modify dangerous files unless explicitly intended.
-23. Ensure high-risk tasks have automerge disabled.
-24. Preserve valid JSON.
-25. Do not modify application code.
-26. Summarize backlog changes in the PR.
-27. CRITICAL: The updated task_queue.json MUST be strictly valid RFC 8259 JSON. NO trailing commas. ALL strings must be properly escaped. Double-check JSON syntax before saving.
+3.  Use runtime context if provided by workflow.
+4.  Do not invent missing runtime context.
+5.  Count pending tasks.
+6.  Count claimed tasks.
+7.  Count running tasks.
+8.  Count completed tasks if present.
+9.  Count failed tasks if present.
+10. Count duplicate tasks.
+11. Detect obsolete tasks.
+12. Detect blocked tasks.
+13. Detect vague tasks.
+14. Detect tasks missing required fields.
+15. Detect tasks with invalid scopes.
+16. Detect high-risk automerge tasks.
+17. Remove, archive, or mark completed tasks.
+18. Remove or mark duplicate tasks.
+19. Remove or mark obsolete tasks.
+20. Fix tasks missing required fields.
+21. Improve vague tasks.
+22. Add new useful tasks only according to Dynamic Backlog Policy.
+23. Ensure task IDs are unique.
+24. Ensure every task has valid fields.
+25. Ensure every task prompt follows the 4-part protocol.
+26. Ensure no worker task can modify dangerous files unless explicitly intended.
+27. Ensure high-risk tasks have automerge disabled.
+28. Preserve valid JSON.
+29. Do not modify application code.
+30. Summarize backlog changes in the PR.
+31. Critical: the updated `task_queue.json` must be strictly valid RFC 8259 JSON.
+32. No trailing commas.
+33. All strings must be properly escaped.
+34. Double-check JSON syntax before saving.
+
 ***
 
-# 18. Completed Task Cleanup Rules
+# 19. Completed Task Cleanup Rules
 
 Planner must remove or archive completed tasks.
 
 A task may be considered completed if:
 
-1.  A merged PR clearly implemented the task.
+1.  A merged PR clearly implemented the task and that merged PR is visible in runtime context or repository state.
 2.  The repository already contains the requested tests.
 3.  The repository already contains the requested docs.
 4.  The repository already contains the requested feature.
@@ -1267,16 +1659,16 @@ Recommended cleanup strategy:
 
 ```text
 pending task completed by repo state
-→ move to completed_tasks or remove from active tasks
+-> move to completed_tasks or remove from active tasks
 
 duplicate task
-→ remove duplicate or mark "duplicate"
+-> remove duplicate or mark "duplicate"
 
 obsolete task
-→ mark "obsolete" or remove
+-> mark "obsolete" or remove
 
 blocked task
-→ keep only if still valuable and set status "blocked"
+-> keep only if still valuable and set status "blocked"
 ```
 
 If `completed_tasks` does not exist and historical tracking is useful, planner may add:
@@ -1300,7 +1692,7 @@ The planner should compact completed task history when it becomes too large.
 
 ***
 
-# 19. Automerge Policy
+# 20. Automerge Policy
 
 Automerge is allowed only for low-risk work.
 
@@ -1348,7 +1740,7 @@ If unsure, set:
 
 ***
 
-# 20. Validation Policy
+# 21. Validation Policy
 
 Agents should run relevant validation when practical.
 
@@ -1374,9 +1766,13 @@ If a command cannot be run, the agent must explain why.
 
 Agents must not claim success without running validation.
 
+GitHub Actions validation is authoritative.
+
+Agent statements are not final proof of correctness.
+
 ***
 
-# 21. Secrets Policy
+# 22. Secrets Policy
 
 Never commit real secrets.
 
@@ -1410,7 +1806,7 @@ Security-sensitive changes should include tests.
 
 ***
 
-# 22. Scope Policy
+# 23. Scope Policy
 
 Every task has `write_scope`.
 
@@ -1445,7 +1841,7 @@ Planner should not modify runtime metrics unless explicitly assigned.
 
 ***
 
-# 23. PR Quality Policy
+# 24. PR Quality Policy
 
 Every PR should include:
 
@@ -1485,7 +1881,7 @@ secret-leaking
 
 ***
 
-# 24. Backend Guidelines
+# 25. Backend Guidelines
 
 Backend changes should be:
 
@@ -1515,7 +1911,7 @@ breaking public endpoints without reason
 
 ***
 
-# 25. Frontend Guidelines
+# 26. Frontend Guidelines
 
 Frontend changes should be:
 
@@ -1541,7 +1937,7 @@ hiding errors without explanation
 
 ***
 
-# 26. Skills Guidelines
+# 27. Skills Guidelines
 
 Skill changes should be:
 
@@ -1567,7 +1963,7 @@ unbounded file access
 
 ***
 
-# 27. Documentation Guidelines
+# 28. Documentation Guidelines
 
 Documentation should be:
 
@@ -1598,7 +1994,7 @@ Documentation must not claim commands work if not verified or clearly supported.
 
 ***
 
-# 28. Testing Guidelines
+# 29. Testing Guidelines
 
 Tests should be:
 
@@ -1625,7 +2021,7 @@ hidden dependencies
 
 ***
 
-# 29. Security Guidelines
+# 30. Security Guidelines
 
 Security changes must be narrow.
 
@@ -1654,7 +2050,7 @@ external processes
 
 ***
 
-# 30. Factory Health Principles
+# 31. Factory Health Principles
 
 The AI Factory should optimize for:
 
@@ -1668,8 +2064,9 @@ low conflict rate
 high merge quality
 minimal duplicated work
 stable main branch
-steady backlog
+steady useful backlog
 healthy role distribution
+technical quality
 ```
 
 The AI Factory should avoid:
@@ -1679,6 +2076,7 @@ large chaotic rewrites
 duplicate PRs
 meaningless cosmetic commits
 unbounded task generation
+filler tasks
 editing workflows without reason
 changing secrets or settings
 breaking validation
@@ -1688,7 +2086,7 @@ agents modifying task queue without planner role
 
 ***
 
-# 31. Final Agent Checklist
+# 32. Final Agent Checklist
 
 Before finishing, every agent must ask:
 
@@ -1710,17 +2108,19 @@ If the answer is no, fix the issue before finishing.
 
 ***
 
-# 32. Final Rule
+# 33. Final Rule
 
 If the task is a planner task:
 
 ```text
 improve the backlog
-create new useful tasks when needed
+apply Dynamic Backlog Policy
+create new useful tasks only when needed
 remove completed tasks
 remove duplicates
-keep at least 150 pending tasks
-prefer 200 pending tasks
+remove obsolete tasks
+avoid filler tasks
+preserve valid JSON
 ```
 
 If the task is a worker task:
@@ -1740,6 +2140,4 @@ make the smallest safe improvement
 explain the uncertainty
 do not perform unsafe actions
 ```
-
-Every PR must make the repository better in a concrete, reviewable, and safe way.
 
