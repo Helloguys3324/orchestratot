@@ -1749,8 +1749,9 @@ Recommended validation examples:
 
 ```text
 python -m compileall backend skills_library run.py
-python -m pytest -q
 python .github/scripts/scan_secrets.py
+PYTHONPATH=. python -m pytest -q
+node --experimental-test-coverage --test frontend/tests/*.js
 ```
 
 If validation commands exist in:
