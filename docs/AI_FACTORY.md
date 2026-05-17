@@ -145,5 +145,5 @@ You can verify that no secrets are accidentally committed by running:
 python .github/scripts/scan_secrets.py
 ```
 
-If a key was committed previously, rotate it immediately.
+If a key was committed previously, rotate it immediately. The automated PR checks will proactively block changes containing known credential patterns.
 

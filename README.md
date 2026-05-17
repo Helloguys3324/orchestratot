@@ -15,6 +15,9 @@ To prepare the repository for local development, follow these steps:
 
 1. **Install Python 3.12 & Node.js (v20+)**
    - The backend is built specifically for Python 3.12. Ensure it is installed and active in your environment.
+   - It is highly recommended to create a virtual environment before installing dependencies:
+     `python -m venv .venv`
+     `source .venv/bin/activate` (or `.venv\Scripts\activate` on Windows)
    - Ensure Node.js (v20+) is installed to run frontend vanilla JS unit tests.
 
 2. **Install Backend & Testing Dependencies**
@@ -70,3 +73,10 @@ PYTHONPATH=. python -m pytest -q
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
 ```
+
+## Troubleshooting Setup & Validation
+
+- **ModuleNotFoundError during tests:** Ensure you run backend tests with `PYTHONPATH=. python -m pytest -q` and have installed all testing dependencies explicitly (`pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings`).
+- **Cannot find module when running Node tests:** Make sure you are using Node 20+ and passing the file glob `frontend/tests/*.js` correctly in your shell.
+- **Secret Scan Failure:** If `scan_secrets.py` fails, review the flagged file. Remove the real credential, use `.env` instead, and ensure you do not commit `AUTOGEN_API_KEY` to any tracked files. Rotate any exposed credentials immediately.
+- **Port already in use:** If `python run.py` fails because port 8000 is taken, kill the existing process (e.g., `kill $(lsof -t -i :8000)` on Unix).
