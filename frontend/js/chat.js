@@ -213,3 +213,7 @@ const ChatPage = {
     document.body.insertAdjacentHTML('beforeend', html);
   },
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChatPage;
+}
