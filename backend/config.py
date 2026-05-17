@@ -33,12 +33,12 @@ load_dotenv(dotenv_path=ENV_FILE)
 # ─── Security ───────────────────────────────────────────
 class ConfigModel(BaseModel):
     """Validates configuration and wraps sensitive keys in SecretStr."""
-    api_key: SecretStr
-    default_model: str
-    base_url: str
-    max_rounds: int
-    temperature: float
-    max_tokens: int
+    api_key: SecretStr = SecretStr("")
+    default_model: str = "gemini-2.5-flash"
+    base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
+    max_rounds: int = 15
+    temperature: float = 0.7
+    max_tokens: int = 4096
 
     @field_validator('api_key', mode='before')
     def validate_api_key(cls, v):
@@ -81,10 +81,6 @@ def save_json(filepath: Path, data):
 def get_settings() -> dict:
     """Get application settings."""
     settings = load_json(SETTINGS_FILE, DEFAULT_SETTINGS)
-    # Merge with defaults for any missing keys
-    for key, value in DEFAULT_SETTINGS.items():
-        if key not in settings:
-            settings[key] = value
 
     # Load and typecast overrides from env vars
     env_overrides = {
@@ -96,36 +92,32 @@ def get_settings() -> dict:
         "max_tokens": os.getenv("AUTOGEN_MAX_TOKENS"),
     }
 
-    for key, value in env_overrides.items():
-        if value is not None:
-            if key == "max_rounds" or key == "max_tokens":
-                try:
-                    settings[key] = int(value)
-                except ValueError:
-                    pass
-            elif key == "temperature":
-                try:
-                    settings[key] = float(value)
-                except ValueError:
-                    pass
-            else:
-                settings[key] = value
+    # Filter out None values to prevent overriding valid settings with empty env vars
+    active_overrides = {k: v for k, v in env_overrides.items() if v is not None and v != ""}
+    settings.update(active_overrides)
 
     try:
         model = ConfigModel(**settings)
-        settings["api_key"] = model.api_key
+        validated_settings = model.model_dump(mode="json")
+        validated_settings["api_key"] = model.api_key
     except ValidationError as e:
         # If the API key is the cause of validation error, clear it. Otherwise, let it fail loud.
         has_api_key_error = any(err.get('loc') == ('api_key',) for err in e.errors())
         if has_api_key_error:
-            settings["api_key"] = SecretStr("")
-            # If there are other errors, still raise
+            # Re-instantiate model without the invalid api_key to validate remaining fields
+            safe_settings = settings.copy()
+            safe_settings["api_key"] = ""
+            model = ConfigModel(**safe_settings)
+            validated_settings = model.model_dump(mode="json")
+            validated_settings["api_key"] = SecretStr("")
+
+            # If there are other errors initially, raise them
             if len(e.errors()) > 1:
                 raise
         else:
             raise
 
-    return settings
+    return validated_settings
 
 
 def save_settings(settings: dict):

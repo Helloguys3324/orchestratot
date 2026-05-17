@@ -81,3 +81,29 @@ def test_save_settings_scrubs_api_key():
         data = json.load(f)
 
     assert data["api_key"] == ""
+
+def test_get_settings_ignores_empty_env_vars(monkeypatch):
+    test_settings = DEFAULT_SETTINGS.copy()
+    test_settings["max_rounds"] = 25
+    test_settings["temperature"] = 0.5
+
+    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
+        json.dump(test_settings, f)
+
+    # Simulate an empty environment variable being set
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "")
+
+    settings = get_settings()
+
+    # The empty env var should be ignored, preserving the value from the file
+    assert settings["max_rounds"] == 25
+    assert settings["temperature"] == 0.5
+
+def test_get_settings_typecasts_env_vars(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "50")
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.9")
+
+    settings = get_settings()
+
+    assert settings["max_rounds"] == 50
+    assert settings["temperature"] == 0.9
