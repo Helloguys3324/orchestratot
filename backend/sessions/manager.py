@@ -98,6 +98,10 @@ class SessionManager:
         """Add and emit a system message."""
         await self._add_message(session, "system", "System", text, icon, color)
 
+    async def _error_msg(self, session, text):
+        """Add and emit an error system message."""
+        await self._sys_msg(session, text, "\u26a0\ufe0f", "#EF4444")
+
     async def run_chat(self, session_id: str, user_message: str):
         session = self._sessions.get(session_id)
         if not session:
@@ -114,9 +118,8 @@ class SessionManager:
         await self._add_message(session, "user", "You", user_message, "\U0001f464", "#FFFFFF")
 
         if not api_key:
-            await self._sys_msg(session,
-                "\u274c API key not set! Go to Settings, paste your Google AI Studio key, click Save.",
-                "\u26a0\ufe0f", "#EF4444")
+            await self._error_msg(session,
+                "\u274c API key not set! Go to Settings, paste your Google AI Studio key, click Save.")
             session["status"] = "idle"
             self._save()
             return
@@ -124,9 +127,8 @@ class SessionManager:
         try:
             await self._run_orchestrated_chat(session, user_message, api_key, settings)
         except Exception as e:
-            await self._sys_msg(session,
-                f"\u274c Error: {type(e).__name__}: {str(e)}",
-                "\u26a0\ufe0f", "#EF4444")
+            await self._error_msg(session,
+                f"\u274c Error: {type(e).__name__}: {str(e)}")
 
         session["status"] = "idle"
         self._save()
@@ -140,7 +142,7 @@ class SessionManager:
                 agent_configs.append(agent_data)
 
         if not agent_configs:
-            await self._sys_msg(session, "No enabled agents.", "\u26a0\ufe0f", "#EF4444")
+            await self._error_msg(session, "No enabled agents.")
             return
 
         base_url = settings.get("base_url", "https://generativelanguage.googleapis.com/v1beta/openai/")
@@ -184,9 +186,8 @@ class SessionManager:
                 )
                 next_agent_name = next_agent_name.strip().strip('"').strip("'")
             except Exception as e:
-                await self._sys_msg(session,
-                    f"\u274c Router error: {type(e).__name__}: {str(e)}",
-                    "\u26a0\ufe0f", "#EF4444")
+                await self._error_msg(session,
+                    f"\u274c Router error: {type(e).__name__}: {str(e)}")
                 break
 
             # Check if done
