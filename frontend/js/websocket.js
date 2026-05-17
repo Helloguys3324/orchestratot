@@ -53,3 +53,7 @@ class WS {
 }
 
 const ws = new WS();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { WS, ws };
+}
