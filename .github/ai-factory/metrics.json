@@ -1,12 +1,17 @@
 {
   "started_at": "2026-05-16",
   "tasks_started": 0,
+  "tasks_claimed": 0,
+  "tasks_running": 0,
+  "tasks_completed": 0,
+  "tasks_failed": 0,
+  "tasks_abandoned": 0,
   "prs_created": 0,
   "prs_merged": 0,
   "prs_rejected": 0,
+  "validation_passed": 0,
   "validation_failures": 0,
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs."
   ]
 }
-
