@@ -6,7 +6,7 @@ import importlib.util
 import httpx
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
-from backend.skills.errors import SkillValidationError, SkillInstallError
+from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
 
 # Built-in skills metadata
@@ -133,13 +133,17 @@ class SkillsManager:
         for s in BUILTIN_SKILLS + self._custom_skills:
             if s["id"] == skill_id:
                 return s
-        return None
+
+        raise SkillNotFoundError("Skill not found")
 
     def create_skill(self, data: dict) -> dict:
+        if not data.get("name"):
+            raise SkillValidationError("Skill name is required")
+
         skill_id = f"custom_{uuid.uuid4().hex[:8]}"
         skill = {
             "id": skill_id,
-            "name": data.get("name", "Custom Skill"),
+            "name": data.get("name"),
             "icon": data.get("icon", "🔧"),
             "description": data.get("description", ""),
             "category": data.get("category", "custom"),
@@ -151,7 +155,10 @@ class SkillsManager:
         # Save code to file
         if skill["code"]:
             filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-            filepath.write_text(skill["code"], encoding="utf-8")
+            try:
+                filepath.write_text(skill["code"], encoding="utf-8")
+            except OSError as e:
+                raise SkillInstallError(f"Failed to write skill file: {e}")
             skill["file"] = f"{skill_id}.py"
 
         self._custom_skills.append(skill)
@@ -164,11 +171,15 @@ class SkillsManager:
                 # Remove file if exists
                 filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
                 if filepath.exists():
-                    filepath.unlink()
+                    try:
+                        filepath.unlink()
+                    except OSError as e:
+                        raise SkillInstallError(f"Failed to delete skill file: {e}")
                 self._custom_skills.pop(i)
                 self._save()
                 return True
-        return False
+
+        raise SkillNotFoundError("Skill not found")
 
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
@@ -202,7 +213,10 @@ class SkillsManager:
             "code": code,
         }
         filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-        filepath.write_text(code, encoding="utf-8")
+        try:
+            filepath.write_text(code, encoding="utf-8")
+        except OSError as e:
+            raise SkillInstallError(f"Failed to write skill file: {e}")
         skill["file"] = f"{skill_id}.py"
 
         self._custom_skills.append(skill)

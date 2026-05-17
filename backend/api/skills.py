@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from backend.state import skills_manager
-from backend.skills.errors import SkillValidationError, SkillInstallError
+from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
@@ -15,13 +15,22 @@ async def api_list_marketplace():
 @router.post("")
 async def api_create_skill(request: Request):
     data = await request.json()
-    return skills_manager.create_skill(data)
+    try:
+        return skills_manager.create_skill(data)
+    except SkillValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SkillInstallError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.delete("/{skill_id}")
 async def api_delete_skill(skill_id: str):
-    if skills_manager.delete_skill(skill_id):
+    try:
+        skills_manager.delete_skill(skill_id)
         return {"status": "ok"}
-    raise HTTPException(404, "Skill not found")
+    except SkillNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except SkillInstallError as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/install")
 async def api_install_skill(request: Request):
