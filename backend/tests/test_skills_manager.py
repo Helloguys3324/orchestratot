@@ -300,3 +300,15 @@ def test_save_oserror():
         with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
             with pytest.raises(SkillInstallError, match="Failed to save skills file: Write error"):
                 manager._save()
+
+def test_load_generic_exception() -> None:
+    with patch("backend.skills.manager.load_json", side_effect=Exception("Corrupted JSON")):
+        with pytest.raises(SkillInstallError, match="Failed to load skills file: Corrupted JSON"):
+            SkillsManager()
+
+def test_save_generic_exception() -> None:
+    with patch("backend.skills.manager.load_json", return_value=[]):
+        manager = SkillsManager()
+        with patch("backend.skills.manager.save_json", side_effect=Exception("Serialization error")):
+            with pytest.raises(SkillInstallError, match="Failed to save skills file: Serialization error"):
+                manager._save()
