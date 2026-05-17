@@ -108,6 +108,8 @@ test('UI.withLoading handles button state and awaits action', async () => {
 
     await UI.withLoading('btn', 'Loading...', actionFn);
 
+    assert.strictEqual(global.document.getElementById('other'), null);
+
     assert.strictEqual(actionCalled, true);
     assert.strictEqual(textContent, 'Submit');
     assert.strictEqual(disabled, false);
@@ -138,12 +140,12 @@ test('UI.withLoading handles button state and awaits action even with errors', a
         throw new Error('Test error');
     };
 
-    try {
-        await UI.withLoading('btn', 'Loading...', actionFn);
-        assert.fail('Should have thrown');
-    } catch (e) {
-        assert.strictEqual(e.message, 'Test error');
-    }
+    await assert.rejects(
+        UI.withLoading('btn', 'Loading...', actionFn),
+        { message: 'Test error' }
+    );
+
+    assert.strictEqual(global.document.getElementById('other'), null);
 
     assert.strictEqual(actionCalled, true);
     assert.strictEqual(textContent, 'Submit');
