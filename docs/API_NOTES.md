@@ -143,3 +143,4 @@ When a user sends a message via `POST /api/sessions/{session_id}/chat`, the Sess
 ## Security and Dependencies
 
 - `python-multipart` should be kept at version `>= 0.0.27` to mitigate vulnerabilities including CVE-2026-24486, CVE-2026-40347, and CVE-2026-42561.
+- `fastapi` and `starlette` are upgraded to `>= 0.136.1` and `>= 0.49.1` respectively, to fix starlette vulnerabilities such as CVE-2025-54121 and CVE-2025-62727.
