@@ -81,16 +81,22 @@ class SessionManager:
         if self._message_callback:
             await self._message_callback(session_id, msg)
 
-    async def _sys_msg(self, session, text, icon="\u2139\ufe0f", color="#94A3B8"):
-        """Add and emit a system message."""
+    async def _add_message(self, session: dict, role: str, sender: str, content: str, icon: str, color: str):
+        """Helper to create, append, and emit a message."""
         msg = {
-            "role": "system", "sender": "System",
-            "content": text,
+            "role": role,
+            "sender": sender,
+            "content": content,
             "timestamp": self._now_iso(),
-            "icon": icon, "color": color,
+            "icon": icon,
+            "color": color,
         }
         session["messages"].append(msg)
         await self._emit(session["id"], msg)
+
+    async def _sys_msg(self, session, text, icon="\u2139\ufe0f", color="#94A3B8"):
+        """Add and emit a system message."""
+        await self._add_message(session, "system", "System", text, icon, color)
 
     async def run_chat(self, session_id: str, user_message: str):
         session = self._sessions.get(session_id)
@@ -105,14 +111,7 @@ class SessionManager:
         self._save()
 
         # Add user message
-        user_msg = {
-            "role": "user", "sender": "You",
-            "content": user_message,
-            "timestamp": self._now_iso(),
-            "icon": "\U0001f464", "color": "#FFFFFF",
-        }
-        session["messages"].append(user_msg)
-        await self._emit(session_id, user_msg)
+        await self._add_message(session, "user", "You", user_message, "\U0001f464", "#FFFFFF")
 
         if not api_key:
             await self._sys_msg(session,
@@ -248,16 +247,7 @@ class SessionManager:
             files_written = await self._extract_and_write_files(session, workspace, content)
 
             # ── Step 4: Send agent message ──
-            msg = {
-                "role": "assistant",
-                "sender": ac["name"],
-                "content": content,
-                "timestamp": self._now_iso(),
-                "icon": ac["icon"],
-                "color": ac["color"],
-            }
-            session["messages"].append(msg)
-            await self._emit(session["id"], msg)
+            await self._add_message(session, "assistant", ac["name"], content, ac["icon"], ac["color"])
 
             conv_history.append({"role": "assistant", "content": f"[{ac['name']}]: {content}"})
 
