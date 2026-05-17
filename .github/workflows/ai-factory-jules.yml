@@ -41,6 +41,7 @@ jobs:
       batch_size: ${{ steps.plan.outputs.batch_size }}
     steps:
       - uses: actions/checkout@v4
+
       - id: plan
         env:
           GITHUB_EVENT_SCHEDULE: ${{ github.event.schedule }}
@@ -60,8 +61,10 @@ jobs:
       max-parallel: 1
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Invoke Jules
         uses: google-labs-code/jules-action@v1.0.0
         with:
@@ -107,16 +110,106 @@ jobs:
             - Never modify .github/workflows, .github/scripts, or .github/CODEOWNERS. Infrastructure changes require a human PR outside AI Factory.
             - Do not create cosmetic-only PRs.
             - If no meaningful safe change exists, report that and do not open a PR.
+            - Never ask for clarification or human permission.
+            - Do not ask questions in chat.
+            - You must be completely autonomous: make the best engineering decision based on the constraints and implement it immediately.
 
-            Validation:
-            Run these commands where possible and include results in the PR body:
+            [STRICT VALIDATION PROTOCOL - REQUIRED]
+
+            Run strict validation before finishing the task.
+
+            Required validation commands from the repository root, whenever possible:
+
             python -m compileall backend skills_library run.py
             python .github/scripts/scan_secrets.py
             python -m pytest -q
+
+            Additional validation:
+            - If JSON files changed, validate JSON syntax.
+            - If documentation changed, verify commands and claims are accurate.
+            - If Mermaid diagrams changed, verify Mermaid syntax as much as possible.
+            - If config or environment handling changed, verify no real secrets are added and no secret values are logged or stringified.
+
+            [FRONTEND RUNTIME WALKTHROUGH - REQUIRED WHEN FRONTEND CHANGES]
+
+            If any files in `frontend/` were changed, you must start the app and visually inspect the UI whenever the environment allows it.
+
+            You must:
+            1. Start the application locally using the documented command or the correct command inferred from the repository.
+            2. Open the frontend in a browser or browser automation environment.
+            3. Walk through the changed UI area and affected user flows.
+            4. Record a short video of the walkthrough if supported.
+            5. If video is not supported, capture screenshots.
+            6. If screenshots are not supported, provide a detailed walkthrough log.
+            7. Check browser console errors and obvious network errors when possible.
+            8. Check loading, empty, error, and success states where relevant.
+            9. Verify there are no obvious broken layouts, broken buttons, broken modals, missing files, or broken imports.
+
+            [FRONTEND VISUAL REGRESSION CHECK - REQUIRED WHEN FRONTEND CHANGES]
+
+            If frontend files changed, visual inspection is mandatory.
+
+            The UI must not be considered complete if any of these issues are visible:
+            - cards overlap;
+            - text overlaps other text;
+            - text escapes containers;
+            - arrows or connectors cover important labels;
+            - dashboard panels collide;
+            - content is clipped unexpectedly;
+            - fixed-position elements cover main content;
+            - diagrams are unreadable;
+            - horizontal overflow appears unintentionally;
+            - vertical content is hidden without scroll;
+            - layout breaks at common viewport sizes;
+            - browser console shows runtime errors.
+
+            When possible, test at least these viewport sizes:
+            - 1440x900 desktop
+            - 1280x720 laptop
+            - 1024x768 tablet-like
+            - 390x844 mobile-like, if responsive layout is expected
+
+            If visual overlap, broken layout, unreadable diagram, clipped text, or obvious UI breakage is found, fix it before opening the PR.
+
+            Do not open a PR that knowingly leaves the UI visually broken unless the PR explicitly documents the issue as unresolved and explains why it could not be fixed.
+
+            PR body must include this exact section:
+
+            ## Validation Results
+
+            - `python -m compileall backend skills_library run.py`: PASSED / FAILED / NOT RUN
+            - `python .github/scripts/scan_secrets.py`: PASSED / FAILED / NOT RUN
+            - `python -m pytest -q`: PASSED / FAILED / NOT RUN
+            - JSON validation: PASSED / FAILED / NOT APPLICABLE
+            - Frontend validation: PASSED / FAILED / NOT APPLICABLE
+            - Mermaid/documentation validation: PASSED / FAILED / NOT APPLICABLE
+
+            ## Frontend Walkthrough
+
+            - Frontend files changed: YES / NO
+            - App start command: `...`
+            - URL opened: `...`
+            - Browser/runtime used: `...`
+            - Walkthrough performed: YES / NO / NOT APPLICABLE
+            - Video recorded: YES / NO / NOT SUPPORTED
+            - Screenshots captured: YES / NO / NOT SUPPORTED
+            - Console errors: NONE / LISTED BELOW / NOT CHECKED
+            - Network errors: NONE / LISTED BELOW / NOT CHECKED
+            - Visual issues found: NONE / LISTED BELOW / NOT CHECKED
+            - Evidence location:
+              - video: `...`
+              - screenshots: `...`
+              - trace/log: `...`
+
+            Notes:
+            - Explain every FAILED, NOT RUN, NOT CHECKED, or NOT SUPPORTED item.
+            - Do not claim tests passed unless they actually passed.
+            - Do not claim the UI works unless it was actually started and inspected.
+            - Do not claim video evidence exists unless a real recording exists.
+            - GitHub Actions validation is authoritative.
 
             PR title:
             ai-factory(${{ matrix.role }}): ${{ matrix.title }}
 
             Safe automerge:
-            Only add label ai-factory:safe-automerge when the PR is docs-only or tests-only and validation passed.
-
+            Only add label ai-factory:safe-automerge when the PR is docs-only or tests-only and validation passed. ф
