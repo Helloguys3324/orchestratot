@@ -2,6 +2,7 @@ import asyncio
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS
+from backend.skills.errors import SkillValidationError, SkillInstallError
 
 @pytest.fixture
 def mock_load_json():
@@ -178,30 +179,45 @@ def test_install_from_url_failure(mock_client_class, manager):
 
     # Mock HTTP response
     mock_response = MagicMock()
+    mock_response.status_code = 404
+    mock_response.reason_phrase = "Not Found"
     mock_response.raise_for_status.side_effect = httpx.HTTPStatusError("404 Not Found", request=MagicMock(), response=mock_response)
 
     mock_client = MagicMock()
     mock_client.get = AsyncMock(return_value=mock_response)
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(httpx.HTTPStatusError):
+    with pytest.raises(SkillInstallError, match="HTTP error occurred: 404 Not Found"):
+        asyncio.run(manager.install_from_url("http://example.com/404.py"))
+
+    assert len(manager._custom_skills) == 0
+
+@patch("backend.skills.manager.httpx.AsyncClient")
+def test_install_from_url_request_error(mock_client_class, manager):
+    import httpx
+
+    mock_client = MagicMock()
+    mock_client.get = AsyncMock(side_effect=httpx.RequestError("Connection failed", request=MagicMock()))
+    mock_client_class.return_value.__aenter__.return_value = mock_client
+
+    with pytest.raises(SkillInstallError, match="Request error occurred: Connection failed"):
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
 
     assert len(manager._custom_skills) == 0
 
 def test_install_from_url_invalid_schema(manager):
-    with pytest.raises(ValueError, match="Invalid URL scheme"):
+    with pytest.raises(SkillValidationError, match="Invalid URL scheme"):
         asyncio.run(manager.install_from_url("file:///etc/passwd"))
 
-    with pytest.raises(ValueError, match="Invalid URL scheme"):
+    with pytest.raises(SkillValidationError, match="Invalid URL scheme"):
         asyncio.run(manager.install_from_url("ftp://example.com/skill.py"))
 
 def test_install_from_url_invalid_hostname(manager):
-    with pytest.raises(ValueError, match="Invalid URL hostname"):
+    with pytest.raises(SkillValidationError, match="Invalid URL hostname"):
         asyncio.run(manager.install_from_url("http://localhost:8080/skill.py"))
 
-    with pytest.raises(ValueError, match="Invalid URL hostname"):
+    with pytest.raises(SkillValidationError, match="Invalid URL hostname"):
         asyncio.run(manager.install_from_url("https://127.0.0.1/skill.py"))
 
-    with pytest.raises(ValueError, match="Invalid URL hostname"):
+    with pytest.raises(SkillValidationError, match="Invalid URL hostname"):
         asyncio.run(manager.install_from_url("http://0.0.0.0:5000/skill.py"))
