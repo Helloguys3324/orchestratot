@@ -1,0 +1,750 @@
+TAP version 13
+# Subtest: AgentsPage.render handles no agents
+ok 1 - AgentsPage.render handles no agents
+  ---
+  duration_ms: 6.980954
+  type: 'test'
+  ...
+# Subtest: AgentsPage.render handles populated agents
+ok 2 - AgentsPage.render handles populated agents
+  ---
+  duration_ms: 1.714854
+  type: 'test'
+  ...
+# Subtest: AgentsPage.showCreateModal works
+ok 3 - AgentsPage.showCreateModal works
+  ---
+  duration_ms: 1.662582
+  type: 'test'
+  ...
+# Subtest: AgentsPage.selectTemplate works
+ok 4 - AgentsPage.selectTemplate works
+  ---
+  duration_ms: 0.882397
+  type: 'test'
+  ...
+# Subtest: AgentsPage.create validates and saves
+ok 5 - AgentsPage.create validates and saves
+  ---
+  duration_ms: 1.454316
+  type: 'test'
+  ...
+# Subtest: AgentsPage.create handles API errors
+ok 6 - AgentsPage.create handles API errors
+  ---
+  duration_ms: 0.932884
+  type: 'test'
+  ...
+# Subtest: AgentsPage.showEditModal works
+ok 7 - AgentsPage.showEditModal works
+  ---
+  duration_ms: 1.150029
+  type: 'test'
+  ...
+# Subtest: AgentsPage.update works
+ok 8 - AgentsPage.update works
+  ---
+  duration_ms: 1.296301
+  type: 'test'
+  ...
+# Subtest: AgentsPage.update validates
+ok 9 - AgentsPage.update validates
+  ---
+  duration_ms: 0.627987
+  type: 'test'
+  ...
+# Subtest: AgentsPage.update handles API errors
+ok 10 - AgentsPage.update handles API errors
+  ---
+  duration_ms: 1.102149
+  type: 'test'
+  ...
+# Subtest: AgentsPage.duplicate works
+ok 11 - AgentsPage.duplicate works
+  ---
+  duration_ms: 0.759142
+  type: 'test'
+  ...
+# Subtest: AgentsPage.remove works
+ok 12 - AgentsPage.remove works
+  ---
+  duration_ms: 0.799657
+  type: 'test'
+  ...
+# Subtest: AgentsPage.remove cancels on prompt
+ok 13 - AgentsPage.remove cancels on prompt
+  ---
+  duration_ms: 0.49715
+  type: 'test'
+  ...
+# Subtest: AgentsPage.selectTemplate clears previous selection correctly
+ok 14 - AgentsPage.selectTemplate clears previous selection correctly
+  ---
+  duration_ms: 0.678837
+  type: 'test'
+  ...
+# Subtest: API client base path is correct
+ok 15 - API client base path is correct
+  ---
+  duration_ms: 2.353738
+  type: 'test'
+  ...
+# Subtest: API request handles successful fetch
+ok 16 - API request handles successful fetch
+  ---
+  duration_ms: 3.579543
+  type: 'test'
+  ...
+# Subtest: API request handles fetch with body
+ok 17 - API request handles fetch with body
+  ---
+  duration_ms: 1.148354
+  type: 'test'
+  ...
+# Subtest: API request handles fetch error with standard detail
+ok 18 - API request handles fetch error with standard detail
+  ---
+  duration_ms: 1.240459
+  type: 'test'
+  ...
+# Subtest: API request handles fetch error with array detail (pydantic style)
+ok 19 - API request handles fetch error with array detail (pydantic style)
+  ---
+  duration_ms: 1.261362
+  type: 'test'
+  ...
+# Subtest: API request handles fetch error when json parsing fails
+ok 20 - API request handles fetch error when json parsing fails
+  ---
+  duration_ms: 1.301016
+  type: 'test'
+  ...
+# Subtest: API request throws json detail properly
+ok 21 - API request throws json detail properly
+  ---
+  duration_ms: 1.131778
+  type: 'test'
+  ...
+# Subtest: API wrapper methods call request correctly
+ok 22 - API wrapper methods call request correctly
+  ---
+  duration_ms: 3.299816
+  type: 'test'
+  ...
+# Subtest: API request handles fetch error with array detail containing plain strings
+ok 23 - API request handles fetch error with array detail containing plain strings
+  ---
+  duration_ms: 3.643894
+  type: 'test'
+  ...
+# Subtest: API request handles fetch error without detail field
+ok 24 - API request handles fetch error without detail field
+  ---
+  duration_ms: 1.232485
+  type: 'test'
+  ...
+# Subtest: App.navigate routes correctly
+ok 25 - App.navigate routes correctly
+  ---
+  duration_ms: 11.989656
+  type: 'test'
+  ...
+# Subtest: App.navigate handles unknown page
+ok 26 - App.navigate handles unknown page
+  ---
+  duration_ms: 1.197115
+  type: 'test'
+  ...
+# Subtest: App.navigate catches component errors
+ok 27 - App.navigate catches component errors
+  ---
+  duration_ms: 0.868825
+  type: 'test'
+  ...
+# Subtest: App.openSession works
+ok 28 - App.openSession works
+  ---
+  duration_ms: 0.888888
+  type: 'test'
+  ...
+# Subtest: App.init works and loads agents
+ok 29 - App.init works and loads agents
+  ---
+  duration_ms: 0.894066
+  type: 'test'
+  ...
+# Subtest: App.init handles API error gracefully
+ok 30 - App.init handles API error gracefully
+  ---
+  duration_ms: 0.73808
+  type: 'test'
+  ...
+# Subtest: App.renderSettings works
+ok 31 - App.renderSettings works
+  ---
+  duration_ms: 1.497085
+  type: 'test'
+  ...
+# Subtest: App.saveSettings works
+ok 32 - App.saveSettings works
+  ---
+  duration_ms: 3.081813
+  type: 'test'
+  ...
+# Subtest: App.saveSettings handles API errors
+ok 33 - App.saveSettings handles API errors
+  ---
+  duration_ms: 1.369798
+  type: 'test'
+  ...
+# Subtest: App.init sets up navigation event listeners
+ok 34 - App.init sets up navigation event listeners
+  ---
+  duration_ms: 1.173385
+  type: 'test'
+  ...
+# Subtest: DOMContentLoaded event triggers App.init
+ok 35 - DOMContentLoaded event triggers App.init
+  ---
+  duration_ms: 1.251229
+  type: 'test'
+  ...
+# Subtest: ChatPage.addMessage returns early if no container
+ok 36 - ChatPage.addMessage returns early if no container
+  ---
+  duration_ms: 2.041214
+  type: 'test'
+  ...
+# Subtest: ChatPage.showTyping returns early if no container
+ok 37 - ChatPage.showTyping returns early if no container
+  ---
+  duration_ms: 0.393751
+  type: 'test'
+  ...
+# Subtest: ChatPage.updateSendBtn handles missing button
+ok 38 - ChatPage.updateSendBtn handles missing button
+  ---
+  duration_ms: 0.333861
+  type: 'test'
+  ...
+# Subtest: ChatPage.scrollToBottom handles missing container
+ok 39 - ChatPage.scrollToBottom handles missing container
+  ---
+  duration_ms: 0.259857
+  type: 'test'
+  ...
+# Subtest: ChatPage.send returns early if input not found
+ok 40 - ChatPage.send returns early if input not found
+  ---
+  duration_ms: 0.608742
+  type: 'test'
+  ...
+# Subtest: ChatPage.formatContent escapes HTML correctly
+ok 41 - ChatPage.formatContent escapes HTML correctly
+  ---
+  duration_ms: 2.65351
+  type: 'test'
+  ...
+# Subtest: ChatPage.formatContent parses markdown properly
+ok 42 - ChatPage.formatContent parses markdown properly
+  ---
+  duration_ms: 0.521654
+  type: 'test'
+  ...
+# Subtest: ChatPage.formatContent handles custom FILE markers
+ok 43 - ChatPage.formatContent handles custom FILE markers
+  ---
+  duration_ms: 0.315529
+  type: 'test'
+  ...
+# Subtest: ChatPage.renderMessage renders user message structure correctly
+ok 44 - ChatPage.renderMessage renders user message structure correctly
+  ---
+  duration_ms: 0.644212
+  type: 'test'
+  ...
+# Subtest: ChatPage.renderMessage renders system message structure correctly
+ok 45 - ChatPage.renderMessage renders system message structure correctly
+  ---
+  duration_ms: 0.321405
+  type: 'test'
+  ...
+# Subtest: ChatPage.addMessage adds message and scrolls
+ok 46 - ChatPage.addMessage adds message and scrolls
+  ---
+  duration_ms: 0.690334
+  type: 'test'
+  ...
+# Subtest: ChatPage.showTyping adds typing indicator and scrolls
+ok 47 - ChatPage.showTyping adds typing indicator and scrolls
+  ---
+  duration_ms: 0.515908
+  type: 'test'
+  ...
+# Subtest: ChatPage.updateSendBtn updates button state based on isRunning
+ok 48 - ChatPage.updateSendBtn updates button state based on isRunning
+  ---
+  duration_ms: 0.406003
+  type: 'test'
+  ...
+# Subtest: ChatPage.scrollToBottom updates scrollTop to scrollHeight
+ok 49 - ChatPage.scrollToBottom updates scrollTop to scrollHeight
+  ---
+  duration_ms: 0.361087
+  type: 'test'
+  ...
+# Subtest: ChatPage.send successfully sends a message
+ok 50 - ChatPage.send successfully sends a message
+  ---
+  duration_ms: 3.615072
+  type: 'test'
+  ...
+# Subtest: ChatPage.send handles empty messages and invalid state
+ok 51 - ChatPage.send handles empty messages and invalid state
+  ---
+  duration_ms: 0.478744
+  type: 'test'
+  ...
+# Subtest: ChatPage.send handles API errors correctly
+ok 52 - ChatPage.send handles API errors correctly
+  ---
+  duration_ms: 0.662575
+  type: 'test'
+  ...
+# Subtest: ChatPage.clearChat handles clearing session correctly
+ok 53 - ChatPage.clearChat handles clearing session correctly
+  ---
+  duration_ms: 0.522047
+  type: 'test'
+  ...
+# Subtest: ChatPage.clearChat handles cancelled confirm and invalid state
+ok 54 - ChatPage.clearChat handles cancelled confirm and invalid state
+  ---
+  duration_ms: 0.360538
+  type: 'test'
+  ...
+# Subtest: ChatPage.showFiles handles empty files properly
+ok 55 - ChatPage.showFiles handles empty files properly
+  ---
+  duration_ms: 0.575273
+  type: 'test'
+  ...
+# Subtest: ChatPage.showFiles handles populated files properly
+ok 56 - ChatPage.showFiles handles populated files properly
+  ---
+  duration_ms: 0.459531
+  type: 'test'
+  ...
+# Subtest: ChatPage.showFiles handles no current session properly
+ok 57 - ChatPage.showFiles handles no current session properly
+  ---
+  duration_ms: 0.332387
+  type: 'test'
+  ...
+# Subtest: ChatPage.render handles missing sessionId (no sessions)
+ok 58 - ChatPage.render handles missing sessionId (no sessions)
+  ---
+  duration_ms: 0.569762
+  type: 'test'
+  ...
+# Subtest: ChatPage.render handles missing sessionId (has sessions)
+ok 59 - ChatPage.render handles missing sessionId (has sessions)
+  ---
+  duration_ms: 0.473419
+  type: 'test'
+  ...
+# Subtest: ChatPage.render handles existing sessionId
+ok 60 - ChatPage.render handles existing sessionId
+  ---
+  duration_ms: 0.724604
+  type: 'test'
+  ...
+# Subtest: ChatPage WebSocket onMessage handles agent_message
+ok 61 - ChatPage WebSocket onMessage handles agent_message
+  ---
+  duration_ms: 0.786209
+  type: 'test'
+  ...
+# Subtest: ModelsPage renders HTML based on data
+ok 62 - ModelsPage renders HTML based on data
+  ---
+  duration_ms: 2.558005
+  type: 'test'
+  ...
+# Subtest: ModelsPage renders null limits and missing features gracefully
+ok 63 - ModelsPage renders null limits and missing features gracefully
+  ---
+  duration_ms: 0.592135
+  type: 'test'
+  ...
+# Subtest: ModelsPage renders specific limits correctly
+ok 64 - ModelsPage renders specific limits correctly
+  ---
+  duration_ms: 0.484935
+  type: 'test'
+  ...
+# Subtest: SessionsPage.render handles no sessions
+ok 65 - SessionsPage.render handles no sessions
+  ---
+  duration_ms: 3.952608
+  type: 'test'
+  ...
+# Subtest: SessionsPage.render handles populated sessions
+ok 66 - SessionsPage.render handles populated sessions
+  ---
+  duration_ms: 26.103793
+  type: 'test'
+  ...
+# Subtest: SessionsPage.showCreateModal alerts if no agents
+ok 67 - SessionsPage.showCreateModal alerts if no agents
+  ---
+  duration_ms: 0.689891
+  type: 'test'
+  ...
+# Subtest: SessionsPage.showCreateModal returns early if agent container is missing
+ok 68 - SessionsPage.showCreateModal returns early if agent container is missing
+  ---
+  duration_ms: 0.824575
+  type: 'test'
+  ...
+# Subtest: SessionsPage.create handles missing elements
+ok 69 - SessionsPage.create handles missing elements
+  ---
+  duration_ms: 0.757454
+  type: 'test'
+  ...
+# Subtest: SessionsPage.remove cancels gracefully when not confirmed
+ok 70 - SessionsPage.remove cancels gracefully when not confirmed
+  ---
+  duration_ms: 0.41622
+  type: 'test'
+  ...
+# Subtest: SessionsPage.remove prompts and deletes
+ok 71 - SessionsPage.remove prompts and deletes
+  ---
+  duration_ms: 0.472158
+  type: 'test'
+  ...
+# Subtest: SessionsPage.showCreateModal injects HTML with agents
+ok 72 - SessionsPage.showCreateModal injects HTML with agents
+  ---
+  duration_ms: 0.454804
+  type: 'test'
+  ...
+# Subtest: SessionsPage.create handles validation
+ok 73 - SessionsPage.create handles validation
+  ---
+  duration_ms: 0.449555
+  type: 'test'
+  ...
+# Subtest: SessionsPage.create successfully creates session
+ok 74 - SessionsPage.create successfully creates session
+  ---
+  duration_ms: 2.013594
+  type: 'test'
+  ...
+# Subtest: SessionsPage.create handles API errors
+ok 75 - SessionsPage.create handles API errors
+  ---
+  duration_ms: 0.639795
+  type: 'test'
+  ...
+# Subtest: SessionsPage.showCreateModal handles DOM operations on chip click
+ok 76 - SessionsPage.showCreateModal handles DOM operations on chip click
+  ---
+  duration_ms: 0.614474
+  type: 'test'
+  ...
+# Subtest: SessionsPage.showCreateModal handles no agents successfully without throwing
+ok 77 - SessionsPage.showCreateModal handles no agents successfully without throwing
+  ---
+  duration_ms: 0.409646
+  type: 'test'
+  ...
+# Subtest: SkillsPage.render generates correct HTML
+ok 78 - SkillsPage.render generates correct HTML
+  ---
+  duration_ms: 2.278922
+  type: 'test'
+  ...
+# Subtest: MarketplacePage.render generates correct HTML
+ok 79 - MarketplacePage.render generates correct HTML
+  ---
+  duration_ms: 2.470741
+  type: 'test'
+  ...
+# Subtest: SkillsPage.remove prompts and deletes
+ok 80 - SkillsPage.remove prompts and deletes
+  ---
+  duration_ms: 0.590359
+  type: 'test'
+  ...
+# Subtest: MarketplacePage.install works
+ok 81 - MarketplacePage.install works
+  ---
+  duration_ms: 0.568867
+  type: 'test'
+  ...
+# Subtest: MarketplacePage.installFromUrl works
+ok 82 - MarketplacePage.installFromUrl works
+  ---
+  duration_ms: 0.549359
+  type: 'test'
+  ...
+# Subtest: SkillsPage.showCreateModal injects modal HTML
+ok 83 - SkillsPage.showCreateModal injects modal HTML
+  ---
+  duration_ms: 0.40365
+  type: 'test'
+  ...
+# Subtest: SkillsPage.create handles validation errors
+ok 84 - SkillsPage.create handles validation errors
+  ---
+  duration_ms: 0.563381
+  type: 'test'
+  ...
+# Subtest: SkillsPage.create successfully creates skill
+ok 85 - SkillsPage.create successfully creates skill
+  ---
+  duration_ms: 1.843709
+  type: 'test'
+  ...
+# Subtest: SkillsPage.create handles API errors
+ok 86 - SkillsPage.create handles API errors
+  ---
+  duration_ms: 0.513503
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions handles empty models array
+ok 87 - UI.renderModelOptions handles empty models array
+  ---
+  duration_ms: 3.638667
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions handles missing rate_limits completely
+ok 88 - UI.renderModelOptions handles missing rate_limits completely
+  ---
+  duration_ms: 0.954795
+  type: 'test'
+  ...
+# Subtest: UI.renderSkillCheckboxes handles empty skills array
+ok 89 - UI.renderSkillCheckboxes handles empty skills array
+  ---
+  duration_ms: 0.271175
+  type: 'test'
+  ...
+# Subtest: UI.withLoading restores original text on success
+ok 90 - UI.withLoading restores original text on success
+  ---
+  duration_ms: 0.463107
+  type: 'test'
+  ...
+# Subtest: UI.showError does not throw when element missing
+ok 91 - UI.showError does not throw when element missing
+  ---
+  duration_ms: 0.460699
+  type: 'test'
+  ...
+# Subtest: UI.hideError does not throw when element missing
+ok 92 - UI.hideError does not throw when element missing
+  ---
+  duration_ms: 0.385692
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions handles missing properties gracefully
+ok 93 - UI.renderModelOptions handles missing properties gracefully
+  ---
+  duration_ms: 0.259358
+  type: 'test'
+  ...
+# Subtest: UI.renderEmptyState handles empty strings and missing arguments
+ok 94 - UI.renderEmptyState handles empty strings and missing arguments
+  ---
+  duration_ms: 0.243481
+  type: 'test'
+  ...
+# Subtest: UI.renderSkillCheckboxes handles missing properties
+ok 95 - UI.renderSkillCheckboxes handles missing properties
+  ---
+  duration_ms: 0.35274
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions handles selectedId correctly when not matched
+ok 96 - UI.renderModelOptions handles selectedId correctly when not matched
+  ---
+  duration_ms: 0.239258
+  type: 'test'
+  ...
+# Subtest: UI.renderSkillCheckboxes handles selectedIds array safely
+ok 97 - UI.renderSkillCheckboxes handles selectedIds array safely
+  ---
+  duration_ms: 0.219015
+  type: 'test'
+  ...
+# Subtest: UI.withLoading restores text successfully on multiple invocations
+ok 98 - UI.withLoading restores text successfully on multiple invocations
+  ---
+  duration_ms: 0.647815
+  type: 'test'
+  ...
+# Subtest: UI.showError handles valid element correctly
+ok 99 - UI.showError handles valid element correctly
+  ---
+  duration_ms: 0.296669
+  type: 'test'
+  ...
+# Subtest: UI.hideError handles valid element correctly
+ok 100 - UI.hideError handles valid element correctly
+  ---
+  duration_ms: 0.3607
+  type: 'test'
+  ...
+# Subtest: UI.withLoading handles case where btn is nullified during action
+ok 101 - UI.withLoading handles case where btn is nullified during action
+  ---
+  duration_ms: 0.412804
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions formats correctly
+ok 102 - UI.renderModelOptions formats correctly
+  ---
+  duration_ms: 3.55015
+  type: 'test'
+  ...
+# Subtest: UI.renderSkillCheckboxes formats correctly
+ok 103 - UI.renderSkillCheckboxes formats correctly
+  ---
+  duration_ms: 0.592733
+  type: 'test'
+  ...
+# Subtest: UI.renderEmptyState formats correctly
+ok 104 - UI.renderEmptyState formats correctly
+  ---
+  duration_ms: 0.373296
+  type: 'test'
+  ...
+# Subtest: UI.showError manipulates DOM correctly
+ok 105 - UI.showError manipulates DOM correctly
+  ---
+  duration_ms: 0.614599
+  type: 'test'
+  ...
+# Subtest: UI.hideError manipulates DOM correctly
+ok 106 - UI.hideError manipulates DOM correctly
+  ---
+  duration_ms: 0.424672
+  type: 'test'
+  ...
+# Subtest: UI.withLoading handles button state and awaits action
+ok 107 - UI.withLoading handles button state and awaits action
+  ---
+  duration_ms: 0.610951
+  type: 'test'
+  ...
+# Subtest: UI.withLoading handles button state and awaits action even with errors
+ok 108 - UI.withLoading handles button state and awaits action even with errors
+  ---
+  duration_ms: 1.7711
+  type: 'test'
+  ...
+# Subtest: UI.withLoading handles non-existent button safely
+ok 109 - UI.withLoading handles non-existent button safely
+  ---
+  duration_ms: 0.361714
+  type: 'test'
+  ...
+# Subtest: UI.renderEmptyState formats correctly without actionHtml
+ok 110 - UI.renderEmptyState formats correctly without actionHtml
+  ---
+  duration_ms: 0.335151
+  type: 'test'
+  ...
+# Subtest: UI.renderSkillCheckboxes formats correctly without selectedIds or className
+ok 111 - UI.renderSkillCheckboxes formats correctly without selectedIds or className
+  ---
+  duration_ms: 0.280524
+  type: 'test'
+  ...
+# Subtest: UI.renderModelOptions formats correctly without selectedId
+ok 112 - UI.renderModelOptions formats correctly without selectedId
+  ---
+  duration_ms: 0.265798
+  type: 'test'
+  ...
+# [WS] Disconnected
+# Subtest: WS connects and handles messages
+ok 113 - WS connects and handles messages
+  ---
+  duration_ms: 3.635233
+  type: 'test'
+  ...
+# Subtest: WS handles disconnect correctly
+ok 114 - WS handles disconnect correctly
+  ---
+  duration_ms: 0.547472
+  type: 'test'
+  ...
+# Subtest: WS auto-reconnects on close
+ok 115 - WS auto-reconnects on close
+  ---
+  duration_ms: 1.755931
+  type: 'test'
+  ...
+# Subtest: WS handles JSON parse errors silently
+ok 116 - WS handles JSON parse errors silently
+  ---
+  duration_ms: 1.694058
+  type: 'test'
+  ...
+# Subtest: WS handles onerror
+ok 117 - WS handles onerror
+  ---
+  duration_ms: 0.398763
+  type: 'test'
+  ...
+# Subtest: WS handles onopen
+ok 118 - WS handles onopen
+  ---
+  duration_ms: 0.364232
+  type: 'test'
+  ...
+1..118
+# tests 118
+# suites 0
+# pass 118
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 656.832544
+# start of coverage report
+# -------------------------------------------------------------------------------------------------------
+# file                 | line % | branch % | funcs % | uncovered lines
+# -------------------------------------------------------------------------------------------------------
+# frontend             |        |          |         |
+#  js                  |        |          |         |
+#   agents.js          | 100.00 |    91.30 |   89.47 |
+#   api.js             | 100.00 |   100.00 |  100.00 |
+#   app.js             | 100.00 |    92.86 |   83.33 |
+#   chat.js            | 100.00 |    86.79 |  100.00 |
+#   models.js          | 100.00 |    89.19 |  100.00 |
+#   sessions.js        | 100.00 |    96.00 |  100.00 |
+#   skills.js          | 100.00 |   100.00 |  100.00 |
+#   ui.js              | 100.00 |   100.00 |  100.00 |
+#   websocket.js       | 100.00 |   100.00 |  100.00 |
+#  tests               |        |          |         |
+#   agents.test.js     | 100.00 |   100.00 |   94.94 |
+#   api.test.js        |  97.24 |    82.86 |  100.00 | 48 70 87 109 197 213
+#   app.test.js        |  99.69 |    87.32 |   96.83 | 286
+#   chat.extra.test.js | 100.00 |   100.00 |  100.00 |
+#   chat.test.js       |  97.07 |    88.89 |   91.30 | 87 96 122 131 154 179 204-212 260 271 282 301-302
+#   models.test.js     | 100.00 |    90.91 |  100.00 |
+#   sessions.test.js   |  97.94 |    86.67 |   88.89 | 182 205 211 239 288 330 341 354
+#   skills.test.js     |  99.21 |    91.30 |   95.35 | 116 165
+#   ui.extra.test.js   |  99.28 |    96.67 |  100.00 | 131
+#   ui.test.js         | 100.00 |   100.00 |   93.55 |
+#   websocket.test.js  | 100.00 |   100.00 |   80.00 |
+# -------------------------------------------------------------------------------------------------------
+# all files            |  99.09 |    92.58 |   94.17 |
+# -------------------------------------------------------------------------------------------------------
+# end of coverage report
