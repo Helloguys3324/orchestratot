@@ -261,3 +261,7 @@ const AgentsPage = {
     App.navigate('agents');
   },
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = AgentsPage;
+}

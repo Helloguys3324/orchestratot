@@ -143,3 +143,7 @@ const MarketplacePage = {
     await this.install(url, null);
   },
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { SkillsPage, MarketplacePage };
+}

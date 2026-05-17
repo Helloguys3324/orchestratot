@@ -104,3 +104,94 @@ test('WS auto-reconnects on close', (t) => {
         ws.socket.onclose();
     });
 });
+
+test('WS handles JSON parse errors silently', (t) => {
+    global.location = { protocol: 'http:', host: 'localhost:8000' };
+
+    let wsInstance = null;
+    class MockWebSocket {
+        constructor(url) {
+            this.url = url;
+            wsInstance = this;
+        }
+        close() {}
+    }
+    global.WebSocket = MockWebSocket;
+
+    const ws = new WS();
+    ws.connect('session-123');
+
+    let listenerCalled = false;
+    ws.onMessage(() => { listenerCalled = true; });
+
+    const origConsoleError = console.error;
+    let errorLogged = false;
+    console.error = () => { errorLogged = true; };
+
+    wsInstance.onmessage({ data: 'invalid json' });
+
+    assert.strictEqual(listenerCalled, false);
+    assert.strictEqual(errorLogged, true);
+
+    console.error = origConsoleError;
+    delete global.location;
+    delete global.WebSocket;
+});
+
+test('WS handles onerror', (t) => {
+    global.location = { protocol: 'http:', host: 'localhost:8000' };
+
+    let wsInstance = null;
+    class MockWebSocket {
+        constructor(url) {
+            this.url = url;
+            wsInstance = this;
+        }
+        close() {}
+    }
+    global.WebSocket = MockWebSocket;
+
+    const ws = new WS();
+    ws.connect('session-123');
+
+    const origConsoleError = console.error;
+    let errorLogged = false;
+    console.error = () => { errorLogged = true; };
+
+    wsInstance.onerror(new Error('test error'));
+
+    assert.strictEqual(errorLogged, true);
+
+    console.error = origConsoleError;
+    delete global.location;
+    delete global.WebSocket;
+});
+
+test('WS handles onopen', (t) => {
+    global.location = { protocol: 'http:', host: 'localhost:8000' };
+
+    let wsInstance = null;
+    class MockWebSocket {
+        constructor(url) {
+            this.url = url;
+            wsInstance = this;
+        }
+        close() {}
+    }
+    global.WebSocket = MockWebSocket;
+
+    const ws = new WS();
+    ws.connect('session-123');
+
+    const origConsoleLog = console.log;
+    let logged = false;
+    console.log = () => { logged = true; };
+
+    wsInstance.onopen();
+
+    assert.strictEqual(logged, true);
+
+    console.log = origConsoleLog;
+    delete global.location;
+    delete global.WebSocket;
+});
