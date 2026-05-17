@@ -118,10 +118,16 @@ class SkillsManager:
         self._load()
 
     def _load(self):
-        self._custom_skills = load_json(SKILLS_FILE, [])
+        try:
+            self._custom_skills = load_json(SKILLS_FILE, [])
+        except OSError as e:
+            raise SkillInstallError(f"Failed to load skills file: {e}") from e
 
     def _save(self):
-        save_json(SKILLS_FILE, self._custom_skills)
+        try:
+            save_json(SKILLS_FILE, self._custom_skills)
+        except OSError as e:
+            raise SkillInstallError(f"Failed to save skills file: {e}") from e
 
     def list_skills(self) -> list[dict]:
         return BUILTIN_SKILLS + self._custom_skills
