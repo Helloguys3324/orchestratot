@@ -109,10 +109,10 @@ python -m compileall backend skills_library run.py
 # Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
 
-# Run all backend unit and integration tests
+# Run all backend unit and integration tests (ensure local testing dependencies are installed)
 PYTHONPATH=. python -m pytest -q
 
-# Run frontend tests
+# Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
 ```
 

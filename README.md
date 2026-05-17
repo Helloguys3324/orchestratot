@@ -23,10 +23,11 @@ To prepare the repository for local development, follow these steps:
    pip install -r backend/requirements.txt
 
    # Local backend testing dependencies
-   pip install pytest pytest-cov pytest-asyncio python-dotenv
+   pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings
 
    # UI testing dependencies (Optional, only needed if making UI changes)
-   pip install playwright && playwright install chromium
+   pip install playwright
+   playwright install chromium
    ```
 
 3. **Configure Local Environment Variables**
@@ -63,9 +64,9 @@ python -m compileall backend skills_library run.py
 # Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
 
-# Run all backend unit and integration tests
+# Run all backend unit and integration tests (ensure local testing dependencies are installed)
 PYTHONPATH=. python -m pytest -q
 
-# Run frontend tests using native node runner
+# Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
 ```
