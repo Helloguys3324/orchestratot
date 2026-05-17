@@ -51,3 +51,5 @@ The repository is structured into the following directories:
 - **Verification:** Zero-trust verification. Unit/integration tests via MCP must pass before any code is considered complete.
 - **Self-Healing:** Enter a debug loop immediately upon test failure or bug detection. Analyze stack traces and fix.
 - **Recursive Meta-Prompting:** All tasks generated must follow the strict 4-part protocol: `[INPUT STATE]`, `[ATOMIC OBJECTIVE]`, `[CONSTRAINTS]`, `[ACCEPTANCE CRITERIA]`.
+- **Error Handling & Validation:** Enforce explicit typed domain exceptions mapping to precise HTTP status codes, and Pydantic models for inbound validation/config with empty env var filtering.
+- **Documentation:** API payloads must be documented in `docs/API_NOTES.md`.
