@@ -334,3 +334,20 @@ test('SessionsPage.showCreateModal handles DOM operations on chip click', async 
     delete global.document;
 
 });
+
+test('SessionsPage.showCreateModal handles no agents successfully without throwing', async () => {
+    global.API = {
+        getAgents: async () => [],
+        getChatModels: async () => []
+    };
+    let alertCalled = false;
+    global.alert = () => { alertCalled = true; };
+    global.App = { navigate: () => {} };
+
+    await SessionsPage.showCreateModal();
+
+    assert.strictEqual(alertCalled, true);
+    delete global.API;
+    delete global.alert;
+    delete global.App;
+});

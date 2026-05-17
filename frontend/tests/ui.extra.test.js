@@ -32,3 +32,21 @@ test('UI.withLoading restores original text on success', async () => {
     assert.strictEqual(btnState.textContent, 'Initial');
     assert.strictEqual(btnState.disabled, false);
 });
+
+test('UI.showError does not throw when element missing', () => {
+    global.document = {
+        getElementById: () => null
+    };
+    assert.doesNotThrow(() => {
+        UI.showError('nonexistent', 'An error occurred');
+    });
+});
+
+test('UI.hideError does not throw when element missing', () => {
+    global.document = {
+        getElementById: () => null
+    };
+    assert.doesNotThrow(() => {
+        UI.hideError('nonexistent');
+    });
+});
