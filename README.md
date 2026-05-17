@@ -19,6 +19,9 @@ To prepare the repository for local development, follow these steps:
 2. **Install Backend Dependencies**
    ```bash
    pip install -r backend/requirements.txt
+
+   # To run backend tests locally, you may also need to install:
+   pip install pytest pytest-cov pytest-asyncio httpx python-dotenv fastapi uvicorn pydantic pydantic-settings
    ```
 
 3. **Configure Environment Variables**
@@ -26,7 +29,7 @@ To prepare the repository for local development, follow these steps:
    ```bash
    cp .env.example .env
    ```
-   *Note: Never commit your `.env` file to source control. Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`.*
+   *Note: Never commit your `.env` file to source control. Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing `.env` and environment variables over default fallback settings.*
 
 4. **Frontend & Testing Dependencies**
    - **Frontend Tests:** Ensure **Node.js** is installed to run frontend vanilla JS unit tests via `node --test`.
@@ -34,6 +37,9 @@ To prepare the repository for local development, follow these steps:
 
 5. **Emergency Stop (Local & Remote)**
    If you need to stop autonomous background tasks, create a file named `AUTOPILOT_STOP` in the root directory.
+
+6. **GitHub Actions & CI/CD**
+   The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically. For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 
 ## Starting the Application
 
@@ -56,5 +62,8 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
-python -m pytest -q
+PYTHONPATH=. python -m pytest -q
+
+# Run frontend tests
+node --experimental-test-coverage --test frontend/tests/*.js
 ```
