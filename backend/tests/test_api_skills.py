@@ -11,11 +11,11 @@ client = TestClient(app)
 def test_create_skill_validation_error(mock_create):
     mock_create.side_effect = SkillValidationError("Invalid skill name")
 
-    response = client.post("/api/skills", json={})
+    response = client.post("/api/skills", json={"name": ""})
 
     assert response.status_code == 400
     assert response.json()["detail"] == "Invalid skill name"
-    mock_create.assert_called_once_with({})
+    mock_create.assert_called_once_with({"name": ""})
 
 @patch("backend.api.skills.skills_manager.create_skill")
 def test_create_skill_install_error(mock_create):
@@ -64,3 +64,7 @@ def test_install_skill_install_error(mock_install):
 
     assert response.status_code == 500
     assert response.json()["detail"] == "HTTP Error"
+
+def test_install_skill_missing_url():
+    response = client.post("/api/skills/install", json={})
+    assert response.status_code == 422
