@@ -23,7 +23,7 @@ To prepare the repository for local development, follow these steps:
    pip install -r backend/requirements.txt
 
    # Local backend testing dependencies
-   pip install pytest pytest-cov pytest-asyncio python-dotenv
+   pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings
 
    # UI testing dependencies (Optional, only needed if making UI changes)
    pip install playwright && playwright install chromium
