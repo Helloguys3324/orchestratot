@@ -6,7 +6,7 @@ on:
       batch_size:
         description: "How many Jules tasks to start in this run"
         required: false
-        default: "4"
+        default: "1"
       role:
         description: "Optional role override, for example tester or documenter"
         required: false
@@ -57,7 +57,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
-      max-parallel: 4
+      max-parallel: 1
       matrix:
         include: ${{ fromJson(needs.plan.outputs.matrix) }}
     steps:
