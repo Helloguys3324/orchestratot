@@ -1,13 +1,1 @@
-name: Jules PR Auto-Loop
 
-on:
-  workflow_dispatch:
-
-jobs:
-  disabled:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Disabled legacy workflow
-        run: |
-          echo "Legacy Jules PR Auto-Loop is disabled."
-          echo "AI Factory workflows handle automation now."
