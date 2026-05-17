@@ -6,7 +6,7 @@ This repository is configured to run Jules as an autonomous GitHub development f
 
 1. Install/connect the repository in the Jules web app.
 2. Create a Jules API key.
-3. Add a repository secret:
+3. Add a repository secret (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
 4. Confirm GitHub Actions are enabled for the repository.
@@ -99,8 +99,13 @@ All implementation, refactor, security, and architecture PRs require human revie
 The validation workflow runs:
 
 ```bash
+# Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
+
+# Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
+
+# Run all backend unit and integration tests
 python -m pytest -q
 ```
 
@@ -108,7 +113,11 @@ The pytest step runs when tests exist outside ignored runtime workspace director
 
 ## Secrets
 
-Never commit real API keys. Local runtime credentials should use environment variables (e.g. by placing them in a `.env` file at the root of the project which is parsed automatically):
+Never commit real API keys. Local runtime credentials should use environment variables (e.g. by placing them in a `.env` file at the root of the project which is parsed automatically). You can copy the provided `.env.example` file to create your local `.env` configuration:
+
+```bash
+cp .env.example .env
+```
 
 ```bash
 AUTOGEN_API_KEY=...
