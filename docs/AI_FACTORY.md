@@ -6,9 +6,11 @@ This repository is configured to run Jules as an autonomous GitHub development f
 
 1. Install/connect the repository in the Jules web app.
 2. Create a Jules API key.
-3. Add a repository secret (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
+3. Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
+   - Name: `AUTOGEN_API_KEY` (if your models require authentication)
+   - Value: your LLM provider API key
 4. Confirm GitHub Actions are enabled for the repository.
 5. Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
