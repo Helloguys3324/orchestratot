@@ -2,7 +2,7 @@ import os
 import json
 import pytest
 from pydantic import SecretStr, ValidationError
-from backend.config import get_settings, save_settings, SETTINGS_FILE, DEFAULT_SETTINGS, ConfigModel
+from backend.config import get_settings, save_settings, SETTINGS_FILE, ConfigModel
 
 @pytest.fixture(autouse=True)
 def setup_teardown_settings():
@@ -36,20 +36,19 @@ def test_secret_str_prevents_json_dump():
 
 def test_config_model_validation():
     # Valid
-    model = ConfigModel(**DEFAULT_SETTINGS | {"api_key": "valid-api-key-123"})
+    model = ConfigModel(**{"api_key": "valid-api-key-123"})
     assert model.api_key.get_secret_value() == "valid-api-key-123"
 
     # Invalid: too short
     with pytest.raises(ValidationError):
-        ConfigModel(**DEFAULT_SETTINGS | {"api_key": "short"})
+        ConfigModel(**{"api_key": "short"})
 
     # Invalid: whitespace
     with pytest.raises(ValidationError):
-        ConfigModel(**DEFAULT_SETTINGS | {"api_key": "has space in it"})
+        ConfigModel(**{"api_key": "has space in it"})
 
 def test_get_settings_masks_api_key():
-    test_settings = DEFAULT_SETTINGS.copy()
-    test_settings["api_key"] = "test-key-from-file"
+    test_settings = {"api_key": "test-key-from-file"}
 
     with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
         json.dump(test_settings, f)
@@ -60,8 +59,7 @@ def test_get_settings_masks_api_key():
     assert settings["api_key"].get_secret_value() == "test-key-from-file"
 
 def test_get_settings_invalid_key_fallback():
-    test_settings = DEFAULT_SETTINGS.copy()
-    test_settings["api_key"] = "short"
+    test_settings = {"api_key": "short"}
 
     with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
         json.dump(test_settings, f)
@@ -72,8 +70,7 @@ def test_get_settings_invalid_key_fallback():
     assert settings["api_key"].get_secret_value() == ""
 
 def test_save_settings_scrubs_api_key():
-    test_settings = DEFAULT_SETTINGS.copy()
-    test_settings["api_key"] = SecretStr("key-to-scrub")
+    test_settings = {"api_key": SecretStr("key-to-scrub")}
 
     save_settings(test_settings)
 
@@ -83,9 +80,7 @@ def test_save_settings_scrubs_api_key():
     assert data["api_key"] == ""
 
 def test_get_settings_ignores_empty_env_vars(monkeypatch):
-    test_settings = DEFAULT_SETTINGS.copy()
-    test_settings["max_rounds"] = 25
-    test_settings["temperature"] = 0.5
+    test_settings = {"max_rounds": 25, "temperature": 0.5}
 
     with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
         json.dump(test_settings, f)

@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from backend.main import app
-from backend.config import get_settings, DEFAULT_SETTINGS
+from backend.config import get_settings, ConfigModel
 
 client = TestClient(app)
 
@@ -13,7 +13,7 @@ def test_app_import():
 def test_settings_loading():
     settings = get_settings()
     assert isinstance(settings, dict)
-    for key in DEFAULT_SETTINGS:
+    for key in ConfigModel().model_dump().keys():
         assert key in settings
 
 def test_api_settings_route():
