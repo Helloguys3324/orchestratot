@@ -70,3 +70,121 @@ test('ChatPage.renderMessage renders system message structure correctly', () => 
     assert.ok(html.includes('System'));
     assert.ok(html.includes('Agent error'));
 });
+
+test('ChatPage.addMessage adds message and scrolls', () => {
+    let htmlInserted = '';
+    let removeCalled = false;
+    let scrollTopValue = 0;
+
+    global.document = {
+        getElementById: (id) => {
+            if (id === 'chat-messages') {
+                return {
+                    querySelector: (sel) => {
+                        if (sel === '.typing-msg') {
+                            return { remove: () => { removeCalled = true; } };
+                        }
+                        return null;
+                    },
+                    insertAdjacentHTML: (pos, html) => {
+                        if (pos === 'beforeend') htmlInserted = html;
+                    },
+                    get scrollHeight() { return 200; },
+                    set scrollTop(val) { scrollTopValue = val; }
+                };
+            }
+            return null;
+        }
+    };
+
+    const msg = { role: 'user', content: 'test', sender: 'You' };
+    ChatPage.addMessage(msg);
+
+    assert.ok(htmlInserted.includes('class="chat-message"'));
+    assert.ok(htmlInserted.includes('test'));
+    assert.strictEqual(removeCalled, true);
+    assert.strictEqual(scrollTopValue, 200);
+});
+
+test('ChatPage.showTyping adds typing indicator and scrolls', () => {
+    let htmlInserted = '';
+    let removeCalled = false;
+    let scrollTopValue = 0;
+
+    global.document = {
+        getElementById: (id) => {
+            if (id === 'chat-messages') {
+                return {
+                    querySelector: (sel) => {
+                        if (sel === '.typing-msg') {
+                            return { remove: () => { removeCalled = true; } };
+                        }
+                        return null;
+                    },
+                    insertAdjacentHTML: (pos, html) => {
+                        if (pos === 'beforeend') htmlInserted = html;
+                    },
+                    get scrollHeight() { return 150; },
+                    set scrollTop(val) { scrollTopValue = val; }
+                };
+            }
+            return null;
+        }
+    };
+
+    ChatPage.showTyping();
+
+    assert.ok(htmlInserted.includes('typing-dots'));
+    assert.strictEqual(removeCalled, true);
+    assert.strictEqual(scrollTopValue, 150);
+});
+
+test('ChatPage.updateSendBtn updates button state based on isRunning', () => {
+    let btnDisabled = false;
+    let btnText = '';
+
+    global.document = {
+        getElementById: (id) => {
+            if (id === 'chat-send-btn') {
+                return {
+                    set disabled(val) { btnDisabled = val; },
+                    set textContent(val) { btnText = val; }
+                };
+            }
+            return null;
+        }
+    };
+
+    ChatPage.isRunning = true;
+    ChatPage.updateSendBtn();
+    assert.strictEqual(btnDisabled, true);
+    assert.strictEqual(btnText, '⏳ Working...');
+
+    ChatPage.isRunning = false;
+    ChatPage.updateSendBtn();
+    assert.strictEqual(btnDisabled, false);
+    assert.strictEqual(btnText, 'Send ➤');
+});
+
+test('ChatPage.scrollToBottom updates scrollTop to scrollHeight', () => {
+    let scrollTopValue = 0;
+    global.document = {
+        getElementById: (id) => {
+            if (id === 'chat-messages') {
+                return {
+                    get scrollHeight() { return 300; },
+                    set scrollTop(val) { scrollTopValue = val; }
+                };
+            }
+            return null;
+        }
+    };
+
+    ChatPage.scrollToBottom();
+    assert.strictEqual(scrollTopValue, 300);
+});
+
+// Restore document after tests
+test.afterEach(() => {
+    delete global.document;
+});
