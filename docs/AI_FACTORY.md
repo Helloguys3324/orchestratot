@@ -118,6 +118,10 @@ node --experimental-test-coverage --test frontend/tests/*.js
 
 The pytest step runs when tests exist outside ignored runtime workspace directories.
 
+### Frontend Visual Validation
+
+When frontend files are changed, visual inspection is mandatory. Start the app locally (`python run.py`), open the UI in a browser, and manually walk through the changed flows to ensure no layout breakages or console errors exist.
+
 ## Secrets
 
 Never commit real API keys, credentials, or `.env` files to source control.
