@@ -9,6 +9,14 @@ Welcome to AutoGen AI Factory! This project acts as an autonomous AI orchestrati
 - [Agent Instructions](AGENTS.md) - Core guidelines, constraints, and rules for autonomous AI contributors.
 - [Mission & Goals](mission.md) - High-level project objectives and operating principles.
 
+## Project Structure
+
+- `backend/` - FastAPI application and orchestration logic.
+- `frontend/` - Static HTML/CSS/JS UI files.
+- `skills_library/` and `custom_skills/` - Skill implementations.
+- `data/` - Runtime JSON state.
+- `.github/ai-factory/` - Autonomous development state and task planning files.
+
 ## Local Development Setup
 
 To prepare the repository for local development, follow these steps:
@@ -70,3 +78,12 @@ PYTHONPATH=. python -m pytest -q
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
 ```
+
+## Frontend Visual Validation
+
+If any files in `frontend/` are modified, you must visually inspect the UI locally:
+1. Start the application: `python run.py`
+2. Open `http://localhost:8000` in a browser.
+3. Walk through the changed UI area and affected user flows.
+4. Check browser console for errors.
+5. Check for layout issues (overlapping text, hidden content, etc.) across different viewport sizes.

@@ -20,4 +20,5 @@ Operating rules:
 - Do not rewrite project history.
 - Treat `AUTOPILOT_STOP` as a hard stop for autonomous work.
 - Ensure local setup and operations documentation is always accurate, clear, and reflects the current repository state.
+- Visually inspect and validate frontend UI changes locally before opening a PR.
 
