@@ -90,25 +90,22 @@ def save_json(filepath: Path, data):
 
 def get_settings() -> dict:
     """Get application settings."""
-    settings = load_json(SETTINGS_FILE, {})
-
     try:
-        model = ConfigModel(**settings)
+        model = ConfigModel()
     except ValidationError as e:
         # If the API key is the cause of validation error, clear it. Otherwise, let it fail loud.
         has_api_key_error = any(err.get('loc') == ('api_key',) for err in e.errors())
         if has_api_key_error:
-            safe_settings = settings.copy()
-            safe_settings["api_key"] = ""
-
-            # Environment variables take precedence over init kwargs.
-            # Temporarily remove it from the environment if present to allow the fallback to instantiate.
-            old_env = os.environ.pop("AUTOGEN_API_KEY", None)
+            # Temporarily set it to empty string in os.environ to override any invalid value in .env
+            old_env = os.environ.get("AUTOGEN_API_KEY")
+            os.environ["AUTOGEN_API_KEY"] = ""
             try:
-                model = ConfigModel(**safe_settings)
+                model = ConfigModel()
             finally:
                 if old_env is not None:
                     os.environ["AUTOGEN_API_KEY"] = old_env
+                else:
+                    del os.environ["AUTOGEN_API_KEY"]
 
             if len(e.errors()) > 1:
                 raise
@@ -121,9 +118,21 @@ def get_settings() -> dict:
 
 
 def save_settings(settings: dict):
-    """Save application settings, scrubbing sensitive data."""
-    # Create a copy so we don't modify the runtime state
-    safe_settings = dict(settings)
-    if "api_key" in safe_settings:
-        safe_settings["api_key"] = ""
-    save_json(SETTINGS_FILE, safe_settings)
+    """Save application settings to .env."""
+    from dotenv import set_key
+    if not ENV_FILE.exists():
+        ENV_FILE.touch()
+
+    for k, v in settings.items():
+        if k == "api_key" and not v:
+            continue
+
+        if isinstance(v, SecretStr):
+            str_v = v.get_secret_value()
+        else:
+            str_v = str(v)
+
+        set_key(str(ENV_FILE), f"AUTOGEN_{k.upper()}", str_v)
+        os.environ[f"AUTOGEN_{k.upper()}"] = str_v
+
+    save_json(SETTINGS_FILE, {})
