@@ -71,21 +71,10 @@ class ConfigModel(BaseSettings):
             raise ValueError("API key must be at least 10 characters and contain no whitespace.")
         return v
 
-# ─── Default settings ───────────────────────────────────
-DEFAULT_SETTINGS = {
-    "api_key": "",
-    "default_model": "gemini-2.5-flash",
-    "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
-    "max_rounds": 15,
-    "temperature": 0.7,
-    "max_tokens": 4096,
-}
-
-
 def load_json(filepath: Path, default=None):
     """Load JSON data from a file, returning default if not found."""
     if default is None:
-        default = []
+        default = {}
     if filepath.exists():
         with open(filepath, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -101,29 +90,33 @@ def save_json(filepath: Path, data):
 
 def get_settings() -> dict:
     """Get application settings."""
-    settings = load_json(SETTINGS_FILE, DEFAULT_SETTINGS)
+    settings = load_json(SETTINGS_FILE, {})
 
     try:
         model = ConfigModel(**settings)
-        validated_settings = model.model_dump(mode="json")
-        validated_settings["api_key"] = model.api_key
     except ValidationError as e:
         # If the API key is the cause of validation error, clear it. Otherwise, let it fail loud.
         has_api_key_error = any(err.get('loc') == ('api_key',) for err in e.errors())
         if has_api_key_error:
-            # Re-instantiate model without the invalid api_key to validate remaining fields
             safe_settings = settings.copy()
             safe_settings["api_key"] = ""
-            model = ConfigModel(**safe_settings)
-            validated_settings = model.model_dump(mode="json")
-            validated_settings["api_key"] = SecretStr("")
 
-            # If there are other errors initially, raise them
+            # Environment variables take precedence over init kwargs.
+            # Temporarily remove it from the environment if present to allow the fallback to instantiate.
+            old_env = os.environ.pop("AUTOGEN_API_KEY", None)
+            try:
+                model = ConfigModel(**safe_settings)
+            finally:
+                if old_env is not None:
+                    os.environ["AUTOGEN_API_KEY"] = old_env
+
             if len(e.errors()) > 1:
                 raise
         else:
             raise
 
+    validated_settings = model.model_dump(mode="json")
+    validated_settings["api_key"] = model.api_key
     return validated_settings
 
 
