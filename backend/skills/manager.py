@@ -190,7 +190,11 @@ class SkillsManager:
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
         from urllib.parse import urlparse
-        parsed_url = urlparse(url)
+        try:
+            parsed_url = urlparse(url)
+        except ValueError as e:
+            raise SkillValidationError(f"Invalid URL format: {e}") from e
+
         if parsed_url.scheme not in ("http", "https"):
             raise SkillValidationError("Invalid URL scheme. Only http and https are allowed.")
         if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
