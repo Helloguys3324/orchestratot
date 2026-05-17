@@ -98,6 +98,42 @@ test('SessionsPage.showCreateModal alerts if no agents', async () => {
     delete global.App;
 });
 
+test('SessionsPage.showCreateModal returns early if agent container is missing', async () => {
+    global.document = {
+        querySelectorAll: () => [],
+        getElementById: () => null,
+        body: { insertAdjacentHTML: () => {} }
+    };
+    global.API = { getAgents: async () => [{id: '1', name: 'agent1', type: 'assistant'}], getChatModels: async () => [] };
+    global.setTimeout = (fn) => fn();
+
+    await assert.doesNotReject(() => SessionsPage.showCreateModal());
+    delete global.document;
+    delete global.API;
+    delete global.setTimeout;
+});
+
+test('SessionsPage.create handles missing elements', async () => {
+    global.document = {
+        querySelectorAll: () => [{value: '1'}],
+        getElementById: () => null
+    };
+    await assert.rejects(() => SessionsPage.create());
+    delete global.document;
+});
+
+test('SessionsPage.remove cancels gracefully when not confirmed', async () => {
+    global.confirm = () => false;
+    let apiCalled = false;
+    global.API = { deleteSession: async () => { apiCalled = true; } };
+
+    await SessionsPage.remove('1');
+    assert.strictEqual(apiCalled, false);
+
+    delete global.confirm;
+    delete global.API;
+});
+
 test('SessionsPage.remove prompts and deletes', async () => {
     let deletedId = null;
     global.API = {
