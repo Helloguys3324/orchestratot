@@ -2,30 +2,28 @@ import os
 import json
 import pytest
 from pydantic import SecretStr, ValidationError
-from backend.config import get_settings, save_settings, SETTINGS_FILE, ConfigModel
+from backend.config import get_settings, save_settings, ENV_FILE, ConfigModel
 
 @pytest.fixture(autouse=True)
 def setup_teardown_settings():
-    original_data = None
-    if SETTINGS_FILE.exists():
-        with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
-            original_data = json.load(f)
+    original_env = None
+    if ENV_FILE.exists():
+        original_env = ENV_FILE.read_text(encoding="utf-8")
 
-    orig_env = os.environ.get("AUTOGEN_API_KEY")
+    orig_env_var = os.environ.get("AUTOGEN_API_KEY")
     if "AUTOGEN_API_KEY" in os.environ:
         del os.environ["AUTOGEN_API_KEY"]
 
     yield
 
-    if original_data is not None:
-        with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-            json.dump(original_data, f, indent=2, ensure_ascii=False)
+    if original_env is not None:
+        ENV_FILE.write_text(original_env, encoding="utf-8")
     else:
-        if SETTINGS_FILE.exists():
-            SETTINGS_FILE.unlink()
+        if ENV_FILE.exists():
+            ENV_FILE.unlink()
 
-    if orig_env is not None:
-        os.environ["AUTOGEN_API_KEY"] = orig_env
+    if orig_env_var is not None:
+        os.environ["AUTOGEN_API_KEY"] = orig_env_var
     elif "AUTOGEN_API_KEY" in os.environ:
         del os.environ["AUTOGEN_API_KEY"]
 
@@ -47,54 +45,39 @@ def test_config_model_validation():
     with pytest.raises(ValidationError):
         ConfigModel(**{"api_key": "has space in it"})
 
-def test_get_settings_masks_api_key():
-    test_settings = {"api_key": "test-key-from-file"}
-
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-        json.dump(test_settings, f)
-
+def test_get_settings_masks_api_key(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_API_KEY", "test-key-from-env")
     settings = get_settings()
 
     assert isinstance(settings["api_key"], SecretStr)
-    assert settings["api_key"].get_secret_value() == "test-key-from-file"
+    assert settings["api_key"].get_secret_value() == "test-key-from-env"
 
-def test_get_settings_invalid_key_fallback():
-    test_settings = {"api_key": "short"}
-
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-        json.dump(test_settings, f)
-
+def test_get_settings_invalid_key_fallback(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_API_KEY", "short")
     settings = get_settings()
+
     # It should catch ValidationError and default to empty SecretStr
     assert isinstance(settings["api_key"], SecretStr)
     assert settings["api_key"].get_secret_value() == ""
 
-def test_save_settings_scrubs_api_key():
-    test_settings = {"api_key": SecretStr("key-to-scrub")}
-
+def test_save_settings_writes_to_env():
+    test_settings = {"api_key": SecretStr("key-to-scrub"), "max_rounds": 25}
     save_settings(test_settings)
 
-    with open(SETTINGS_FILE, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    assert data["api_key"] == ""
+    if ENV_FILE.exists():
+        content = ENV_FILE.read_text(encoding="utf-8")
+        assert "AUTOGEN_API_KEY" in content
+        assert "AUTOGEN_MAX_ROUNDS" in content
+    else:
+        pytest.fail("ENV_FILE was not created")
 
 def test_get_settings_ignores_empty_env_vars(monkeypatch):
-    test_settings = {"max_rounds": 25, "temperature": 0.5}
-
-    with open(SETTINGS_FILE, "w", encoding="utf-8") as f:
-        json.dump(test_settings, f)
-
-    # Simulate an empty environment variable being set
     monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "")
-
-    # Also mock pydantic_settings environment loading from .env
     monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.5")
 
     settings = get_settings()
 
-    # The empty env var should be ignored, preserving the value from the file
-    assert settings["max_rounds"] == 25
+    assert settings["max_rounds"] == 15  # Default from model
     assert settings["temperature"] == 0.5
 
 def test_get_settings_typecasts_env_vars(monkeypatch):
