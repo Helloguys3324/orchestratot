@@ -58,8 +58,8 @@ class ConfigModel(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> Tuple[PydanticBaseSettingsSource, ...]:
-        # Priority: env_settings > dotenv_settings > init_settings
-        return env_settings, dotenv_settings, init_settings, file_secret_settings
+        # Priority: init_settings > env_settings > dotenv_settings
+        return init_settings, env_settings, dotenv_settings, file_secret_settings
 
     @field_validator('api_key', mode='before')
     def validate_api_key(cls, v):
@@ -96,16 +96,14 @@ def get_settings() -> dict:
         # If the API key is the cause of validation error, clear it. Otherwise, let it fail loud.
         has_api_key_error = any(err.get('loc') == ('api_key',) for err in e.errors())
         if has_api_key_error:
-            # Temporarily set it to empty string in os.environ to override any invalid value in .env
-            old_env = os.environ.get("AUTOGEN_API_KEY")
-            os.environ["AUTOGEN_API_KEY"] = ""
+            # Temporarily remove it from os.environ to prevent re-reading the invalid env var
+            old_env = os.environ.pop("AUTOGEN_API_KEY", None)
             try:
-                model = ConfigModel()
+                # Initialize with empty api_key to override .env configuration, preserving other vars
+                model = ConfigModel(api_key="")
             finally:
                 if old_env is not None:
                     os.environ["AUTOGEN_API_KEY"] = old_env
-                else:
-                    del os.environ["AUTOGEN_API_KEY"]
 
             if len(e.errors()) > 1:
                 raise
