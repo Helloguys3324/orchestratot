@@ -19,7 +19,7 @@ The repository is structured into the following directories:
   - `websocket/`: Real-time communication handlers.
   - `state.py`: Global application state and manager instantiations.
 - `docs/`: Architectural Decision Records (ADRs) and architectural state documentation.
-- `frontend/`: Web UI components (HTML/CSS/JS).
+- `frontend/`: Web UI components (HTML/CSS/JS) with shared UI utilities and Node.js testing.
 - `skills_library/`: Reusable skills and MCP tools.
 - `tests/`: Unit tests for `skills_library` and other non-backend modules.
 - `data/`: Persistent or temporary data storage.
@@ -27,12 +27,12 @@ The repository is structured into the following directories:
 
 ### 3. Tech Stack Choices
 - **Backend Framework:** FastAPI, Uvicorn (async HTTP server)
-- **Data Validation:** Pydantic v2
+- **Data Validation:** Pydantic v2 (includes SecretStr for config security and request models)
 - **Concurrency:** Asyncio (Python) for non-blocking operations.
 - **Environment Management:** `python-dotenv` for configuration loading.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
-- **Testing:** `pytest` with heavily type-hinted, asynchronous code.
+- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend) with heavily type-hinted, asynchronous code.
 
 ### 4. Data Flow & System Architecture
 1. **Input:** User requests or autonomous triggers initialize a session.
