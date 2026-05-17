@@ -139,3 +139,7 @@ When a user sends a message via `POST /api/sessions/{session_id}/chat`, the Sess
 4. **File Extraction**: The system parses the agent's response, securely extracts any file blocks (preventing path traversal), and writes them to the workspace.
 5. **Message Emission**: The agent's response is appended to the session history and emitted via WebSocket to the connected frontend clients.
 6. **Loop**: Steps 2-5 repeat until the router outputs `DONE` or the maximum number of rounds (`max_rounds`, default 15) is reached.
+
+## Security and Dependencies
+
+- `python-multipart` should be kept at version `>= 0.0.27` to mitigate vulnerabilities including CVE-2026-24486, CVE-2026-40347, and CVE-2026-42561.
