@@ -6,6 +6,7 @@ import importlib.util
 import httpx
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
+from backend.skills.errors import SkillValidationError, SkillInstallError
 
 
 # Built-in skills metadata
@@ -174,13 +175,19 @@ class SkillsManager:
         from urllib.parse import urlparse
         parsed_url = urlparse(url)
         if parsed_url.scheme not in ("http", "https"):
-            raise ValueError("Invalid URL scheme. Only http and https are allowed.")
+            raise SkillValidationError("Invalid URL scheme. Only http and https are allowed.")
         if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
-            raise ValueError("Invalid URL hostname. Localhost is not allowed.")
-        async with httpx.AsyncClient() as client:
-            resp = await client.get(url)
-            resp.raise_for_status()
-            code = resp.text
+            raise SkillValidationError("Invalid URL hostname. Localhost is not allowed.")
+
+        try:
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(url)
+                resp.raise_for_status()
+                code = resp.text
+        except httpx.HTTPStatusError as e:
+            raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}")
+        except httpx.RequestError as e:
+            raise SkillInstallError(f"Request error occurred: {str(e)}")
 
         skill_id = f"imported_{uuid.uuid4().hex[:8]}"
         skill = {

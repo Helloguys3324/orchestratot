@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from backend.state import skills_manager
+from backend.skills.errors import SkillValidationError, SkillInstallError
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
@@ -29,5 +30,11 @@ async def api_install_skill(request: Request):
     name = data.get("name")
     if not url:
         raise HTTPException(400, "URL is required")
-    skill = await skills_manager.install_from_url(url, name)
-    return skill
+
+    try:
+        skill = await skills_manager.install_from_url(url, name)
+        return skill
+    except SkillValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SkillInstallError as e:
+        raise HTTPException(status_code=500, detail=str(e))
