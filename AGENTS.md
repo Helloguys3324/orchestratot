@@ -1988,6 +1988,7 @@ environment variable guidance
 secrets handling
 architecture notes
 API examples when supported
+GitHub Actions and CI/CD context
 ```
 
 Documentation must not invent features.

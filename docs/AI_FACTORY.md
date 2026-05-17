@@ -108,7 +108,10 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
-python -m pytest -q
+PYTHONPATH=. python -m pytest -q
+
+# Run frontend tests
+node --experimental-test-coverage --test frontend/tests/*.js
 ```
 
 The pytest step runs when tests exist outside ignored runtime workspace directories.
@@ -128,6 +131,11 @@ AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
 
 The application uses Pydantic `SecretStr` to prevent accidental logging or JSON serialization of secrets loaded from `.env`. The application is configured to automatically scrub the `api_key` field before saving to `data/settings.json` to prevent accidental credential leakage to disk. Empty strings in environment variables are filtered out to prevent overwriting valid defaults.
+
+You can verify that no secrets are accidentally committed by running:
+```bash
+python .github/scripts/scan_secrets.py
+```
 
 If a key was committed previously, rotate it immediately.
 

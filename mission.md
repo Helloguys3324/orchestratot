@@ -9,6 +9,7 @@ Primary goals:
 - Expand test coverage around routing, sessions, skills, settings, and websocket behavior.
 - Keep secrets out of source control and move runtime credentials to environment variables (e.g. using local `.env` files).
 - Make every autonomous change small, reviewable, measurable, and reversible.
+- Ensure documentation accurately reflects the current state of local setup, workflows, and validation commands.
 
 Operating rules:
 

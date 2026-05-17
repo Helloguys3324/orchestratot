@@ -21,7 +21,7 @@ To prepare the repository for local development, follow these steps:
    pip install -r backend/requirements.txt
 
    # To run backend tests locally, you may also need to install:
-   pip install pytest pytest-cov pytest-asyncio httpx python-dotenv fastapi uvicorn pydantic pydantic-settings
+   pip install pytest pytest-cov pytest-asyncio python-dotenv
    ```
 
 3. **Configure Environment Variables**
@@ -32,7 +32,7 @@ To prepare the repository for local development, follow these steps:
    *Note: Never commit your `.env` file to source control. Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing `.env` and environment variables over default fallback settings.*
 
 4. **Frontend & Testing Dependencies**
-   - **Frontend Tests:** Ensure **Node.js** is installed to run frontend vanilla JS unit tests via `node --test`.
+   - **Frontend Tests:** Ensure **Node.js** (v20+) is installed to run frontend vanilla JS unit tests via `node --experimental-test-coverage --test frontend/tests/*.js`.
    - **UI Validation:** If you make UI changes, ensure Playwright is installed via `pip install playwright && playwright install chromium`.
 
 5. **Emergency Stop (Local & Remote)**
