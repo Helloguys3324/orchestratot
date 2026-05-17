@@ -93,6 +93,9 @@ def test_get_settings_ignores_empty_env_vars(monkeypatch):
     # Simulate an empty environment variable being set
     monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "")
 
+    # Also mock pydantic_settings environment loading from .env
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.5")
+
     settings = get_settings()
 
     # The empty env var should be ignored, preserving the value from the file
