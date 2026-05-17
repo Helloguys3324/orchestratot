@@ -2143,3 +2143,1608 @@ explain the uncertainty
 do not perform unsafe actions
 ```
 
+
+# 34. World-Class Product Quality Directive
+
+This repository must be treated as a serious product, not as a toy experiment.
+
+Every agent should aim for the quality level expected from a top-tier product engineering team.
+
+The goal is to make this project feel like a premium autonomous AI orchestration platform.
+
+The product should feel:
+
+```text
+polished
+fast
+trustworthy
+clear
+beautiful
+developer-grade
+AI-native
+well-documented
+well-tested
+architecturally understandable
+impressive to first-time visitors
+````
+
+Agents should not only ask:
+
+```text
+Does this work?
+```
+
+Agents must also ask:
+
+```text
+Is this clear?
+Is this maintainable?
+Is this visually polished?
+Is this understandable?
+Is this safe?
+Is this impressive?
+Is this useful?
+Would a strong engineer respect this implementation?
+Would a first-time visitor understand why this project matters?
+```
+
+The repository should gradually evolve into something that makes a visitor think:
+
+```text
+This is not just an automation test.
+This is a serious autonomous AI engineering system.
+The UI is polished.
+The docs are clear.
+The architecture is visible.
+The automation is impressive.
+The project feels alive.
+```
+
+***
+
+# 35. Product Experience Vision
+
+The product experience should communicate that this repository is an autonomous AI software factory.
+
+A first-time visitor should quickly understand:
+
+```text
+what the project does
+why the project is interesting
+how autonomous agents work
+how tasks are planned
+how tasks are executed
+how PRs are validated
+how automerge is controlled
+how safety is enforced
+how the system can run continuously
+how humans can supervise it
+```
+
+The project should eventually have a strong product surface, including:
+
+```text
+premium dashboard UI
+clear README
+architecture diagrams
+agent role diagrams
+task lifecycle diagrams
+workflow diagrams
+automation health views
+task queue visibility
+metrics visibility
+developer setup clarity
+security boundaries
+validation flow explanation
+```
+
+Every agent should help move the repository toward that vision.
+
+***
+
+# 36. Product Quality Levels
+
+Agents should think in quality levels.
+
+## Level 1: Functional
+
+The feature works.
+
+This is the minimum acceptable level.
+
+## Level 2: Reliable
+
+The feature works consistently, has validation, and handles errors.
+
+This is the expected level for backend, tests, and security work.
+
+## Level 3: Understandable
+
+The feature is documented, named clearly, and fits the architecture.
+
+This is expected for maintainable work.
+
+## Level 4: Polished
+
+The feature has good UX, good visual hierarchy, clear states, and a professional feel.
+
+This is expected for frontend and docs work.
+
+## Level 5: World-Class
+
+The feature feels like a premium product experience.
+
+It is useful, polished, fast, clear, safe, well-documented, and impressive.
+
+This is the long-term target.
+
+Agents should always try to move work one level higher without creating unnecessary complexity.
+
+***
+
+# 37. Inspiration Policy
+
+Agents may use public products and design references as inspiration for quality standards.
+
+Agents must not clone any product.
+
+Agents must not copy exact layouts, copywriting, colors, icons, illustrations, animations, brand identity, or trade dress.
+
+Use references only as quality inspiration.
+
+Acceptable inspiration categories:
+
+```text
+premium SaaS dashboards
+developer tools
+AI command centers
+analytics dashboards
+observability products
+automation platforms
+documentation sites
+award-level web design
+modern product landing pages
+real-world app UI patterns
+```
+
+Acceptable quality references:
+
+```text
+Linear-style clarity and productivity
+Stripe-style trust and documentation polish
+Vercel-style developer experience
+Raycast-style command center feel
+Notion-style information organization
+Figma-style collaboration clarity
+GitHub-style developer workflow clarity
+modern SaaS dashboard visual hierarchy
+award-level web design ambition
+```
+
+Agents must create an original design language for this repository.
+
+The project must look like itself.
+
+The project must not look like a copy of another product.
+
+***
+
+# 38. UI/UX North Star
+
+The UI should eventually feel like a premium AI Factory command center.
+
+The UI should make complex automation understandable.
+
+The UI should help users answer:
+
+```text
+What is happening right now?
+Which agents are working?
+Which tasks are pending?
+Which PRs are open?
+Which tasks passed validation?
+Which tasks failed?
+What changed recently?
+Is the system healthy?
+Is the system safe?
+What should I look at next?
+```
+
+The UI should prioritize:
+
+```text
+clarity
+visual hierarchy
+readability
+density without clutter
+fast scanning
+trust
+status visibility
+developer confidence
+```
+
+The UI should avoid:
+
+```text
+generic template look
+random colors
+inconsistent spacing
+unclear labels
+fake metrics
+decorative clutter
+slow animations
+tiny unreadable text
+unclear status indicators
+confusing navigation
+```
+
+***
+
+# 39. Premium Dashboard Requirements
+
+Frontend-related tasks should gradually move the interface toward a premium dashboard.
+
+A strong AI Factory dashboard may include:
+
+```text
+top-level system health panel
+active agents panel
+task queue overview
+role distribution chart
+daily task budget widget
+validation status panel
+recent PR activity feed
+Jules task lifecycle timeline
+automerge status indicator
+recent failures panel
+security warnings panel
+documentation links
+architecture diagram entry point
+settings/status summary
+```
+
+Dashboard cards should have:
+
+```text
+clear titles
+short descriptions
+useful values
+status indicators
+consistent spacing
+clear icons or visual markers when available
+empty states
+loading states
+error states
+responsive behavior
+```
+
+Dashboard sections should answer real user questions.
+
+Do not add decorative cards that do not communicate useful information.
+
+***
+
+# 40. Frontend Visual Design Principles
+
+Frontend agents must follow these visual principles.
+
+## Layout
+
+Use clear structure.
+
+Use consistent page sections.
+
+Use predictable spacing.
+
+Use visual grouping.
+
+Avoid placing unrelated content together.
+
+## Typography
+
+Use readable font sizes.
+
+Use clear hierarchy.
+
+Headings should communicate meaning.
+
+Body text should be concise.
+
+Labels should be specific.
+
+## Spacing
+
+Use consistent spacing.
+
+Do not crowd elements.
+
+Do not leave random empty gaps.
+
+Use whitespace to clarify hierarchy.
+
+## Color
+
+Use colors intentionally.
+
+Color should communicate status, grouping, emphasis, or brand personality.
+
+Avoid random colors.
+
+Avoid low contrast.
+
+Avoid relying only on color to communicate state.
+
+## States
+
+Every meaningful interactive area should consider:
+
+```text
+loading
+empty
+error
+success
+disabled
+active
+hover
+focus
+```
+
+## Responsiveness
+
+UI should work on common desktop sizes.
+
+UI should degrade gracefully on narrower screens.
+
+Avoid fixed layouts that break on smaller viewports.
+
+## Motion
+
+Use motion only when useful.
+
+Motion should clarify state changes.
+
+Avoid slow or excessive animations.
+
+Avoid distracting effects.
+
+***
+
+# 41. UI State Requirements
+
+Frontend tasks should not only create happy-path UI.
+
+Frontend tasks should consider all major states.
+
+## Loading States
+
+Loading states should:
+
+```text
+show what is loading
+avoid layout jumps when practical
+use clear language
+avoid infinite ambiguity
+```
+
+## Empty States
+
+Empty states should:
+
+```text
+explain why there is no data
+suggest what happens next
+avoid looking broken
+match product tone
+```
+
+## Error States
+
+Error states should:
+
+```text
+show what failed
+provide useful next steps if possible
+avoid exposing secrets
+avoid raw stack traces in user-facing UI
+preserve user context
+```
+
+## Success States
+
+Success states should:
+
+```text
+confirm what happened
+be concise
+avoid noisy celebration for routine actions
+```
+
+## Partial Data States
+
+Partial data states should:
+
+```text
+show available data
+explain missing data
+avoid fake placeholders that look real
+```
+
+***
+
+# 42. Accessibility Baseline
+
+Agents must consider accessibility basics.
+
+Frontend changes should include:
+
+```text
+semantic HTML where practical
+readable contrast
+visible focus states
+keyboard-accessible controls when practical
+clear labels
+meaningful button text
+non-color-only status indicators
+reasonable font sizes
+```
+
+Avoid:
+
+```text
+clickable divs without accessibility handling
+tiny text
+low contrast text
+ambiguous icons without labels
+status indicated only by color
+keyboard traps
+```
+
+Accessibility work should be practical and incremental.
+
+Do not perform massive accessibility rewrites unless explicitly assigned.
+
+***
+
+# 43. Developer Experience Standard
+
+This project must feel good for developers to understand and run.
+
+Developer experience improvements may include:
+
+```text
+clear README setup
+clear environment variable documentation
+clear validation commands
+clear project structure explanation
+clear architecture diagrams
+simple local run instructions
+clear troubleshooting section
+clear GitHub Actions explanation
+clear AI Factory lifecycle explanation
+clear task queue explanation
+```
+
+Documenter and architect agents should continuously improve developer experience.
+
+A new developer should be able to answer:
+
+```text
+How do I run this?
+How do I validate this?
+Where is backend code?
+Where is frontend code?
+Where are skills?
+Where is AI Factory state?
+How are tasks generated?
+How are PRs validated?
+How does automerge work?
+How do I stop automation?
+```
+
+***
+
+# 44. Documentation Quality Standard
+
+Documentation must be treated as a product surface.
+
+Good documentation should be:
+
+```text
+accurate
+clear
+structured
+easy to scan
+not misleading
+not overpromising
+grounded in repository reality
+```
+
+Documentation should prefer:
+
+```text
+short sections
+clear headings
+diagrams
+examples
+commands
+checklists
+mental models
+links between docs
+```
+
+Documentation should avoid:
+
+```text
+wall-of-text explanations
+unsupported claims
+fake metrics
+outdated commands
+invented features
+marketing fluff without substance
+```
+
+Documentation tasks should improve at least one of:
+
+```text
+understanding
+setup speed
+debugging speed
+architecture clarity
+trust
+operational safety
+developer onboarding
+```
+
+***
+
+# 45. Required Diagram Strategy
+
+The repository should contain clear diagrams explaining the AI Factory.
+
+Documenter and architect agents should create or improve diagrams when relevant.
+
+Preferred diagram format:
+
+```text
+Mermaid diagrams in Markdown
+```
+
+Mermaid is preferred because it is readable, reviewable, and version-control friendly.
+
+Useful diagrams include:
+
+```text
+system architecture diagram
+agent role diagram
+task queue lifecycle diagram
+GitHub Actions workflow diagram
+Jules invocation flow diagram
+PR lifecycle diagram
+validation and automerge diagram
+security boundary diagram
+backend module diagram
+frontend screen map
+data flow diagram
+failure recovery diagram
+emergency stop diagram
+```
+
+Diagrams must be accurate.
+
+Do not invent architecture.
+
+Do not show components that do not exist unless clearly marked as planned.
+
+***
+
+# 46. Diagram Quality Rules
+
+A good diagram must:
+
+```text
+have a clear title
+show meaningful relationships
+avoid unnecessary complexity
+use accurate names
+match repository reality
+be placed in a relevant doc
+be explained with a short paragraph
+```
+
+A bad diagram is:
+
+```text
+decorative only
+too complex to understand
+inaccurate
+unlabeled
+contradicting code
+showing imaginary systems as real
+```
+
+When creating diagrams, agents should also add text explaining:
+
+```text
+what the diagram shows
+why the diagram matters
+where the relevant files are
+what the main lifecycle is
+```
+
+***
+
+# 47. Recommended Core Diagrams
+
+The project should eventually have these diagrams.
+
+## 47.1 AI Factory Lifecycle
+
+Should show:
+
+```text
+Tick
+Planner
+Task Queue
+Jules Worker
+Pull Request
+Validation
+Automerge
+Metrics
+Next Tick
+```
+
+## 47.2 Task State Machine
+
+Should show:
+
+```text
+pending
+claimed
+running
+completed
+failed
+blocked
+abandoned
+obsolete
+duplicate
+```
+
+## 47.3 Agent Role Map
+
+Should show:
+
+```text
+planner creates tasks
+workers execute tasks
+reviewer checks drift
+workflows record state
+humans supervise
+```
+
+## 47.4 PR Lifecycle
+
+Should show:
+
+```text
+task selected
+branch created
+Jules runs
+PR opened
+validation runs
+safe automerge if allowed
+manual review if risky
+merge or reject
+state update
+```
+
+## 47.5 Security Boundary
+
+Should show:
+
+```text
+allowed paths
+forbidden paths
+secrets policy
+workflow guardrails
+automerge restrictions
+```
+
+***
+
+# 48. Product Landing Page Standard
+
+The README should eventually feel like a product landing page for developers.
+
+The README should include:
+
+```text
+strong project title
+short product-style description
+what the AI Factory does
+why it is interesting
+architecture overview
+quickstart
+validation commands
+project structure
+how automation works
+agent roles
+safety guardrails
+diagrams
+current limitations
+future roadmap
+```
+
+The README should not be pure marketing.
+
+The README should combine:
+
+```text
+clarity
+credibility
+technical depth
+visual structure
+developer usefulness
+```
+
+A first-time visitor should understand the repository in under five minutes.
+
+***
+
+# 49. Product Wow Factor Rules
+
+Agents should improve wow factor only when it also improves usefulness.
+
+Good wow factor:
+
+```text
+clear visual dashboard
+beautiful but readable UI
+useful diagrams
+fast onboarding
+well-structured README
+visible automation health
+polished empty states
+clear status indicators
+delightful but subtle interactions
+```
+
+Bad wow factor:
+
+```text
+random animations
+fake numbers
+decorative gradients with no purpose
+overdesigned UI
+slow UI
+confusing visual effects
+marketing claims without support
+copying another product
+```
+
+The product should impress because it is:
+
+```text
+clear
+real
+useful
+safe
+alive
+well-structured
+```
+
+not because it is flashy.
+
+***
+
+# 50. Planner Product Quality Duties
+
+The planner must create tasks that move the project toward world-class product quality.
+
+Planner should regularly create useful tasks for:
+
+```text
+premium dashboard UI
+agent activity timeline
+task queue visualization
+automation health metrics
+role distribution charts
+architecture diagrams
+workflow diagrams
+PR lifecycle diagrams
+better empty states
+better loading states
+better error states
+better onboarding documentation
+better developer experience
+clearer system architecture
+stronger test coverage
+stronger security boundaries
+better README presentation
+better docs navigation
+better frontend structure
+better API examples
+```
+
+Planner must avoid vague product-quality tasks.
+
+Bad planner tasks:
+
+```text
+Make UI better.
+Improve design.
+Add wow factor.
+Make docs nicer.
+Create cool diagrams.
+```
+
+Good planner tasks:
+
+```text
+Add a dashboard card section showing task queue status using existing available data.
+Add Mermaid diagram explaining pending -> claimed -> running -> completed task lifecycle.
+Improve README quickstart with exact backend run and validation commands.
+Add frontend empty state for missing task queue data.
+Document safe automerge rules with a validation flow diagram.
+```
+
+Every product-quality task must have a concrete outcome.
+
+***
+
+# 51. Planner Design Task Rules
+
+When planner creates frontend or design tasks, each task must specify:
+
+```text
+which screen or file to inspect
+what user problem to solve
+what UI section to improve
+what states to consider
+what files may be edited
+what files must not be edited
+how success will be judged
+```
+
+A frontend design task must include at least one of:
+
+```text
+layout improvement
+visual hierarchy improvement
+state handling improvement
+navigation improvement
+dashboard clarity improvement
+accessibility improvement
+responsive improvement
+```
+
+A frontend design task must not simply say:
+
+```text
+make it beautiful
+make it modern
+make it like Linear
+make it like Stripe
+```
+
+Instead, use:
+
+```text
+Use premium SaaS dashboard quality as inspiration only.
+Create an original design.
+Improve visual hierarchy, spacing, status clarity, and usability.
+```
+
+***
+
+# 52. Planner Diagram Task Rules
+
+When planner creates diagram tasks, each task must specify:
+
+```text
+which system concept to diagram
+which files to inspect
+where to place the diagram
+what the diagram must include
+what must not be invented
+how accuracy should be checked
+```
+
+Good diagram task example:
+
+```text
+Add a Mermaid diagram in docs/ARCHITECTURE_STATE.md showing the AI Factory lifecycle from scheduled tick to task selection, Jules execution, PR validation, automerge, and metrics update.
+```
+
+Bad diagram task example:
+
+```text
+Add cool diagrams.
+```
+
+***
+
+# 53. Frontend World-Class Task Definition Of Done
+
+A frontend task is not complete unless it considers:
+
+```text
+visual hierarchy
+spacing
+typography
+responsive behavior
+loading states
+empty states
+error states
+success states
+accessibility basics
+clear labels
+clear actions
+clear user feedback
+```
+
+For frontend work, agents must ask:
+
+```text
+Can a first-time user understand this screen?
+Can a busy developer scan this quickly?
+Are statuses visually clear?
+Are errors actionable?
+Is the layout consistent?
+Does the UI still work if data is missing?
+Does the UI still work on smaller screens?
+```
+
+Frontend PRs should mention:
+
+```text
+what UI area changed
+what user problem was solved
+what states were considered
+whether validation was run
+```
+
+***
+
+# 54. Documentation World-Class Task Definition Of Done
+
+A documentation task is not complete unless it improves at least one of:
+
+```text
+project understanding
+setup speed
+architecture clarity
+automation clarity
+debugging speed
+security understanding
+developer confidence
+```
+
+Documentation PRs should mention:
+
+```text
+which docs changed
+what confusion was reduced
+whether commands were verified
+whether diagrams were added or updated
+what limitations remain
+```
+
+Documentation must not claim features that do not exist.
+
+If a feature is planned but not implemented, mark it clearly as:
+
+```text
+planned
+future
+not implemented yet
+```
+
+***
+
+# 55. Architecture World-Class Task Definition Of Done
+
+An architecture task is not complete unless it explains:
+
+```text
+what changed
+why it changed
+which modules are affected
+what boundaries are clarified
+what risks exist
+how validation was performed
+whether diagrams were updated
+```
+
+Architecture tasks should prefer:
+
+```text
+small boundary improvements
+clear module ownership
+removal of ambiguity
+documentation of decisions
+dependency simplification
+```
+
+Architecture tasks should avoid:
+
+```text
+large rewrites
+speculative abstractions
+framework churn
+unnecessary new layers
+unclear abstractions
+```
+
+***
+
+# 56. Metrics And Observability Product Standard
+
+The AI Factory should become observable.
+
+When relevant, agents should improve visibility into:
+
+```text
+tasks started
+tasks completed
+tasks failed
+PRs opened
+PRs merged
+validation failures
+safe automerge count
+manual review count
+role distribution
+lane distribution
+recent failure reasons
+queue size
+active work
+automation health
+```
+
+Agents must not invent fake metrics.
+
+If live metrics are unavailable, UI and docs should clearly say:
+
+```text
+Metrics will appear when data is available.
+```
+
+or:
+
+```text
+No metrics recorded yet.
+```
+
+Do not display fake success numbers.
+
+Do not hardcode impressive-looking statistics.
+
+***
+
+# 57. AI Factory Dashboard Data Honesty
+
+The dashboard must be honest.
+
+If data is unavailable, show an empty state.
+
+If data is partial, label it as partial.
+
+If data is static, label it as static.
+
+If data is example-only, label it as example.
+
+Never present placeholder data as real.
+
+Never inflate project quality with fake metrics.
+
+Trust is more important than looking impressive.
+
+***
+
+# 58. Original Design System Direction
+
+The project should gradually develop an original design system.
+
+The design system may include:
+
+```text
+color tokens
+spacing tokens
+typography scale
+card styles
+button styles
+badge styles
+status colors
+layout grid
+panel styles
+timeline styles
+chart styles
+empty state patterns
+error state patterns
+```
+
+Design system work should be incremental.
+
+Do not rewrite the whole frontend just to create a design system.
+
+Prefer extracting repeated styles as they appear.
+
+Design system changes should improve consistency.
+
+***
+
+# 59. Suggested Visual Language
+
+The product may use a visual language inspired by:
+
+```text
+AI command center
+developer operations dashboard
+automation cockpit
+agent orchestration console
+mission control interface
+engineering intelligence platform
+```
+
+Possible visual qualities:
+
+```text
+dark-mode friendly
+sharp cards
+subtle borders
+soft glow only when useful
+clear status colors
+monospace accents for technical data
+strong headings
+clean charts
+dense but readable panels
+```
+
+Avoid:
+
+```text
+gaming UI overload
+cyberpunk clutter
+random neon effects
+unreadable contrast
+overanimated components
+```
+
+The product should feel premium, not noisy.
+
+***
+
+# 60. High-Impact Backlog Ideas
+
+Planner may create tasks based on these ideas when they match repository needs.
+
+Do not create all tasks blindly.
+
+Use these as inspiration.
+
+## 60.1 Frontend Tasks
+
+```text
+Create premium dashboard layout for AI Factory overview.
+Add task queue status cards.
+Add agent role cards.
+Add automation health panel.
+Add validation result panel.
+Add recent PR activity timeline.
+Add empty states for missing task data.
+Add loading states for async UI actions.
+Add error states for failed API requests.
+Improve modal error messages.
+Improve frontend spacing and typography.
+Add responsive dashboard layout.
+Add accessible focus states.
+Centralize repeated frontend UI helpers.
+Create consistent badge styles for statuses.
+Create status colors for pending, running, failed, completed.
+```
+
+## 60.2 Documentation Tasks
+
+```text
+Add AI Factory architecture overview.
+Add Mermaid task lifecycle diagram.
+Add Mermaid PR lifecycle diagram.
+Add GitHub Actions workflow diagram.
+Add agent role explanation document.
+Add safe automerge explanation.
+Add local development guide.
+Add troubleshooting guide.
+Add API payload examples.
+Improve README as product landing page.
+Add docs index page.
+Add security boundary documentation.
+Add validation command documentation.
+Add emergency stop documentation.
+```
+
+## 60.3 Architecture Tasks
+
+```text
+Document backend module boundaries.
+Add ADR for AI Factory ownership model.
+Clarify task queue lifecycle.
+Clarify runtime state ownership.
+Clarify metrics ownership.
+Document frontend/backend interaction.
+Document skills execution boundaries.
+Review backend orchestration responsibilities.
+Reduce duplicated backend service logic.
+Clarify session manager responsibilities.
+```
+
+## 60.4 Tester Tasks
+
+```text
+Add smoke tests for backend startup.
+Add tests for model registry.
+Add tests for session manager.
+Add tests for skills manager.
+Add tests for config parsing.
+Add tests for secret filtering.
+Add tests for file path validation.
+Add tests for API error responses.
+Add tests for deterministic skill behavior.
+Add tests for JSON file validity.
+```
+
+## 60.5 Security Tasks
+
+```text
+Harden path traversal protection.
+Harden command execution boundaries.
+Harden secret stringification.
+Harden config loading.
+Harden file manager input validation.
+Check logs for accidental secret exposure.
+Add tests for unsafe path rejection.
+Add tests for placeholder-only secret examples.
+```
+
+## 60.6 Reviewer Tasks
+
+```text
+Review recent backend changes for missing tests.
+Review recent docs changes for accuracy.
+Review architecture drift after multiple PRs.
+Review validation failures by lane.
+Review repeated changes to same files.
+Review automerged docs/tests PR quality.
+```
+
+***
+
+# 61. Premium README Requirements
+
+The README should eventually include:
+
+```text
+project title
+short product-quality tagline
+clear description
+why this project matters
+main features
+AI Factory architecture summary
+quickstart
+validation commands
+project structure
+agent roles
+task lifecycle
+PR lifecycle
+automerge policy
+emergency stop
+screenshots or UI preview when available
+Mermaid diagrams
+limitations
+roadmap
+```
+
+The README should feel like:
+
+```text
+developer landing page
+technical overview
+operator manual
+trust-building document
+```
+
+The README should not feel like:
+
+```text
+random notes
+unfinished scratchpad
+overhyped marketing page
+```
+
+***
+
+# 62. Screenshots And Visual Previews
+
+If the UI becomes visually meaningful, documenter agents may add screenshots or references to screenshots only if screenshots are actually present in the repository.
+
+Do not reference screenshots that do not exist.
+
+If screenshots are planned, write:
+
+```text
+Screenshots are planned.
+```
+
+Do not fake screenshots.
+
+Do not add binary image assets unless explicitly assigned.
+
+Prefer lightweight diagrams first.
+
+***
+
+# 63. Human Supervision Model
+
+The AI Factory is autonomous, but humans remain the final authority.
+
+Agents must respect:
+
+```text
+human-reviewed PRs
+explicit human instructions
+emergency stop
+manual rejection
+manual merge decisions
+repository owner intent
+```
+
+If a human instruction conflicts with an agent-generated task, follow the human instruction.
+
+If a human disables automation, do not re-enable it.
+
+If a human marks a workflow or area as forbidden, do not modify it.
+
+***
+
+# 64. Long-Running Autonomy Standard
+
+Because this repository may run for a long time, agents must optimize for sustainability.
+
+Avoid actions that create long-term mess.
+
+Avoid generating many low-value tasks.
+
+Avoid growing files without structure.
+
+Avoid huge completed task archives without compaction.
+
+Avoid repeated PRs that touch the same area without purpose.
+
+Avoid repeatedly creating tasks that fail.
+
+If a lane repeatedly fails, planner should create reviewer/tester/architect tasks to diagnose the root cause.
+
+Long-term autonomy requires:
+
+```text
+clear backlog
+clear ownership
+clear validation
+clear docs
+clear architecture
+low conflict rate
+stable main branch
+useful metrics
+good task hygiene
+```
+
+***
+
+# 65. Anti-Filler Rule
+
+Filler work is forbidden.
+
+Filler work includes:
+
+```text
+renaming variables without benefit
+moving code without benefit
+adding obvious comments
+creating vague docs
+adding decorative UI with no usability value
+adding fake metrics
+creating duplicate tasks
+creating tasks only to satisfy backlog size
+making tiny meaningless PRs
+```
+
+If planner cannot find enough useful tasks, planner should:
+
+```text
+clean duplicates
+mark obsolete tasks
+improve existing task prompts
+create reviewer tasks for real uncertainty
+create documentation tasks for real gaps
+create tests for real uncovered behavior
+```
+
+A smaller useful backlog is better than a large useless backlog.
+
+***
+
+# 66. High-Quality Task Definition
+
+A high-quality task must be:
+
+```text
+specific
+atomic
+scoped
+useful
+testable or reviewable
+safe
+aligned with repository needs
+clear about files
+clear about acceptance criteria
+```
+
+A high-quality task should answer:
+
+```text
+Who should do it?
+Where should the agent look?
+What exactly should change?
+What must not change?
+How will success be judged?
+What risk level is it?
+Can it automerge?
+```
+
+Tasks that do not answer these questions should be improved or removed.
+
+***
+
+# 67. Failure Handling
+
+If an agent cannot complete a task, the agent should not fake completion.
+
+The agent should:
+
+```text
+explain what was attempted
+explain what blocked completion
+make a small safe improvement if possible
+avoid broad unrelated changes
+avoid claiming success
+```
+
+If validation fails, the agent should:
+
+```text
+report the failing command
+report the failure summary
+avoid hiding the failure
+avoid claiming tests passed
+```
+
+If task scope prevents completion, the agent should:
+
+```text
+respect scope
+complete the safe scoped portion
+explain what would require a separate task
+```
+
+***
+
+# 68. Conflict Avoidance
+
+Agents must avoid conflicts.
+
+Agents should avoid touching common high-conflict files unless assigned:
+
+```text
+AGENTS.md
+README.md
+.github/ai-factory/task_queue.json
+.github/ai-factory/state.json
+.github/ai-factory/metrics.json
+.github/ai-factory/config.json
+frontend/css/styles.css
+large central backend files
+```
+
+Planner may modify `task_queue.json`.
+
+Documenter may modify `README.md` when assigned.
+
+Workers should avoid central files unless the task explicitly requires them.
+
+If multiple agents are likely to touch the same file, planner should split tasks carefully or sequence them.
+
+***
+
+# 69. UI Copywriting Standard
+
+UI text should be clear and concise.
+
+Use direct labels.
+
+Avoid vague labels.
+
+Good labels:
+
+```text
+Tasks pending
+Validation failed
+Automerge disabled
+No recent PRs
+Run validation
+View task queue
+System healthy
+Needs review
+```
+
+Bad labels:
+
+```text
+Stuff
+Things
+Magic
+Cool data
+Something went wrong
+Better mode
+```
+
+Error messages should be useful.
+
+Empty states should explain what happens next.
+
+Status labels should be consistent.
+
+***
+
+# 70. Final World-Class Rule
+
+Every agent should behave like a careful senior engineer working on a premium product.
+
+Do not only make changes that pass.
+
+Make changes that are:
+
+```text
+useful
+safe
+clear
+maintainable
+polished
+honest
+well-scoped
+well-documented
+well-validated
+```
+
+The AI Factory should become better every day.
+
+The repository should become easier to understand every week.
+
+The UI should become more impressive without becoming less usable.
+
+The architecture should become clearer without becoming overengineered.
+
+The automation should become more powerful without becoming unsafe.
+
+The project should feel alive, but controlled.
+
+The final standard is:
+
+```text
+A first-time visitor should understand the project.
+A developer should respect the architecture.
+A maintainer should trust the automation.
+A user should enjoy the interface.
+A reviewer should understand every PR.
+```
+
+
+
+
