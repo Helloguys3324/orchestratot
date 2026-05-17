@@ -1,5 +1,6 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends
 from backend.models.registry import list_models, list_models_by_category, get_model, get_chat_models
+from backend.api.dependencies import get_model_or_404
 
 router = APIRouter(prefix="/api/models", tags=["models"])
 
@@ -16,8 +17,5 @@ async def api_list_chat_models():
     return get_chat_models()
 
 @router.get("/{model_id}")
-async def api_get_model(model_id: str):
-    model = get_model(model_id)
-    if not model:
-        raise HTTPException(404, "Model not found")
+async def api_get_model(model: dict = Depends(get_model_or_404)):
     return model
