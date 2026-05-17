@@ -69,3 +69,7 @@ const ModelsPage = {
     container.innerHTML = html;
   }
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ModelsPage;
+}

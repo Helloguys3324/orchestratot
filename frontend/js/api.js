@@ -58,3 +58,7 @@ const API = {
   clearSession(id) { return this.request('POST', `/api/sessions/${id}/clear`); },
   getSessionFiles(id) { return this.request('GET', `/api/sessions/${id}/files`); },
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = API;
+}
