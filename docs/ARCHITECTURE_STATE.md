@@ -32,7 +32,7 @@ The repository is structured into the following directories:
 - **Environment Management:** `python-dotenv` for configuration loading and Pydantic `BaseModel` for robust configuration parsing and defaults.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
-- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, including comprehensive test suites for utilities like `api.js`, `models.js`, and `websocket.js` by simulating globals without external libraries) with heavily type-hinted, asynchronous code.
+- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, including comprehensive test suites for utilities like `api.js`, `models.js`, `websocket.js`, and `chat.js` by simulating DOM manipulation via `global.document` mocking without external libraries) with heavily type-hinted, asynchronous code.
 
 ### 4. Data Flow & System Architecture
 1. **Input:** User requests or autonomous triggers initialize a session.
@@ -51,5 +51,6 @@ The repository is structured into the following directories:
 - **Verification:** Zero-trust verification. Unit/integration tests via MCP must pass before any code is considered complete.
 - **Self-Healing:** Enter a debug loop immediately upon test failure or bug detection. Analyze stack traces and fix.
 - **Recursive Meta-Prompting:** All tasks generated must follow the strict 4-part protocol: `[INPUT STATE]`, `[ATOMIC OBJECTIVE]`, `[CONSTRAINTS]`, `[ACCEPTANCE CRITERIA]`.
-- **Error Handling & Validation:** Enforce explicit typed domain exceptions mapping to precise HTTP status codes, and Pydantic models for inbound validation/config with empty env var filtering.
+- **Error Handling & Validation:** Enforce explicit typed domain exceptions (e.g., catching `OSError` and chaining `from e` to preserve tracebacks) mapping to precise HTTP status codes. Use shared base request models to reduce duplication in API contracts. Use Pydantic models for inbound validation/config with empty env var filtering.
 - **Documentation:** API payloads must be documented in `docs/API_NOTES.md`.
+- **Emergency Stop:** The `AUTOPILOT_STOP` file acts as an emergency stop signal; automation must immediately halt and the file must not be removed.
