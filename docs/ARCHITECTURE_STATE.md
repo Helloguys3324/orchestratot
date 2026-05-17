@@ -10,7 +10,7 @@ The repository is structured into the following directories:
 - `.github/`: CI/CD workflows, automation scripts, and task queues for AI Factory.
 - `backend/`: Core orchestrator logic utilizing FastAPI, Uvicorn, and Pydantic v2.
   - `agents/`: Defines agent classes and behaviors.
-  - `api/`: FastAPI APIRouter endpoints decoupling application routing logic.
+  - `api/`: FastAPI APIRouter endpoints decoupling application routing logic, utilizing FastAPI's `Depends()` injection for reusable API dependencies.
   - `llm/`: Decoupled low-level LLM API integrations (e.g., Gemini Live API and OpenAI compatible endpoints) enforcing strict architectural boundaries.
   - `models/`: Pydantic data models.
   - `sessions/`: Manages orchestration sessions.
@@ -39,7 +39,7 @@ The repository is structured into the following directories:
 1. **Input:** User requests or autonomous triggers initialize a session.
 2. **Orchestrator:** A central asynchronous loop manages DAG execution.
 3. **Agent Routing:** Tasks are parsed and assigned to specific agents based on capabilities.
-4. **Execution:** Agents use skills via MCP, fetching tools and executing them safely. Managers (e.g., `SessionManager`) isolate real-time WebSocket communication from core logic by utilizing injected `_message_callback` functions to emit events (e.g., `_add_message`), decoupling them from direct FastAPI WebSocket routing.
+4. **Execution:** Agents use skills via MCP, fetching tools and executing them safely. Managers (e.g., `SessionManager`) isolate real-time WebSocket communication from core logic by utilizing injected `_message_callback` functions to emit events (e.g., `_add_message`), decoupling them from direct FastAPI WebSocket routing. Localized helper functions (e.g., `_error_msg`) are utilized for standardized event formatting.
 5. **Memory & State:** `ARCHITECTURE_STATE.md` maintains long-term memory for the continuous loop, alongside structured logs or databases for session memory.
 6. **Output/Feedback:** Results are aggregated, validated against constraints, and returned to the user or passed to the next DAG node. Continuous self-healing is triggered on failure.
 
@@ -52,6 +52,6 @@ The repository is structured into the following directories:
 - **Verification:** Zero-trust verification. Unit/integration tests via MCP must pass before any code is considered complete.
 - **Self-Healing:** Enter a debug loop immediately upon test failure or bug detection. Analyze stack traces and fix.
 - **Recursive Meta-Prompting:** All tasks generated must follow the strict 4-part protocol: `[INPUT STATE]`, `[ATOMIC OBJECTIVE]`, `[CONSTRAINTS]`, `[ACCEPTANCE CRITERIA]`.
-- **Error Handling & Validation:** Enforce explicit typed domain exceptions (e.g., catching specific errors like `OSError` or `json.JSONDecodeError` instead of generic `Exception` and chaining `from e` to preserve tracebacks) mapping to precise HTTP status codes. Use standard synchronous `@contextmanager` from `contextlib` to wrap asynchronous FastAPI route handlers for centralized HTTP status mapping, eliminating duplicate `try...except` blocks. Use shared base request models to reduce duplication in API contracts. Use Pydantic `BaseModel` for inbound request payload validation, and `pydantic-settings` for config management with empty env var filtering via `os.environ.pop`.
+- **Error Handling & Validation:** Enforce explicit typed domain exceptions (e.g., catching specific errors like `OSError` or `json.JSONDecodeError` instead of generic `Exception` and chaining `from e` to preserve tracebacks) mapping to precise HTTP status codes. Use standard synchronous `@contextmanager` from `contextlib` to wrap asynchronous FastAPI route handlers for centralized HTTP status mapping, eliminating duplicate `try...except` blocks. Use shared base request models to reduce duplication in API contracts. Use Pydantic `BaseModel` for inbound request payload validation, and `pydantic-settings` for config management with empty env var filtering via `os.environ.pop` and dynamic `ValidationError` fallback using explicit defaults via `init_kwargs`.
 - **Documentation:** API payloads must be documented in `docs/API_NOTES.md`.
 - **Emergency Stop:** The `AUTOPILOT_STOP` file acts as an emergency stop signal; automation must immediately halt and the file must not be removed.
