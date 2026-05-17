@@ -300,3 +300,16 @@ def test_save_oserror():
         with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
             with pytest.raises(SkillInstallError, match="Failed to save skills file: Write error"):
                 manager._save()
+
+def test_load_json_error():
+    import json
+    with patch("backend.skills.manager.load_json", side_effect=json.JSONDecodeError("Expecting value", "doc", 0)):
+        with pytest.raises(SkillInstallError, match="Failed to load skills file: Expecting value"):
+            SkillsManager()
+
+def test_save_type_error():
+    with patch("backend.skills.manager.load_json", return_value=[]):
+        manager = SkillsManager()
+        with patch("backend.skills.manager.save_json", side_effect=TypeError("Object of type function is not JSON serializable")):
+            with pytest.raises(SkillInstallError, match="Failed to save skills file: Object of type function is not JSON serializable"):
+                manager._save()

@@ -120,13 +120,13 @@ class SkillsManager:
     def _load(self):
         try:
             self._custom_skills = load_json(SKILLS_FILE, [])
-        except OSError as e:
+        except Exception as e:
             raise SkillInstallError(f"Failed to load skills file: {e}") from e
 
     def _save(self):
         try:
             save_json(SKILLS_FILE, self._custom_skills)
-        except OSError as e:
+        except Exception as e:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
 
     def list_skills(self) -> list[dict]:
@@ -163,7 +163,7 @@ class SkillsManager:
             filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
             try:
                 filepath.write_text(skill["code"], encoding="utf-8")
-            except OSError as e:
+            except Exception as e:
                 raise SkillInstallError(f"Failed to write skill file: {e}") from e
             skill["file"] = f"{skill_id}.py"
 
@@ -179,7 +179,7 @@ class SkillsManager:
                 if filepath.exists():
                     try:
                         filepath.unlink()
-                    except OSError as e:
+                    except Exception as e:
                         raise SkillInstallError(f"Failed to delete skill file: {e}") from e
                 self._custom_skills.pop(i)
                 self._save()
@@ -221,7 +221,7 @@ class SkillsManager:
         filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
         try:
             filepath.write_text(code, encoding="utf-8")
-        except OSError as e:
+        except Exception as e:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
         skill["file"] = f"{skill_id}.py"
 
