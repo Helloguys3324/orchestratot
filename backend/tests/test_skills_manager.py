@@ -2,7 +2,7 @@ import asyncio
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock
 from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS
-from backend.skills.errors import SkillValidationError, SkillInstallError
+from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
 @pytest.fixture
 def mock_load_json():
@@ -44,8 +44,8 @@ def test_get_skill_custom(manager):
     assert skill == {"id": "custom_1", "name": "Custom 1"}
 
 def test_get_skill_not_found(manager):
-    skill = manager.get_skill("non_existent_id")
-    assert skill is None
+    with pytest.raises(SkillNotFoundError, match="Skill not found"):
+        manager.get_skill("non_existent_id")
 
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -95,6 +95,31 @@ def test_create_skill_no_code(mock_save, manager):
     assert "file" not in result
     mock_save.assert_called_once()
 
+def test_create_skill_missing_name(manager):
+    data = {"description": "No name provided"}
+    with pytest.raises(SkillValidationError, match="Skill name is required"):
+        manager.create_skill(data)
+
+@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
+@patch("backend.skills.manager.SkillsManager._save")
+def test_create_skill_write_error(mock_save, mock_path, mock_uuid, manager):
+    mock_uuid_instance = MagicMock()
+    mock_uuid_instance.hex = "1234567890abcdef"
+    mock_uuid.return_value = mock_uuid_instance
+
+    mock_file_path = MagicMock()
+    mock_file_path.write_text.side_effect = OSError("Disk full")
+    mock_path.__truediv__.return_value = mock_file_path
+
+    data = {
+        "name": "Broken Disk Skill",
+        "code": "print('fail')"
+    }
+
+    with pytest.raises(SkillInstallError, match="Failed to write skill file: Disk full"):
+        manager.create_skill(data)
+
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
@@ -115,6 +140,20 @@ def test_delete_skill_exists(mock_save, mock_path, manager):
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
+def test_delete_skill_unlink_error(mock_save, mock_path, manager):
+    manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
+
+    mock_file_path = MagicMock()
+    mock_file_path.exists.return_value = True
+    mock_file_path.unlink.side_effect = OSError("Permission denied")
+    mock_path.__truediv__.return_value = mock_file_path
+
+    with pytest.raises(SkillInstallError, match="Failed to delete skill file: Permission denied"):
+        manager.delete_skill("custom_1")
+
+
+@patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
+@patch("backend.skills.manager.SkillsManager._save")
 def test_delete_skill_file_not_exists(mock_save, mock_path, manager):
     manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
 
@@ -132,9 +171,9 @@ def test_delete_skill_file_not_exists(mock_save, mock_path, manager):
 
 def test_delete_skill_not_found(manager):
     manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
-    result = manager.delete_skill("non_existent_id")
+    with pytest.raises(SkillNotFoundError, match="Skill not found"):
+        manager.delete_skill("non_existent_id")
 
-    assert result is False
     assert len(manager._custom_skills) == 1
 
 @patch("backend.skills.manager.uuid.uuid4")
@@ -172,6 +211,29 @@ def test_install_from_url_success(mock_client_class, mock_save, mock_dir, mock_u
     mock_file_path.write_text.assert_called_once_with("print('installed')", encoding="utf-8")
     mock_save.assert_called_once()
     assert len(manager._custom_skills) == 1
+
+@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
+@patch("backend.skills.manager.httpx.AsyncClient")
+def test_install_from_url_write_error(mock_client_class, mock_dir, mock_uuid, manager):
+    mock_uuid_instance = MagicMock()
+    mock_uuid_instance.hex = "abcdef1234567890"
+    mock_uuid.return_value = mock_uuid_instance
+
+    mock_response = MagicMock()
+    mock_response.text = "print('installed')"
+    mock_response.raise_for_status.return_value = None
+
+    mock_client = MagicMock()
+    mock_client.get = AsyncMock(return_value=mock_response)
+    mock_client_class.return_value.__aenter__.return_value = mock_client
+
+    mock_file_path = MagicMock()
+    mock_file_path.write_text.side_effect = OSError("Read only file system")
+    mock_dir.__truediv__.return_value = mock_file_path
+
+    with pytest.raises(SkillInstallError, match="Failed to write skill file: Read only file system"):
+        asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
 
 @patch("backend.skills.manager.httpx.AsyncClient")
 def test_install_from_url_failure(mock_client_class, manager):
