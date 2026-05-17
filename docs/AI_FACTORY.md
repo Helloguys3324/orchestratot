@@ -4,17 +4,18 @@ This repository is configured to run Jules as an autonomous GitHub development f
 
 ## Required GitHub Setup
 
-1. Install/connect the repository in the Jules web app.
-2. Create a Jules API key.
-3. Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
+1. **App Installation:** Install/connect the repository in the Jules web app.
+2. **API Key Creation:** Create a Jules API key.
+3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
    - Value: your LLM provider API key
-4. Confirm GitHub Actions are enabled for the repository.
-5. Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
+4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
+5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
-*Note: Infrastructure files including `.github/workflows/`, `.github/scripts/`, and `.github/CODEOWNERS` are locked for AI agents and must only be modified via human PRs outside of the automated framework.*
+**Warning: Infrastructure Lock**
+*Infrastructure files including `.github/workflows/`, `.github/scripts/`, and `.github/CODEOWNERS` are securely locked for AI agents. These files must only be modified via human PRs outside of the automated AI Factory framework.*
 
 ## Schedule
 
