@@ -44,7 +44,9 @@ def test_create_agent_invalid_temperature_bounds():
     assert errors[0]["loc"] == ["body", "temperature"]
 
 @patch("backend.api.agents.agent_manager.update_agent")
-def test_update_agent_success(mock_update):
+@patch("backend.api.dependencies.agent_manager.get_agent")
+def test_update_agent_success(mock_get, mock_update):
+    mock_get.return_value = {"id": "123", "name": "Old Agent"}
     mock_update.return_value = {"id": "123", "name": "Updated Agent"}
 
     response = client.put("/api/agents/123", json={
@@ -55,7 +57,9 @@ def test_update_agent_success(mock_update):
     assert response.json() == {"id": "123", "name": "Updated Agent"}
     mock_update.assert_called_once_with("123", {"name": "Updated Agent"})
 
-def test_update_agent_invalid_max_tokens():
+@patch("backend.api.dependencies.agent_manager.get_agent")
+def test_update_agent_invalid_max_tokens(mock_get):
+    mock_get.return_value = {"id": "123", "name": "Old Agent"}
     response = client.put("/api/agents/123", json={
         "max_tokens": 0
     })

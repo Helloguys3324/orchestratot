@@ -10,6 +10,11 @@ def mock_session_manager():
     with patch("backend.api.sessions.session_manager") as mock:
         yield mock
 
+@pytest.fixture
+def mock_get_session_dep():
+    with patch("backend.api.dependencies.session_manager.get_session") as mock:
+        yield mock
+
 def test_api_list_sessions(mock_session_manager):
     mock_session_manager.list_sessions.return_value = [{"id": "s1"}, {"id": "s2"}]
     response = client.get("/api/sessions")
@@ -17,15 +22,15 @@ def test_api_list_sessions(mock_session_manager):
     assert response.json() == [{"id": "s1"}, {"id": "s2"}]
     mock_session_manager.list_sessions.assert_called_once()
 
-def test_api_get_session_exists(mock_session_manager):
-    mock_session_manager.get_session.return_value = {"id": "s1", "title": "Test"}
+def test_api_get_session_exists(mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1", "title": "Test"}
     response = client.get("/api/sessions/s1")
     assert response.status_code == 200
     assert response.json() == {"id": "s1", "title": "Test"}
-    mock_session_manager.get_session.assert_called_once_with("s1")
+    mock_get_session_dep.assert_called_once_with("s1")
 
-def test_api_get_session_not_found(mock_session_manager):
-    mock_session_manager.get_session.return_value = None
+def test_api_get_session_not_found(mock_get_session_dep):
+    mock_get_session_dep.return_value = None
     response = client.get("/api/sessions/s1")
     assert response.status_code == 404
     assert response.json() == {"detail": "Session not found"}
@@ -37,21 +42,21 @@ def test_api_create_session(mock_session_manager):
     assert response.json() == {"id": "s1", "title": "New"}
     mock_session_manager.create_session.assert_called_once_with({"title": "New"})
 
-def test_api_delete_session_success(mock_session_manager):
-    mock_session_manager.delete_session.return_value = True
+def test_api_delete_session_success(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
     response = client.delete("/api/sessions/s1")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
     mock_session_manager.delete_session.assert_called_once_with("s1")
 
-def test_api_delete_session_not_found(mock_session_manager):
-    mock_session_manager.delete_session.return_value = False
+def test_api_delete_session_not_found(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = None
     response = client.delete("/api/sessions/s1")
     assert response.status_code == 404
     assert response.json() == {"detail": "Session not found"}
 
-def test_api_chat_success(mock_session_manager):
-    mock_session_manager.get_session.return_value = {"id": "s1"}
+def test_api_chat_success(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
 
     # Needs to mock asyncio.create_task to avoid actually running chat
     with patch("backend.api.sessions.asyncio.create_task") as mock_create_task:
@@ -60,46 +65,48 @@ def test_api_chat_success(mock_session_manager):
         assert response.json() == {"status": "started"}
         mock_create_task.assert_called_once()
         # Verify get_session was called to check existence
-        mock_session_manager.get_session.assert_called_once_with("s1")
+        mock_get_session_dep.assert_called_once_with("s1")
 
-def test_api_chat_session_not_found(mock_session_manager):
-    mock_session_manager.get_session.return_value = None
+def test_api_chat_session_not_found(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = None
     response = client.post("/api/sessions/s1/chat", json={"message": "hello"})
     assert response.status_code == 404
     assert response.json() == {"detail": "Session not found"}
 
-def test_api_chat_empty_message(mock_session_manager):
+def test_api_chat_empty_message(mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
     response = client.post("/api/sessions/s1/chat", json={"message": ""})
     assert response.status_code == 422 # Pydantic validation error
 
-def test_api_chat_missing_message(mock_session_manager):
+def test_api_chat_missing_message(mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
     response = client.post("/api/sessions/s1/chat", json={})
     assert response.status_code == 422
 
-def test_api_clear_session_success(mock_session_manager):
-    mock_session_manager.clear_messages.return_value = True
+def test_api_clear_session_success(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
     response = client.post("/api/sessions/s1/clear")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
     mock_session_manager.clear_messages.assert_called_once_with("s1")
 
-def test_api_clear_session_not_found(mock_session_manager):
-    mock_session_manager.clear_messages.return_value = False
+def test_api_clear_session_not_found(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = None
     response = client.post("/api/sessions/s1/clear")
     assert response.status_code == 404
     assert response.json() == {"detail": "Session not found"}
 
-def test_api_session_files_success(mock_session_manager):
-    mock_session_manager.get_session.return_value = {"id": "s1"}
+def test_api_session_files_success(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = {"id": "s1"}
     mock_session_manager.get_workspace_files.return_value = [{"name": "file.txt"}]
     response = client.get("/api/sessions/s1/files")
     assert response.status_code == 200
     assert response.json() == [{"name": "file.txt"}]
-    mock_session_manager.get_session.assert_called_once_with("s1")
+    mock_get_session_dep.assert_called_once_with("s1")
     mock_session_manager.get_workspace_files.assert_called_once_with("s1")
 
-def test_api_session_files_not_found(mock_session_manager):
-    mock_session_manager.get_session.return_value = None
+def test_api_session_files_not_found(mock_session_manager, mock_get_session_dep):
+    mock_get_session_dep.return_value = None
     response = client.get("/api/sessions/s1/files")
     assert response.status_code == 404
     assert response.json() == {"detail": "Session not found"}
