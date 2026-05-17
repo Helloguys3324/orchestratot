@@ -93,22 +93,32 @@ def get_settings() -> dict:
     try:
         model = ConfigModel()
     except ValidationError as e:
-        # If the API key is the cause of validation error, clear it. Otherwise, let it fail loud.
-        has_api_key_error = any(err.get('loc') == ('api_key',) for err in e.errors())
-        if has_api_key_error:
-            # Temporarily remove it from os.environ to prevent re-reading the invalid env var
-            old_env = os.environ.pop("AUTOGEN_API_KEY", None)
-            try:
-                # Initialize with empty api_key to override .env configuration, preserving other vars
-                model = ConfigModel(api_key="")
-            finally:
-                if old_env is not None:
-                    os.environ["AUTOGEN_API_KEY"] = old_env
+        invalid_keys = [err.get('loc')[0] for err in e.errors() if err.get('loc')]
+        old_envs = {}
 
-            if len(e.errors()) > 1:
-                raise
-        else:
-            raise
+        # Temporarily remove invalid keys from os.environ to prevent re-reading invalid env vars
+        for k in invalid_keys:
+            env_key = f"AUTOGEN_{k.upper()}"
+            old_envs[env_key] = os.environ.pop(env_key, None)
+
+        # We must provide the default values in kwargs to override invalid entries in the .env file
+        kwargs = {}
+        for k in invalid_keys:
+            if k == "api_key":
+                kwargs["api_key"] = ""
+            elif k in ConfigModel.model_fields:
+                default_val = ConfigModel.model_fields[k].get_default()
+                if default_val is not None:
+                    kwargs[k] = default_val
+
+        try:
+            # Initialize with kwargs (defaults) to override .env configuration, preserving valid vars
+            model = ConfigModel(**kwargs)
+        finally:
+            # Restore the environment variables
+            for env_key, val in old_envs.items():
+                if val is not None:
+                    os.environ[env_key] = val
 
     validated_settings = model.model_dump(mode="json")
     validated_settings["api_key"] = model.api_key

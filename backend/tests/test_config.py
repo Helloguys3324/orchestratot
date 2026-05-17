@@ -88,3 +88,12 @@ def test_get_settings_typecasts_env_vars(monkeypatch):
 
     assert settings["max_rounds"] == 50
     assert settings["temperature"] == 0.9
+
+def test_get_settings_all_invalid_fallback(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "invalid_float")
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "invalid_int")
+
+    settings = get_settings()
+
+    assert settings["temperature"] == 0.7  # Default from model
+    assert settings["max_rounds"] == 15  # Default from model
