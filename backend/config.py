@@ -131,7 +131,15 @@ def save_settings(settings: dict):
     if not ENV_FILE.exists():
         ENV_FILE.touch()
 
-    for k, v in settings.items():
+    # Filter out masked api_key from incoming data
+    filtered_settings = {k: v for k, v in settings.items() if not (k == "api_key" and v == "**********")}
+
+    # Validate before saving
+    model = ConfigModel(**filtered_settings)
+    validated_settings = model.model_dump(mode="json")
+    validated_settings["api_key"] = model.api_key
+
+    for k, v in validated_settings.items():
         if k == "api_key" and not v:
             continue
 
