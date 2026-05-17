@@ -14,6 +14,8 @@ This repository is configured to run Jules as an autonomous GitHub development f
 4. Confirm GitHub Actions are enabled for the repository.
 5. Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
+*Note: Infrastructure files including `.github/workflows/`, `.github/scripts/`, and `.github/CODEOWNERS` are locked for AI agents and must only be modified via human PRs outside of the automated framework.*
+
 ## Schedule
 
 The workflow `.github/workflows/ai-factory-tick.yml` targets 100 Jules tasks per day by dispatching `.github/workflows/ai-factory-jules.yml`:
@@ -98,7 +100,7 @@ All implementation, refactor, security, and architecture PRs require human revie
 
 ## Validation
 
-The validation workflow runs:
+The validation workflow runs the following full suite:
 
 ```bash
 # Verify Python syntax and compilation
@@ -118,7 +120,13 @@ The pytest step runs when tests exist outside ignored runtime workspace director
 
 ## Secrets
 
-Never commit real API keys. Local runtime credentials should use environment variables (e.g. by placing them in a `.env` file at the root of the project which is parsed automatically). You can copy the provided `.env.example` file to create your local `.env` configuration:
+Never commit real API keys, credentials, or `.env` files to source control.
+
+**CI/CD Environments:**
+Use GitHub Actions Secrets (navigate to **Settings -> Secrets and variables -> Actions**) to securely store production and testing keys.
+
+**Local Development:**
+Local runtime credentials should use environment variables (e.g., by placing them in a `.env` file at the root of the project, which is automatically parsed by `pydantic-settings`). You can copy the provided `.env.example` file to create your local `.env` configuration:
 
 ```bash
 cp .env.example .env
