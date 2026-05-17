@@ -26,7 +26,7 @@ To prepare the repository for local development, follow these steps:
    ```bash
    cp .env.example .env
    ```
-   *Note: Never commit your `.env` file to source control.*
+   *Note: Never commit your `.env` file to source control. Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`.*
 
 4. **Frontend & Testing Dependencies**
    - **Frontend Tests:** Ensure **Node.js** is installed to run frontend vanilla JS unit tests via `node --test`.
