@@ -125,7 +125,7 @@ AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
 AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 ```
 
-The application is configured to automatically scrub the `api_key` field before saving to `data/settings.json` to prevent accidental credential leakage to disk.
+The application uses Pydantic `SecretStr` to prevent accidental logging or JSON serialization of secrets loaded from `.env`. The application is configured to automatically scrub the `api_key` field before saving to `data/settings.json` to prevent accidental credential leakage to disk. Empty strings in environment variables are filtered out to prevent overwriting valid defaults.
 
 If a key was committed previously, rotate it immediately.
 

@@ -32,6 +32,9 @@ To prepare the repository for local development, follow these steps:
    - **Frontend Tests:** Ensure **Node.js** is installed to run frontend vanilla JS unit tests via `node --test`.
    - **UI Validation:** If you make UI changes, ensure Playwright is installed via `pip install playwright && playwright install chromium`.
 
+5. **Emergency Stop (Local & Remote)**
+   If you need to stop autonomous background tasks, create a file named `AUTOPILOT_STOP` in the root directory.
+
 ## Starting the Application
 
 To start the local FastAPI server and serve the frontend:
