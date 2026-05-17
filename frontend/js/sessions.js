@@ -137,3 +137,7 @@ const SessionsPage = {
     App.navigate('sessions');
   },
 };
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = SessionsPage;
+}

@@ -94,3 +94,89 @@ test('API request handles fetch error when json parsing fails', async () => {
 test.afterEach(() => {
     delete global.fetch;
 });
+
+test('API request throws json detail properly', async () => {
+    global.fetch = async (url, opts) => {
+        return {
+            ok: false,
+            statusText: 'Bad Request',
+            json: async () => ({ detail: { key: 'value' } })
+        };
+    };
+
+    try {
+        await API.request('GET', '/test');
+        assert.fail('Should have thrown an error');
+    } catch (e) {
+        assert.strictEqual(e.message, '{"key":"value"}');
+    }
+});
+
+test('API wrapper methods call request correctly', async () => {
+    const calls = [];
+    const originalRequest = API.request;
+    API.request = async (method, path, body) => {
+        calls.push({ method, path, body });
+        return { success: true };
+    };
+
+    await API.getSettings();
+    await API.saveSettings({ theme: 'dark' });
+    await API.getTemplates();
+
+    await API.getAgents();
+    await API.getAgent('a1');
+    await API.createAgent({ name: 'Agent1' });
+    await API.updateAgent('a1', { name: 'Agent1 Updated' });
+    await API.deleteAgent('a1');
+    await API.duplicateAgent('a1');
+
+    await API.getModels();
+    await API.getModelsByCategory();
+    await API.getChatModels();
+
+    await API.getSkills();
+    await API.getMarketplace();
+    await API.createSkill({ name: 'Skill1' });
+    await API.deleteSkill('s1');
+    await API.installSkill('http://example.com', 'Skill2');
+
+    await API.getSessions();
+    await API.getSession('sess1');
+    await API.createSession({ agent_id: 'a1' });
+    await API.deleteSession('sess1');
+    await API.sendMessage('sess1', 'hello');
+    await API.clearSession('sess1');
+    await API.getSessionFiles('sess1');
+
+    assert.deepStrictEqual(calls[0], { method: 'GET', path: '/api/settings', body: undefined });
+    assert.deepStrictEqual(calls[1], { method: 'POST', path: '/api/settings', body: { theme: 'dark' } });
+    assert.deepStrictEqual(calls[2], { method: 'GET', path: '/api/templates', body: undefined });
+
+    assert.deepStrictEqual(calls[3], { method: 'GET', path: '/api/agents', body: undefined });
+    assert.deepStrictEqual(calls[4], { method: 'GET', path: '/api/agents/a1', body: undefined });
+    assert.deepStrictEqual(calls[5], { method: 'POST', path: '/api/agents', body: { name: 'Agent1' } });
+    assert.deepStrictEqual(calls[6], { method: 'PUT', path: '/api/agents/a1', body: { name: 'Agent1 Updated' } });
+    assert.deepStrictEqual(calls[7], { method: 'DELETE', path: '/api/agents/a1', body: undefined });
+    assert.deepStrictEqual(calls[8], { method: 'POST', path: '/api/agents/a1/duplicate', body: undefined });
+
+    assert.deepStrictEqual(calls[9], { method: 'GET', path: '/api/models', body: undefined });
+    assert.deepStrictEqual(calls[10], { method: 'GET', path: '/api/models/categories', body: undefined });
+    assert.deepStrictEqual(calls[11], { method: 'GET', path: '/api/models/chat', body: undefined });
+
+    assert.deepStrictEqual(calls[12], { method: 'GET', path: '/api/skills', body: undefined });
+    assert.deepStrictEqual(calls[13], { method: 'GET', path: '/api/skills/marketplace', body: undefined });
+    assert.deepStrictEqual(calls[14], { method: 'POST', path: '/api/skills', body: { name: 'Skill1' } });
+    assert.deepStrictEqual(calls[15], { method: 'DELETE', path: '/api/skills/s1', body: undefined });
+    assert.deepStrictEqual(calls[16], { method: 'POST', path: '/api/skills/install', body: { url: 'http://example.com', name: 'Skill2' } });
+
+    assert.deepStrictEqual(calls[17], { method: 'GET', path: '/api/sessions', body: undefined });
+    assert.deepStrictEqual(calls[18], { method: 'GET', path: '/api/sessions/sess1', body: undefined });
+    assert.deepStrictEqual(calls[19], { method: 'POST', path: '/api/sessions', body: { agent_id: 'a1' } });
+    assert.deepStrictEqual(calls[20], { method: 'DELETE', path: '/api/sessions/sess1', body: undefined });
+    assert.deepStrictEqual(calls[21], { method: 'POST', path: '/api/sessions/sess1/chat', body: { message: 'hello' } });
+    assert.deepStrictEqual(calls[22], { method: 'POST', path: '/api/sessions/sess1/clear', body: undefined });
+    assert.deepStrictEqual(calls[23], { method: 'GET', path: '/api/sessions/sess1/files', body: undefined });
+
+    API.request = originalRequest;
+});

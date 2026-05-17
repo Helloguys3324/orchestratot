@@ -169,3 +169,30 @@ test('UI.withLoading handles non-existent button safely', async () => {
 test.afterEach(() => {
     delete global.document;
 });
+
+test('UI.renderEmptyState formats correctly without actionHtml', () => {
+    const html = UI.renderEmptyState('ICON', 'Title', 'Message');
+    assert.ok(html.includes('<div class="icon">ICON</div>'));
+    assert.ok(html.includes('<h3>Title</h3>'));
+    assert.ok(html.includes('<p>Message</p>'));
+});
+
+test('UI.renderSkillCheckboxes formats correctly without selectedIds or className', () => {
+    const skills = [
+        { id: 's1', name: 'Skill 1', icon: 'S1' }
+    ];
+
+    const html = UI.renderSkillCheckboxes(skills);
+
+    assert.ok(html.includes('<input type="checkbox" class="" value="s1" > S1 Skill 1'));
+});
+
+test('UI.renderModelOptions formats correctly without selectedId', () => {
+    const models = [
+        { id: '1', name: 'Model 1', icon: 'M1', rate_limits: { rpm: 10 } }
+    ];
+
+    const html = UI.renderModelOptions(models);
+
+    assert.ok(html.includes('<option value="1" >M1 Model 1 (10 RPM)</option>'));
+});

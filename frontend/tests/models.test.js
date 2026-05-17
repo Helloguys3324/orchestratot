@@ -98,3 +98,46 @@ test('ModelsPage renders null limits and missing features gracefully', async () 
     // Cleanup
     delete global.API;
 });
+
+test('ModelsPage renders specific limits correctly', async () => {
+    global.API = {
+        getModelsByCategory: async () => ({
+            'test-limits': {
+                info: { label: 'Limit Tests', icon: '⚡' },
+                models: [
+                    {
+                        id: 'm3',
+                        name: 'Model Three',
+                        icon: '3️⃣',
+                        tier: 'premium',
+                        description: 'Notes and zero limits test',
+                        notes: 'Important warning',
+                        supports_vision: false,
+                        supports_tools: true,
+                        context_window: '128K',
+                        max_output_tokens: 500,
+                        rate_limits: { rpm: 0, tpm: 'Unlimited', rpd: 0 }
+                    }
+                ]
+            }
+        })
+    };
+
+    let innerHTML = '';
+    const container = {
+        set innerHTML(val) { innerHTML = val; }
+    };
+
+    await ModelsPage.render(container);
+
+    assert.ok(innerHTML.includes('⚡'), 'Should include category icon');
+    assert.ok(innerHTML.includes('Limit Tests'), 'Should include category label');
+    assert.ok(innerHTML.includes('Model Three'), 'Should include model name');
+    assert.ok(innerHTML.includes('Important warning'), 'Should include warning notes');
+    assert.ok(innerHTML.includes('🔧 Tools'), 'Should include tools tag');
+    assert.ok(innerHTML.includes('500 out'), 'Should include max output tokens unformatted');
+    assert.ok(innerHTML.includes('>0<'), 'Should include RPM limit zero');
+    assert.ok(innerHTML.includes('Unlimited'), 'Should include string TPM limit');
+
+    delete global.API;
+});
