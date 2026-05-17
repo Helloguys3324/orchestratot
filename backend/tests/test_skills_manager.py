@@ -300,3 +300,22 @@ def test_save_oserror():
         with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
             with pytest.raises(SkillInstallError, match="Failed to save skills file: Write error"):
                 manager._save()
+
+def test_load_valueerror():
+    with patch("backend.skills.manager.load_json", side_effect=ValueError("Parse error")):
+        with pytest.raises(SkillInstallError, match="Failed to parse skills file: Parse error") as exc:
+            SkillsManager()
+        assert isinstance(exc.value.__cause__, ValueError)
+
+def test_save_typeerror():
+    with patch("backend.skills.manager.load_json", return_value=[]):
+        manager = SkillsManager()
+        with patch("backend.skills.manager.save_json", side_effect=TypeError("Serialize error")):
+            with pytest.raises(SkillInstallError, match="Failed to serialize skills data: Serialize error") as exc:
+                manager._save()
+            assert isinstance(exc.value.__cause__, TypeError)
+
+def test_install_from_url_valueerror(manager):
+    with pytest.raises(SkillValidationError, match="Invalid URL: Invalid IPv6 URL") as exc:
+        asyncio.run(manager.install_from_url("http://]foo["))
+    assert isinstance(exc.value.__cause__, ValueError)

@@ -122,12 +122,16 @@ class SkillsManager:
             self._custom_skills = load_json(SKILLS_FILE, [])
         except OSError as e:
             raise SkillInstallError(f"Failed to load skills file: {e}") from e
+        except ValueError as e:
+            raise SkillInstallError(f"Failed to parse skills file: {e}") from e
 
     def _save(self):
         try:
             save_json(SKILLS_FILE, self._custom_skills)
         except OSError as e:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
+        except (TypeError, ValueError) as e:
+            raise SkillInstallError(f"Failed to serialize skills data: {e}") from e
 
     def list_skills(self) -> list[dict]:
         return BUILTIN_SKILLS + self._custom_skills
@@ -190,10 +194,16 @@ class SkillsManager:
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
         from urllib.parse import urlparse
-        parsed_url = urlparse(url)
-        if parsed_url.scheme not in ("http", "https"):
+        try:
+            parsed_url = urlparse(url)
+            scheme = parsed_url.scheme
+            hostname = parsed_url.hostname
+        except ValueError as e:
+            raise SkillValidationError(f"Invalid URL: {e}") from e
+
+        if scheme not in ("http", "https"):
             raise SkillValidationError("Invalid URL scheme. Only http and https are allowed.")
-        if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
+        if hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
             raise SkillValidationError("Invalid URL hostname. Localhost is not allowed.")
 
         try:
