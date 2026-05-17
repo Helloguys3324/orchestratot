@@ -6,7 +6,7 @@ import uuid
 import re
 import asyncio
 import subprocess
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Callable
 from pathlib import Path
 from backend.config import SESSIONS_FILE, BASE_DIR, load_json, save_json, get_settings
@@ -47,6 +47,9 @@ class SessionManager:
     def get_session(self, session_id: str) -> Optional[dict]:
         return self._sessions.get(session_id)
 
+    def _now_iso(self) -> str:
+        return datetime.now(timezone.utc).isoformat()
+
     def create_session(self, data: dict) -> dict:
         session_id = str(uuid.uuid4())[:8]
         session = {
@@ -55,7 +58,7 @@ class SessionManager:
             "agent_ids": data.get("agent_ids", []),
             "strategy": data.get("strategy", "auto"),
             "max_rounds": data.get("max_rounds", 15),
-            "created_at": datetime.now().isoformat(),
+            "created_at": self._now_iso(),
             "messages": [],
             "status": "idle",
             "workspace": str(WORKSPACE_DIR / session_id),
@@ -83,7 +86,7 @@ class SessionManager:
         msg = {
             "role": "system", "sender": "System",
             "content": text,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": self._now_iso(),
             "icon": icon, "color": color,
         }
         session["messages"].append(msg)
@@ -105,7 +108,7 @@ class SessionManager:
         user_msg = {
             "role": "user", "sender": "You",
             "content": user_message,
-            "timestamp": datetime.now().isoformat(),
+            "timestamp": self._now_iso(),
             "icon": "\U0001f464", "color": "#FFFFFF",
         }
         session["messages"].append(user_msg)
@@ -249,7 +252,7 @@ class SessionManager:
                 "role": "assistant",
                 "sender": ac["name"],
                 "content": content,
-                "timestamp": datetime.now().isoformat(),
+                "timestamp": self._now_iso(),
                 "icon": ac["icon"],
                 "color": ac["color"],
             }
