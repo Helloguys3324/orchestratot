@@ -4,7 +4,8 @@ Configuration for AutoGen AI Orchestrator.
 import os
 import json
 from pathlib import Path
-from pydantic import BaseModel, SecretStr, field_validator, ValidationError
+from pydantic import SecretStr, field_validator, ValidationError
+from pydantic_settings import BaseSettings, SettingsConfigDict
 import re
 
 # ─── Paths ───────────────────────────────────────────────
@@ -25,13 +26,10 @@ SKILLS_FILE = DATA_DIR / "skills.json"
 SETTINGS_FILE = DATA_DIR / "settings.json"
 
 # ─── Load .env ──────────────────────────────────────────
-from dotenv import load_dotenv
-
 ENV_FILE = BASE_DIR / ".env"
-load_dotenv(dotenv_path=ENV_FILE)
 
 # ─── Security ───────────────────────────────────────────
-class ConfigModel(BaseModel):
+class ConfigModel(BaseSettings):
     """Validates configuration and wraps sensitive keys in SecretStr."""
     api_key: SecretStr = SecretStr("")
     default_model: str = "gemini-2.5-flash"
@@ -39,6 +37,29 @@ class ConfigModel(BaseModel):
     max_rounds: int = 15
     temperature: float = 0.7
     max_tokens: int = 4096
+
+    model_config = SettingsConfigDict(
+        env_prefix="AUTOGEN_",
+        env_file=ENV_FILE,
+        env_ignore_empty=True,
+        extra="ignore"
+    )
+
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls,
+        init_settings,
+        env_settings,
+        dotenv_settings,
+        file_secret_settings,
+    ):
+        return (
+            env_settings,
+            dotenv_settings,
+            init_settings,
+            file_secret_settings,
+        )
 
     @field_validator('api_key', mode='before')
     def validate_api_key(cls, v):
@@ -81,20 +102,6 @@ def save_json(filepath: Path, data):
 def get_settings() -> dict:
     """Get application settings."""
     settings = load_json(SETTINGS_FILE, DEFAULT_SETTINGS)
-
-    # Load and typecast overrides from env vars
-    env_overrides = {
-        "api_key": os.getenv("AUTOGEN_API_KEY"),
-        "default_model": os.getenv("AUTOGEN_DEFAULT_MODEL"),
-        "base_url": os.getenv("AUTOGEN_BASE_URL"),
-        "max_rounds": os.getenv("AUTOGEN_MAX_ROUNDS"),
-        "temperature": os.getenv("AUTOGEN_TEMPERATURE"),
-        "max_tokens": os.getenv("AUTOGEN_MAX_TOKENS"),
-    }
-
-    # Filter out None values to prevent overriding valid settings with empty env vars
-    active_overrides = {k: v for k, v in env_overrides.items() if v is not None and v != ""}
-    settings.update(active_overrides)
 
     try:
         model = ConfigModel(**settings)
