@@ -1350,6 +1350,7 @@ mission.md
 13. Respect `avoid_scope`.
 14. Avoid misleading claims.
 15. Avoid stale instructions.
+16. Document the existence and purpose of `AUTOPILOT_STOP` clearly in setup guides.
 
 ***
 
