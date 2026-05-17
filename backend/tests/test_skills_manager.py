@@ -117,8 +117,9 @@ def test_create_skill_write_error(mock_save, mock_path, mock_uuid, manager):
         "code": "print('fail')"
     }
 
-    with pytest.raises(SkillInstallError, match="Failed to write skill file: Disk full"):
+    with pytest.raises(SkillInstallError, match="Failed to write skill file: Disk full") as exc:
         manager.create_skill(data)
+    assert isinstance(exc.value.__cause__, OSError)
 
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -148,8 +149,9 @@ def test_delete_skill_unlink_error(mock_save, mock_path, manager):
     mock_file_path.unlink.side_effect = OSError("Permission denied")
     mock_path.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillInstallError, match="Failed to delete skill file: Permission denied"):
+    with pytest.raises(SkillInstallError, match="Failed to delete skill file: Permission denied") as exc:
         manager.delete_skill("custom_1")
+    assert isinstance(exc.value.__cause__, OSError)
 
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -232,8 +234,9 @@ def test_install_from_url_write_error(mock_client_class, mock_dir, mock_uuid, ma
     mock_file_path.write_text.side_effect = OSError("Read only file system")
     mock_dir.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillInstallError, match="Failed to write skill file: Read only file system"):
+    with pytest.raises(SkillInstallError, match="Failed to write skill file: Read only file system") as exc:
         asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
+    assert isinstance(exc.value.__cause__, OSError)
 
 @patch("backend.skills.manager.httpx.AsyncClient")
 def test_install_from_url_failure(mock_client_class, manager):
@@ -249,8 +252,9 @@ def test_install_from_url_failure(mock_client_class, manager):
     mock_client.get = AsyncMock(return_value=mock_response)
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="HTTP error occurred: 404 Not Found"):
+    with pytest.raises(SkillInstallError, match="HTTP error occurred: 404 Not Found") as exc:
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
+    assert isinstance(exc.value.__cause__, httpx.HTTPStatusError)
 
     assert len(manager._custom_skills) == 0
 
@@ -262,8 +266,9 @@ def test_install_from_url_request_error(mock_client_class, manager):
     mock_client.get = AsyncMock(side_effect=httpx.RequestError("Connection failed", request=MagicMock()))
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="Request error occurred: Connection failed"):
+    with pytest.raises(SkillInstallError, match="Request error occurred: Connection failed") as exc:
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
+    assert isinstance(exc.value.__cause__, httpx.RequestError)
 
     assert len(manager._custom_skills) == 0
 

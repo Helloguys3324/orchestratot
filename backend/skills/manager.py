@@ -164,7 +164,7 @@ class SkillsManager:
             try:
                 filepath.write_text(skill["code"], encoding="utf-8")
             except OSError as e:
-                raise SkillInstallError(f"Failed to write skill file: {e}")
+                raise SkillInstallError(f"Failed to write skill file: {e}") from e
             skill["file"] = f"{skill_id}.py"
 
         self._custom_skills.append(skill)
@@ -180,7 +180,7 @@ class SkillsManager:
                     try:
                         filepath.unlink()
                     except OSError as e:
-                        raise SkillInstallError(f"Failed to delete skill file: {e}")
+                        raise SkillInstallError(f"Failed to delete skill file: {e}") from e
                 self._custom_skills.pop(i)
                 self._save()
                 return True
@@ -202,9 +202,9 @@ class SkillsManager:
                 resp.raise_for_status()
                 code = resp.text
         except httpx.HTTPStatusError as e:
-            raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}")
+            raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}") from e
         except httpx.RequestError as e:
-            raise SkillInstallError(f"Request error occurred: {str(e)}")
+            raise SkillInstallError(f"Request error occurred: {str(e)}") from e
 
         skill_id = f"imported_{uuid.uuid4().hex[:8]}"
         skill = {
@@ -222,7 +222,7 @@ class SkillsManager:
         try:
             filepath.write_text(code, encoding="utf-8")
         except OSError as e:
-            raise SkillInstallError(f"Failed to write skill file: {e}")
+            raise SkillInstallError(f"Failed to write skill file: {e}") from e
         skill["file"] = f"{skill_id}.py"
 
         self._custom_skills.append(skill)
