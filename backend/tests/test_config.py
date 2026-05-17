@@ -97,3 +97,14 @@ def test_get_settings_all_invalid_fallback(monkeypatch):
 
     assert settings["temperature"] == 0.7  # Default from model
     assert settings["max_rounds"] == 15  # Default from model
+
+def test_save_settings_validation():
+    # Valid settings, should pass
+    save_settings({"temperature": 0.5, "max_rounds": 20})
+
+    # Validation error with invalid setting
+    with pytest.raises(ValidationError):
+        save_settings({"temperature": "invalid_float"})
+
+    # Should safely ignore placeholder api_key
+    save_settings({"api_key": "**********", "temperature": 0.6})
