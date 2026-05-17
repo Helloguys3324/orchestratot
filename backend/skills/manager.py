@@ -4,6 +4,7 @@ Skills Manager — handles skill CRUD, loading, and marketplace.
 import uuid
 import importlib.util
 import httpx
+import json
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
 from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
@@ -120,13 +121,13 @@ class SkillsManager:
     def _load(self) -> None:
         try:
             self._custom_skills = load_json(SKILLS_FILE, [])
-        except Exception as e:
+        except (json.JSONDecodeError, OSError) as e:
             raise SkillInstallError(f"Failed to load skills file: {e}") from e
 
     def _save(self) -> None:
         try:
             save_json(SKILLS_FILE, self._custom_skills)
-        except Exception as e:
+        except (TypeError, ValueError, OSError) as e:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
 
     def list_skills(self) -> list[dict]:
@@ -146,7 +147,7 @@ class SkillsManager:
         filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
         try:
             filepath.write_text(code, encoding="utf-8")
-        except Exception as e:
+        except OSError as e:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
         return f"{skill_id}.py"
 
@@ -182,7 +183,7 @@ class SkillsManager:
                 if filepath.exists():
                     try:
                         filepath.unlink()
-                    except Exception as e:
+                    except OSError as e:
                         raise SkillInstallError(f"Failed to delete skill file: {e}") from e
                 self._custom_skills.pop(i)
                 self._save()

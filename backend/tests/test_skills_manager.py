@@ -305,28 +305,29 @@ def test_save_oserror():
             with pytest.raises(SkillInstallError, match="Failed to save skills file: Write error"):
                 manager._save()
 
-def test_load_generic_exception() -> None:
-    with patch("backend.skills.manager.load_json", side_effect=Exception("Corrupted JSON")):
+def test_load_jsondecodeerror() -> None:
+    import json
+    with patch("backend.skills.manager.load_json", side_effect=json.JSONDecodeError("Corrupted JSON", "", 0)):
         with pytest.raises(SkillInstallError, match="Failed to load skills file: Corrupted JSON"):
             SkillsManager()
 
-def test_save_generic_exception() -> None:
+def test_save_typeerror() -> None:
     with patch("backend.skills.manager.load_json", return_value=[]):
         manager = SkillsManager()
-        with patch("backend.skills.manager.save_json", side_effect=Exception("Serialization error")):
+        with patch("backend.skills.manager.save_json", side_effect=TypeError("Serialization error")):
             with pytest.raises(SkillInstallError, match="Failed to save skills file: Serialization error"):
                 manager._save()
 
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
-def test_create_skill_write_generic_exception(mock_save, mock_path, mock_uuid, manager) -> None:
+def test_create_skill_write_oserror(mock_save, mock_path, mock_uuid, manager) -> None:
     mock_uuid_instance = MagicMock()
     mock_uuid_instance.hex = "1234567890abcdef"
     mock_uuid.return_value = mock_uuid_instance
 
     mock_file_path = MagicMock()
-    mock_file_path.write_text.side_effect = Exception("Generic write error")
+    mock_file_path.write_text.side_effect = OSError("Generic write error")
     mock_path.__truediv__.return_value = mock_file_path
 
     data = {
@@ -336,26 +337,26 @@ def test_create_skill_write_generic_exception(mock_save, mock_path, mock_uuid, m
 
     with pytest.raises(SkillInstallError, match="Failed to write skill file: Generic write error") as exc:
         manager.create_skill(data)
-    assert isinstance(exc.value.__cause__, Exception)
+    assert isinstance(exc.value.__cause__, OSError)
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
-def test_delete_skill_unlink_generic_exception(mock_save, mock_path, manager) -> None:
+def test_delete_skill_unlink_oserror(mock_save, mock_path, manager) -> None:
     manager._custom_skills = [{"id": "custom_1", "file": "custom_1.py"}]
 
     mock_file_path = MagicMock()
     mock_file_path.exists.return_value = True
-    mock_file_path.unlink.side_effect = Exception("Generic unlink error")
+    mock_file_path.unlink.side_effect = OSError("Generic unlink error")
     mock_path.__truediv__.return_value = mock_file_path
 
     with pytest.raises(SkillInstallError, match="Failed to delete skill file: Generic unlink error") as exc:
         manager.delete_skill("custom_1")
-    assert isinstance(exc.value.__cause__, Exception)
+    assert isinstance(exc.value.__cause__, OSError)
 
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.httpx.AsyncClient")
-def test_install_from_url_write_generic_exception(mock_client_class, mock_dir, mock_uuid, manager) -> None:
+def test_install_from_url_write_oserror(mock_client_class, mock_dir, mock_uuid, manager) -> None:
     mock_uuid_instance = MagicMock()
     mock_uuid_instance.hex = "abcdef1234567890"
     mock_uuid.return_value = mock_uuid_instance
@@ -369,9 +370,9 @@ def test_install_from_url_write_generic_exception(mock_client_class, mock_dir, m
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
     mock_file_path = MagicMock()
-    mock_file_path.write_text.side_effect = Exception("Generic write error")
+    mock_file_path.write_text.side_effect = OSError("Generic write error")
     mock_dir.__truediv__.return_value = mock_file_path
 
     with pytest.raises(SkillInstallError, match="Failed to write skill file: Generic write error") as exc:
         asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
-    assert isinstance(exc.value.__cause__, Exception)
+    assert isinstance(exc.value.__cause__, OSError)
