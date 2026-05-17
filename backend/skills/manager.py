@@ -142,6 +142,14 @@ class SkillsManager:
 
         raise SkillNotFoundError("Skill not found")
 
+    def _write_skill_file(self, skill_id: str, code: str) -> str:
+        filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
+        try:
+            filepath.write_text(code, encoding="utf-8")
+        except Exception as e:
+            raise SkillInstallError(f"Failed to write skill file: {e}") from e
+        return f"{skill_id}.py"
+
     def create_skill(self, data: dict) -> dict:
         if not data.get("name"):
             raise SkillValidationError("Skill name is required")
@@ -160,12 +168,7 @@ class SkillsManager:
         }
         # Save code to file
         if skill["code"]:
-            filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-            try:
-                filepath.write_text(skill["code"], encoding="utf-8")
-            except Exception as e:
-                raise SkillInstallError(f"Failed to write skill file: {e}") from e
-            skill["file"] = f"{skill_id}.py"
+            skill["file"] = self._write_skill_file(skill_id, skill["code"])
 
         self._custom_skills.append(skill)
         self._save()
@@ -222,12 +225,7 @@ class SkillsManager:
             "source": url,
             "code": code,
         }
-        filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-        try:
-            filepath.write_text(code, encoding="utf-8")
-        except Exception as e:
-            raise SkillInstallError(f"Failed to write skill file: {e}") from e
-        skill["file"] = f"{skill_id}.py"
+        skill["file"] = self._write_skill_file(skill_id, code)
 
         self._custom_skills.append(skill)
         self._save()
