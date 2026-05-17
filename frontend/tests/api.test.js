@@ -180,3 +180,38 @@ test('API wrapper methods call request correctly', async () => {
 
     API.request = originalRequest;
 });
+
+test('API request handles fetch error with array detail containing plain strings', async () => {
+    global.fetch = async (url, opts) => {
+        return {
+            ok: false,
+            statusText: 'Bad Request',
+            json: async () => ({
+                detail: ['Error 1', 'Error 2']
+            })
+        };
+    };
+
+    try {
+        await API.request('POST', '/test');
+        assert.fail('Should have thrown an error');
+    } catch (e) {
+        assert.strictEqual(e.message, 'Error 1\nError 2');
+    }
+});
+
+test('API request handles fetch error without detail field', async () => {
+    global.fetch = async (url, opts) => {
+        return {
+            ok: false,
+            json: async () => ({ other_field: 'something' })
+        };
+    };
+
+    try {
+        await API.request('POST', '/test');
+        assert.fail('Should have thrown an error');
+    } catch (e) {
+        assert.strictEqual(e.message, 'Request failed');
+    }
+});

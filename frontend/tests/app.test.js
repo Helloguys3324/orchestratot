@@ -298,3 +298,30 @@ test('App.init sets up navigation event listeners', async () => {
     delete global.API;
     delete global.document;
 });
+
+test('DOMContentLoaded event triggers App.init', async () => {
+    let initCalled = false;
+    const origInit = App.init;
+    App.init = async () => { initCalled = true; };
+
+    const eventListeners = {};
+    global.document = {
+        addEventListener: (event, cb) => {
+            eventListeners[event] = cb;
+        }
+    };
+
+    // Re-evaluate App.js so the event listener gets registered under mock document
+    delete require.cache[require.resolve('../js/app.js')];
+    const AppReloaded = require('../js/app.js');
+    AppReloaded.init = async () => { initCalled = true; };
+
+    if (eventListeners['DOMContentLoaded']) {
+        eventListeners['DOMContentLoaded']();
+    }
+
+    assert.strictEqual(initCalled, true);
+
+    App.init = origInit;
+    delete global.document;
+});

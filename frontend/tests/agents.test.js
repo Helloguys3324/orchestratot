@@ -345,3 +345,27 @@ test('AgentsPage.remove cancels on prompt', async () => {
     delete global.confirm;
     delete global.App;
 });
+
+test('AgentsPage.selectTemplate clears previous selection correctly', () => {
+    AgentsPage.templates = [{ id: 't1', name: 'T1', icon: 'X', system_prompt: 'P1' }];
+
+    const elements = {};
+    let removeCalled = false;
+    const mockCard = {
+        classList: { remove: () => { removeCalled = true; } }
+    };
+
+    global.document = {
+        querySelectorAll: () => [mockCard],
+        querySelector: () => null,
+        getElementById: (id) => {
+            if (!elements[id]) elements[id] = {};
+            return elements[id];
+        }
+    };
+
+    AgentsPage.selectTemplate('t1');
+
+    assert.strictEqual(removeCalled, true);
+    delete global.document;
+});
