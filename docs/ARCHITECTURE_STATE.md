@@ -29,10 +29,10 @@ The repository is structured into the following directories:
 - **Backend Framework:** FastAPI, Uvicorn (async HTTP server)
 - **Data Validation:** Pydantic v2 (includes SecretStr for config security and request models)
 - **Concurrency:** Asyncio (Python) for non-blocking operations.
-- **Environment Management:** `python-dotenv` for configuration loading.
+- **Environment Management:** `python-dotenv` for configuration loading and Pydantic `BaseModel` for robust configuration parsing and defaults.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
-- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend) with heavily type-hinted, asynchronous code.
+- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, including comprehensive test suites for utilities like `api.js`, `models.js`, and `websocket.js` by simulating globals without external libraries) with heavily type-hinted, asynchronous code.
 
 ### 4. Data Flow & System Architecture
 1. **Input:** User requests or autonomous triggers initialize a session.
