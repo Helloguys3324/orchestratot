@@ -13,7 +13,7 @@ def test_app_import():
 def test_settings_loading():
     settings = get_settings()
     assert isinstance(settings, dict)
-    for key in ConfigModel().model_dump().keys():
+    for key in ConfigModel.model_fields.keys():
         assert key in settings
 
 def test_api_settings_route():
