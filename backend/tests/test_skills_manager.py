@@ -283,3 +283,15 @@ def test_install_from_url_invalid_hostname(manager):
 
     with pytest.raises(SkillValidationError, match="Invalid URL hostname"):
         asyncio.run(manager.install_from_url("http://0.0.0.0:5000/skill.py"))
+
+def test_load_oserror():
+    with patch("backend.skills.manager.load_json", side_effect=OSError("Read error")):
+        with pytest.raises(SkillInstallError, match="Failed to load skills file: Read error"):
+            SkillsManager()
+
+def test_save_oserror():
+    with patch("backend.skills.manager.load_json", return_value=[]):
+        manager = SkillsManager()
+        with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
+            with pytest.raises(SkillInstallError, match="Failed to save skills file: Write error"):
+                manager._save()
