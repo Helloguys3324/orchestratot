@@ -215,3 +215,43 @@ def test_save_settings_ignores_unrelated_invalid_env_vars(monkeypatch):
         assert "AUTOGEN_TEMPERATURE='0.8'" in content or "AUTOGEN_TEMPERATURE=0.8" in content
     else:
         pytest.fail("ENV_FILE was not created")
+
+def test_config_model_boundaries():
+    # Valid bounds
+    model = ConfigModel(temperature=0.0, max_rounds=1, max_tokens=1)
+    assert model.temperature == 0.0
+
+    # Invalid: temperature too low
+    with pytest.raises(ValidationError):
+        ConfigModel(temperature=-0.1)
+
+    # Invalid: temperature too high
+    with pytest.raises(ValidationError):
+        ConfigModel(temperature=2.1)
+
+    # Invalid: max_rounds too low
+    with pytest.raises(ValidationError):
+        ConfigModel(max_rounds=0)
+
+    # Invalid: max_rounds too high
+    with pytest.raises(ValidationError):
+        ConfigModel(max_rounds=101)
+
+    # Invalid: max_tokens too low
+    with pytest.raises(ValidationError):
+        ConfigModel(max_tokens=0)
+
+    # Invalid: max_tokens too high
+    with pytest.raises(ValidationError):
+        ConfigModel(max_tokens=128001)
+
+def test_get_settings_out_of_bounds_fallback(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "5.0")
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "1000")
+    monkeypatch.setenv("AUTOGEN_MAX_TOKENS", "-10")
+
+    settings = get_settings()
+
+    assert settings["temperature"] == 0.7  # Default from model
+    assert settings["max_rounds"] == 15  # Default from model
+    assert settings["max_tokens"] == 4096  # Default from model
