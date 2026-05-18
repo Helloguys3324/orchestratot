@@ -30,14 +30,17 @@ Every agent must respect task scopes, AI Factory ownership rules, validation req
 Run these before proposing a code PR when practical:
 
 ```bash
+# Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
+
+# Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
-````
 
-If tests are added or available, also run:
+# Run all backend unit and integration tests
+PYTHONPATH=. python -m pytest -q
 
-```bash
-python -m pytest -q
+# Run frontend tests using native node runner
+node --experimental-test-coverage --test frontend/tests/*.js
 ```
 
 If validation cannot be run, the PR body must clearly explain why.
