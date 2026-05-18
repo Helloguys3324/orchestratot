@@ -40,6 +40,13 @@ pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydanti
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
 **Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings. The configuration is set to ignore empty strings on load (`env_ignore_empty=True`). However, you can deliberately clear API keys or other fields out by updating settings through the UI, which writes the empty string to the `.env` file.
 
+### Issue: JSON files fail validation or cause errors
+**Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
+**Solution:** Run the built-in JSON tool to identify the exact line containing the syntax error:
+```bash
+python -m json.tool <filepath>
+```
+
 ## GitHub Actions & Autonomous Workflows
 
 ### Issue: "Infrastructure Lock" PR rejection
