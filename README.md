@@ -85,6 +85,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - `JULES_API_KEY` (your Jules API key)
    - `AUTOGEN_API_KEY` (if your models require authentication)
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
+5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
 For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
@@ -117,6 +118,9 @@ PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
+
+# Validate JSON syntax (if JSON files are modified)
+python -m json.tool <filepath>
 
 # Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be installed)
 pip-audit -r backend/requirements.txt

@@ -115,6 +115,9 @@ PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
+
+# Validate JSON syntax (if JSON files are modified)
+python -m json.tool <filepath>
 ```
 
 The pytest step runs when tests exist outside ignored runtime workspace directories.

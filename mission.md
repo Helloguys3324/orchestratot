@@ -14,7 +14,7 @@ Primary goals:
 Operating rules:
 
 - Prefer small pull requests with one clear purpose.
-- Run the repository validation commands before opening a PR.
+- Run the repository validation commands (including JSON syntax validation) before opening a PR.
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
 - Do not rewrite project history.
