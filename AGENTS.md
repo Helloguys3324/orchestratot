@@ -3353,7 +3353,6 @@ Add GitHub Actions workflow diagram.
 Add agent role explanation document.
 Add safe automerge explanation.
 Add local development guide.
-Add troubleshooting guide.
 Add API payload examples.
 Improve README as product landing page.
 Add docs index page.
