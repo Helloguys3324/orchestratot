@@ -26,6 +26,10 @@ pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydanti
 **Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.js`.
 **Solution:** Ensure you have Node.js version 20 or higher installed, as it natively includes the `node:test` module. You do not need to `npm install` anything for standard test runs.
 
+### Issue: `pip-audit` reports false positives or missing dependencies
+**Symptom:** Running `pip-audit -r backend/requirements.txt` fails or flags vulnerabilities for package versions that aren't actually installed in the target environment.
+**Solution:** Ensure you have installed the project core requirements locally first (`pip install -r backend/requirements.txt`). To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.
+
 ## Secrets and Configuration
 
 ### Issue: "Secret Scanner Failed" during validation
