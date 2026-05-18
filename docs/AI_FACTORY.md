@@ -167,3 +167,63 @@ python .github/scripts/scan_secrets.py
 
 If a key was committed previously, rotate it immediately.
 
+## Workflows & Diagrams
+
+### Task Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> InQueue: Human creates task
+    InQueue --> Claimed: Agent assigned
+    Claimed --> Working: Task execution
+    Working --> Validating: PR created
+    Validating --> Failed: Validation error
+    Validating --> ReviewRequired: Validation passed
+    Failed --> Working: Agent retries
+    ReviewRequired --> Merged: Human approves
+    ReviewRequired --> Merged: Automerged (if safe)
+    Merged --> [*]: Task completed
+```
+
+### PR Lifecycle
+
+```mermaid
+stateDiagram-v2
+    [*] --> PR_Created: Agent pushes branch
+    PR_Created --> ValidationChecks: Trigger GitHub Actions
+    ValidationChecks --> SecretsScan: scan_secrets.py
+    ValidationChecks --> PythonCompile: compileall
+    ValidationChecks --> BackendTests: pytest
+    ValidationChecks --> FrontendTests: node --test
+    SecretsScan --> PR_Passed: All Pass
+    PythonCompile --> PR_Passed: All Pass
+    BackendTests --> PR_Passed: All Pass
+    FrontendTests --> PR_Passed: All Pass
+    SecretsScan --> PR_Failed: Any Fail
+    PythonCompile --> PR_Failed: Any Fail
+    BackendTests --> PR_Failed: Any Fail
+    FrontendTests --> PR_Failed: Any Fail
+    PR_Failed --> [*]: Agent notified to fix
+    PR_Passed --> WaitReview: Requires review
+    PR_Passed --> AutoMerge: Has safe-automerge label
+    WaitReview --> [*]: Human merges
+    AutoMerge --> [*]: Workflow merges
+```
+
+### GitHub Actions Workflow
+
+```mermaid
+flowchart TD
+    A[Tick Schedule: 15 min] -->|Dispatches| B(ai-factory-jules.yml)
+    B --> C{Check AUTOPILOT_STOP}
+    C -- Exists --> D[Halt Execution]
+    C -- Not Found --> E[Determine Role based on hour]
+    E --> F[Pop Task from task_queue.json]
+    F --> G[Run Jules Agent]
+    G --> H{Changes made?}
+    H -- Yes --> I[Create PR & Run Validation]
+    H -- No --> J[Mark as Completed Empty]
+    I --> K[Check Safe Automerge]
+    K -- Yes --> L[Merge PR]
+    K -- No --> M[Wait for Review]
+```
