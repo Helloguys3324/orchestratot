@@ -46,8 +46,23 @@ cp .env.example .env
 ```
 *Note: Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored.*
 
+You can verify that no secrets are accidentally committed by running the secret scanner:
+```bash
+python .github/scripts/scan_secrets.py
+```
+
 ### 4. Continuous Integration & AI Factory
-The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically. For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
+The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
+
+**Required GitHub Setup:**
+1. **App Installation:** Install/connect the repository in the Jules web app.
+2. **API Key Creation:** Create a Jules API key.
+3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**):
+   - `JULES_API_KEY` (your Jules API key)
+   - `AUTOGEN_API_KEY` (if your models require authentication)
+4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
+
+For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
 ### 5. Emergency Stop Protocol
@@ -78,6 +93,9 @@ PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
+
+# Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be installed)
+pip-audit -r backend/requirements.txt
 ```
 
 ## Frontend Visual Validation

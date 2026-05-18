@@ -119,6 +119,19 @@ node --experimental-test-coverage --test frontend/tests/*.js
 
 The pytest step runs when tests exist outside ignored runtime workspace directories.
 
+### Vulnerability Scanning
+
+To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Because `pip-audit` needs to accurately evaluate transitive dependencies, ensure the project core requirements are installed in your local environment first:
+
+```bash
+# Ensure core requirements are installed
+pip install -r backend/requirements.txt
+
+# Run the security audit
+pip install pip-audit
+pip-audit -r backend/requirements.txt
+```
+
 ### Frontend Visual Validation
 
 When frontend files are changed, visual inspection is mandatory. Start the app locally (`python run.py`), open the UI in a browser, and manually walk through the changed flows to ensure no layout breakages or console errors exist.
