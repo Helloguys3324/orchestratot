@@ -295,10 +295,14 @@ def list_models() -> list[dict]:
     return list(AVAILABLE_MODELS.values())
 
 
+def _get_models_by_category(category: str) -> list[dict]:
+    """Helper to filter models by category."""
+    return [m for m in AVAILABLE_MODELS.values() if m.get("category") == category]
+
 def list_models_by_category() -> dict:
     result = {}
     for cat_id, cat_info in CATEGORIES.items():
-        models = [m for m in AVAILABLE_MODELS.values() if m.get("category") == cat_id]
+        models = _get_models_by_category(cat_id)
         if models:
             result[cat_id] = {"info": cat_info, "models": models}
     return result
@@ -310,7 +314,7 @@ def get_model(model_id: str) -> dict | None:
 
 def get_chat_models() -> list[dict]:
     """Return only models suitable for agent chat (text category)."""
-    return [m for m in AVAILABLE_MODELS.values() if m.get("category") == "text"]
+    return _get_models_by_category("text")
 
 
 def get_config_list(api_key: str, model_id: str = "gemini-2.5-flash", base_url: str = None) -> list[dict]:
