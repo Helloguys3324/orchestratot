@@ -91,7 +91,11 @@ For detailed workflows and auto-merge requirements, refer to [AI Factory Operati
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
 ### 5. Emergency Stop Protocol
-If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the root directory. This halts scheduled execution both locally and on GitHub Actions.
+If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the root directory:
+```bash
+touch AUTOPILOT_STOP
+```
+This halts scheduled execution both locally and on GitHub Actions.
 
 ## Starting the Application
 
