@@ -132,6 +132,8 @@ pip install pip-audit
 pip-audit -r backend/requirements.txt
 ```
 
+*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
+
 ### Frontend Visual Validation
 
 When frontend files are changed, visual inspection is mandatory. Start the app locally (`python run.py`), open the UI in a browser, and manually walk through the changed flows to ensure no layout breakages or console errors exist.

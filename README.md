@@ -112,6 +112,8 @@ node --experimental-test-coverage --test frontend/tests/*.js
 pip-audit -r backend/requirements.txt
 ```
 
+*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
+
 ## Frontend Visual Validation
 
 If any files in `frontend/` are modified, you must visually inspect the UI locally:
