@@ -64,13 +64,16 @@ playwright install chromium
 ```
 
 ### 3. Secrets & Configuration
-Never commit secrets or API keys. Copy the example environment file to configure your local runtime:
+Never commit secrets, API keys, or credentials. Copy the example environment file to configure your local runtime:
+
 ```bash
 cp .env.example .env
 ```
-*Note: Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by clearing the legacy JSON file after migration.*
 
-You can verify that no secrets are accidentally committed by running the secret scanner:
+*Note: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.*
+
+**Important:** You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
+
 ```bash
 python .github/scripts/scan_secrets.py
 ```
@@ -123,10 +126,10 @@ PYTHONPATH=. python -m pytest -q
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.js
 
-# Validate JSON syntax (if JSON files are modified)
+# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 
-# Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be installed)
+# Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be explicitly installed first)
 pip-audit -r backend/requirements.txt
 ```
 
