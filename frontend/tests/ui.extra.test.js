@@ -136,3 +136,28 @@ test('UI.withLoading handles case where btn is nullified during action', async (
         // Test passes without throwing
     });
 });
+
+test('UI.withLoading handles case where btn is nullified during action (dynamic DOM coverage fix)', async () => {
+    let btnState = { textContent: 'Initial', disabled: false };
+    let getElementByIdCalledCount = 0;
+
+    global.document = {
+        getElementById: () => {
+            getElementByIdCalledCount++;
+            if (getElementByIdCalledCount === 1) return btnState;
+            return null;
+        }
+    };
+
+    let actionCalled = false;
+    await UI.withLoading('btn', 'Wait...', async () => {
+        actionCalled = true;
+    });
+
+    assert.strictEqual(actionCalled, true);
+});
+
+
+test.afterEach(() => {
+    delete global.document;
+});
