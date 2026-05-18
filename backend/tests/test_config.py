@@ -200,3 +200,41 @@ def test_save_settings_clear_api_key():
         content = ENV_FILE.read_text(encoding="utf-8")
         assert "valid-key-12345" not in content
         assert "AUTOGEN_API_KEY=''" not in content and "AUTOGEN_API_KEY=" not in content
+
+
+def test_config_model_schema_keys():
+    """Verify that the model correctly defines configuration keys without instantiation."""
+    expected_keys = {"api_key", "default_model", "base_url", "max_rounds", "temperature", "max_tokens"}
+    schema_keys = set(ConfigModel.model_fields.keys())
+    assert expected_keys.issubset(schema_keys)
+
+def test_config_model_parsing_from_env(monkeypatch):
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "20")
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.8")
+    monkeypatch.setenv("AUTOGEN_MAX_TOKENS", "2000")
+    monkeypatch.setenv("AUTOGEN_DEFAULT_MODEL", "gpt-4")
+
+    # Verify that ConfigModel correctly parses env vars without relying on get_settings()
+    model = ConfigModel()
+
+    assert model.max_rounds == 20
+    assert model.temperature == 0.8
+    assert model.max_tokens == 2000
+    assert model.default_model == "gpt-4"
+
+def test_config_model_validation_bounds():
+    # Test valid bounds
+    model = ConfigModel(temperature=1.0, max_rounds=50, max_tokens=8000)
+    assert model.temperature == 1.0
+
+    # Test invalid temperature
+    with pytest.raises(ValidationError):
+        ConfigModel(temperature=2.5)
+
+    # Test invalid max_rounds
+    with pytest.raises(ValidationError):
+        ConfigModel(max_rounds=0)
+
+    # Test invalid max_tokens
+    with pytest.raises(ValidationError):
+        ConfigModel(max_tokens=0)

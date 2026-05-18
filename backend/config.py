@@ -5,7 +5,7 @@ import os
 import json
 from pathlib import Path
 from typing import Type, Tuple
-from pydantic import SecretStr, field_validator, ValidationError
+from pydantic import Field, SecretStr, field_validator, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource
 import re
 
@@ -38,9 +38,9 @@ class ConfigModel(BaseSettings):
     api_key: SecretStr = SecretStr("")
     default_model: str = "gemini-2.5-flash"
     base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
-    max_rounds: int = 15
-    temperature: float = 0.7
-    max_tokens: int = 4096
+    max_rounds: int = Field(default=15, ge=1, le=100)
+    temperature: float = Field(default=0.7, ge=0.0, le=2.0)
+    max_tokens: int = Field(default=4096, ge=1, le=128000)
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
