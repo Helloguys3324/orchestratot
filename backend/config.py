@@ -93,7 +93,12 @@ def get_settings() -> dict:
     # Migrate legacy JSON config to .env if needed
     legacy_settings = load_json(SETTINGS_FILE, {})
     if legacy_settings:
-        save_settings(legacy_settings)
+        try:
+            save_settings(legacy_settings)
+        except ValidationError:
+            pass
+        finally:
+            save_json(SETTINGS_FILE, {})
 
     try:
         model = ConfigModel()
@@ -149,8 +154,6 @@ def save_settings(settings: dict):
 
     for k in keys_to_save:
         v = validated_settings[k]
-        if k == "api_key" and not v:
-            continue
 
         if isinstance(v, SecretStr):
             str_v = v.get_secret_value()
