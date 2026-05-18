@@ -10,7 +10,7 @@ The repository is structured into the following directories:
 - `.github/`: CI/CD workflows, automation scripts, and task queues for AI Factory.
 - `backend/`: Core orchestrator logic utilizing FastAPI, Uvicorn, and Pydantic v2.
   - `agents/`: Defines agent classes and behaviors.
-  - `api/`: FastAPI APIRouter endpoints decoupling application routing logic, utilizing FastAPI's `Depends()` injection for reusable API dependencies.
+  - `api/`: FastAPI APIRouter endpoints decoupling application routing logic, utilizing FastAPI's `Depends()` injection and unified helper functions (like `_get_item_or_404`) to reduce boilerplate for reusable API dependencies.
   - `llm/`: Decoupled low-level LLM API integrations (e.g., Gemini Live API and OpenAI compatible endpoints) enforcing strict architectural boundaries.
   - `models/`: Pydantic data models.
   - `sessions/`: Manages orchestration sessions.
@@ -29,7 +29,7 @@ The repository is structured into the following directories:
 - **Backend Framework:** FastAPI, Uvicorn (async HTTP server)
 - **Data Validation:** Pydantic v2 (includes SecretStr for config security and request models)
 - **Concurrency:** Asyncio (Python) for non-blocking operations.
-- **Environment Management:** `pydantic-settings` for configuration loading, robust parsing, and environment variable overlay prioritization over JSON fallbacks, including bypassing invalid empty variables.
+- **Environment Management:** `pydantic-settings` for configuration loading, robust parsing, and environment variable overlay prioritization over JSON fallbacks, including bypassing invalid empty variables. Legacy JSON configurations (`data/settings.json`) are automatically migrated to environment variables (`.env` file) on startup, securing credentials by deleting the legacy file after migration.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
 - **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, leveraging conditional CommonJS exports to expose vanilla JS objects, achieving complete line coverage, and simulating DOM manipulation via `global.document` mocking without external libraries) with heavily type-hinted, asynchronous code. For config models, validate dynamically via `model_fields.keys()` rather than `model_dump()` to prevent environment-dependent crashes. For Node.js modules that conditionally attach event listeners upon evaluation, test setups must clear `require.cache` and re-require the module after establishing global DOM mocks to ensure proper listener attachment.
