@@ -32,8 +32,8 @@ The repository is structured into the following directories:
 - **Environment Management:** `pydantic-settings` for configuration loading, robust parsing, and environment variable overlay prioritization over JSON fallbacks, including bypassing invalid empty variables.
 - **Protocol:** MCP (Model Context Protocol) for tool and skill execution.
 - **Routing:** DAG-based (Directed Acyclic Graph) task routing.
-- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, leveraging conditional CommonJS exports to expose vanilla JS objects, achieving complete line coverage, and simulating DOM manipulation via `global.document` mocking without external libraries) with heavily type-hinted, asynchronous code. For config models, validate dynamically via `model_fields.keys()` rather than `model_dump()` to prevent environment-dependent crashes.
-- **Dependency Management:** Proactive vulnerability mitigation (e.g., upgrading packages to avoid insecure transitive dependencies like `diskcache`).
+- **Testing:** `pytest` (backend) and Node.js built-in `node:test` (frontend, leveraging conditional CommonJS exports to expose vanilla JS objects, achieving complete line coverage, and simulating DOM manipulation via `global.document` mocking without external libraries) with heavily type-hinted, asynchronous code. For config models, validate dynamically via `model_fields.keys()` rather than `model_dump()` to prevent environment-dependent crashes. For Node.js modules that conditionally attach event listeners upon evaluation, test setups must clear `require.cache` and re-require the module after establishing global DOM mocks to ensure proper listener attachment.
+- **Dependency Management:** Proactive vulnerability mitigation (e.g., upgrading packages to avoid insecure transitive dependencies like `diskcache`) and explicit local vulnerability scanning utilizing `pip-audit`, which requires core backend dependencies to be installed first to ensure accurate evaluation of transitive dependencies.
 
 ### 4. Data Flow & System Architecture
 1. **Input:** User requests or autonomous triggers initialize a session.
