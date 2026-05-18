@@ -3,9 +3,19 @@ from fastapi.testclient import TestClient
 from unittest.mock import patch
 
 from backend.main import app
-from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
 
 client = TestClient(app)
+
+@patch("backend.api.skills.skills_manager.create_skill")
+def test_create_skill_base_error(mock_create):
+    mock_create.side_effect = SkillError("Generic skill error")
+
+    response = client.post("/api/skills", json={"name": ""})
+
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Generic skill error"
+    mock_create.assert_called_once_with({"name": ""})
 
 @patch("backend.api.skills.skills_manager.create_skill")
 def test_create_skill_validation_error(mock_create):
