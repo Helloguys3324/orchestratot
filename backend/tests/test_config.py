@@ -165,3 +165,37 @@ def test_legacy_json_migration():
 
     # verify JSON is cleared securely
     assert load_json(SETTINGS_FILE) == {}
+
+def test_legacy_json_migration_invalid_data():
+    from backend.config import SETTINGS_FILE, save_json, load_json
+
+    # Create a legacy JSON file with invalid settings
+    test_settings = {"api_key": "short"}
+    save_json(SETTINGS_FILE, test_settings)
+
+    # get_settings should read it, fail to migrate due to ValidationError, but still clear JSON and not crash
+    settings = get_settings()
+
+    # Default should be returned or an empty SecretStr for api_key
+    assert settings["api_key"].get_secret_value() == ""
+
+    # verify JSON is cleared securely even after error
+    assert load_json(SETTINGS_FILE) == {}
+
+def test_save_settings_clear_api_key():
+    # Make sure we start fresh
+    if ENV_FILE.exists():
+        ENV_FILE.unlink()
+
+    # Save a valid key
+    save_settings({"api_key": "valid-key-12345"})
+
+    content = ENV_FILE.read_text(encoding="utf-8")
+    assert "valid-key-12345" in content
+
+    # Clear it
+    save_settings({"api_key": ""})
+
+    content = ENV_FILE.read_text(encoding="utf-8")
+    assert "valid-key-12345" not in content
+    assert "AUTOGEN_API_KEY=''" in content or "AUTOGEN_API_KEY=" in content
