@@ -10,7 +10,5 @@ async def api_get_settings():
 
 @router.post("")
 async def api_save_settings(data: Dict[str, Any]):
-    settings = get_settings()
-    settings.update(data)
-    save_settings(settings)
+    save_settings(data)
     return {"status": "ok"}
