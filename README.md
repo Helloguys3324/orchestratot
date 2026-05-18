@@ -25,8 +25,21 @@ To prepare the repository for local development, follow these steps:
 - **Python 3.12:** The backend is built specifically for Python 3.12. Ensure it is installed and active in your environment.
 - **Node.js (v20+):** Ensure Node.js (v20+) is installed to run frontend vanilla JS unit tests using the native test runner.
 
-### 2. Dependency Installation
-Install the necessary packages for the backend and testing tools:
+### 2. Virtual Environment & Dependency Installation
+It is highly recommended to use a Python virtual environment to isolate project dependencies.
+
+```bash
+# Create a Python virtual environment
+python3 -m venv venv
+
+# Activate the virtual environment (Mac/Linux)
+source venv/bin/activate
+
+# Activate the virtual environment (Windows)
+venv\Scripts\activate
+```
+
+Once activated, install the necessary packages for the backend and testing tools:
 ```bash
 # Core backend dependencies
 pip install -r backend/requirements.txt
