@@ -139,7 +139,11 @@ def save_settings(settings: dict):
     validated_settings = model.model_dump(mode="json")
     validated_settings["api_key"] = model.api_key
 
-    for k, v in validated_settings.items():
+    # Only save keys that were actually provided in the settings payload
+    keys_to_save = [k for k in settings.keys() if k in validated_settings]
+
+    for k in keys_to_save:
+        v = validated_settings[k]
         if k == "api_key" and not v:
             continue
 

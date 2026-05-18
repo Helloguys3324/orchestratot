@@ -71,6 +71,21 @@ def test_save_settings_writes_to_env():
     else:
         pytest.fail("ENV_FILE was not created")
 
+def test_save_settings_partial_update():
+    # Make sure we start fresh for this test
+    if ENV_FILE.exists():
+        ENV_FILE.unlink()
+
+    test_settings = {"max_rounds": 30}
+    save_settings(test_settings)
+
+    if ENV_FILE.exists():
+        content = ENV_FILE.read_text(encoding="utf-8")
+        assert "AUTOGEN_MAX_ROUNDS" in content
+        assert "AUTOGEN_TEMPERATURE" not in content
+    else:
+        pytest.fail("ENV_FILE was not created")
+
 def test_get_settings_ignores_empty_env_vars(monkeypatch):
     monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "")
     monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.5")
