@@ -3,7 +3,7 @@ from typing import Optional
 from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
 from backend.state import skills_manager
-from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
@@ -16,6 +16,8 @@ def handle_skill_exceptions():
     except SkillNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
     except SkillInstallError as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    except SkillError as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 class SkillCreateRequest(BaseModel):

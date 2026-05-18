@@ -152,8 +152,11 @@ class SkillsManager:
         return f"{skill_id}.py"
 
     def create_skill(self, data: dict) -> dict:
-        if not data.get("name"):
-            raise SkillValidationError("Skill name is required")
+        try:
+            if not data.get("name"):
+                raise SkillValidationError("Skill name is required")
+        except AttributeError as e:
+            raise SkillValidationError("Invalid skill data provided") from e
 
         skill_id = f"custom_{uuid.uuid4().hex[:8]}"
         skill = {
