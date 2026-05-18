@@ -60,7 +60,7 @@ def test_send_message_dead_connection(manager, mock_websocket):
 
     # The dead connection should be removed. Since it's the only one, session should be clean but the code actually just discards it.
     # The implementation in handler doesn't delete the empty session like `disconnect` does.
-    assert mock_websocket not in manager.active_connections[session_id]
+    assert session_id not in manager.active_connections
 
 def test_broadcast(manager):
     ws1 = MagicMock(spec=WebSocket)

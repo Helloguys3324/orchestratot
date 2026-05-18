@@ -34,7 +34,7 @@ class ConnectionManager:
                 except Exception:
                     dead.add(ws)
             for ws in dead:
-                self.active_connections[session_id].discard(ws)
+                self.disconnect(ws, session_id)
 
     async def broadcast(self, message: dict):
         for session_id in list(self.active_connections.keys()):
