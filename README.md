@@ -8,6 +8,7 @@ Welcome to AutoGen AI Factory! This project acts as an autonomous AI orchestrati
 - [API and Architecture Notes](docs/API_NOTES.md) - High-level overview of backend services, endpoints, and orchestration.
 - [Agent Instructions](AGENTS.md) - Core guidelines, constraints, and rules for autonomous AI contributors.
 - [Mission & Goals](mission.md) - High-level project objectives and operating principles.
+- [Troubleshooting](docs/TROUBLESHOOTING.md) - Common issues and solutions for local setup, validation, and operations.
 
 ## Project Structure
 
