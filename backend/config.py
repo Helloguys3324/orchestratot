@@ -137,7 +137,7 @@ def get_settings() -> dict:
 
 def save_settings(settings: dict):
     """Save application settings to .env."""
-    from dotenv import set_key
+    from dotenv import set_key, unset_key
     if not ENV_FILE.exists():
         ENV_FILE.touch()
 
@@ -160,7 +160,12 @@ def save_settings(settings: dict):
         else:
             str_v = str(v)
 
-        set_key(str(ENV_FILE), f"AUTOGEN_{k.upper()}", str_v)
-        os.environ[f"AUTOGEN_{k.upper()}"] = str_v
+        env_key = f"AUTOGEN_{k.upper()}"
+        if str_v == "":
+            unset_key(str(ENV_FILE), env_key)
+            os.environ.pop(env_key, None)
+        else:
+            set_key(str(ENV_FILE), env_key, str_v)
+            os.environ[env_key] = str_v
 
     save_json(SETTINGS_FILE, {})
