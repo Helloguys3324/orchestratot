@@ -58,7 +58,7 @@ Never commit secrets or API keys. Copy the example environment file to configure
 ```bash
 cp .env.example .env
 ```
-*Note: Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored.*
+*Note: Your `.env` file should include runtime credentials like `AUTOGEN_API_KEY`. The backend uses `pydantic-settings` to automatically load these variables safely, prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by clearing the legacy JSON file after migration.*
 
 You can verify that no secrets are accidentally committed by running the secret scanner:
 ```bash
