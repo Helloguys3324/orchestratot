@@ -10,6 +10,11 @@ from backend.agents.templates import get_template, AGENT_TEMPLATES
 class AgentManager:
     """Manages agent configurations and lifecycle."""
 
+    UPDATABLE_FIELDS = [
+        "name", "icon", "color", "description", "system_prompt",
+        "skills", "model", "temperature", "max_tokens", "enabled",
+    ]
+
     def __init__(self):
         self._agents: dict[str, dict] = {}
         self._load()
@@ -57,21 +62,28 @@ class AgentManager:
                 "skills": [],
             }
 
+        # Defaults specifically mentioned in the original logic
+        defaults = {
+            "model": "gemini-2.5-flash",
+            "temperature": 0.7,
+            "max_tokens": 4096,
+            "enabled": True,
+        }
+
         # Override with user-provided values
         agent = {
             "id": agent_id,
-            "name": data.get("name", base["name"]),
-            "icon": data.get("icon", base["icon"]),
-            "color": data.get("color", base["color"]),
-            "description": data.get("description", base["description"]),
-            "system_prompt": data.get("system_prompt", base["system_prompt"]),
-            "skills": data.get("skills", base["skills"]),
-            "model": data.get("model", "gemini-2.5-flash"),
-            "temperature": data.get("temperature", 0.7),
-            "max_tokens": data.get("max_tokens", 4096),
-            "enabled": data.get("enabled", True),
             "template": template_id or "custom",
         }
+
+        for field in self.UPDATABLE_FIELDS:
+            # Fallback priority: data -> base -> defaults
+            if field in data:
+                agent[field] = data[field]
+            elif field in base:
+                agent[field] = base[field]
+            elif field in defaults:
+                agent[field] = defaults[field]
 
         self._agents[agent_id] = agent
         self._save()
@@ -84,11 +96,7 @@ class AgentManager:
 
         agent = self._agents[agent_id]
         # Update only provided fields
-        updatable = [
-            "name", "icon", "color", "description", "system_prompt",
-            "skills", "model", "temperature", "max_tokens", "enabled",
-        ]
-        for field in updatable:
+        for field in self.UPDATABLE_FIELDS:
             if field in data:
                 agent[field] = data[field]
 
