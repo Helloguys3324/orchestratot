@@ -88,6 +88,51 @@ def save_json(filepath: Path, data):
         json.dump(data, f, indent=2, ensure_ascii=False)
 
 
+def _validate_config(input_kwargs: dict = None) -> ConfigModel:
+    """Helper to instantiate ConfigModel with fallback for invalid env vars."""
+    if input_kwargs is None:
+        input_kwargs = {}
+
+    try:
+        model = ConfigModel(**input_kwargs)
+    except ValidationError as e:
+        invalid_keys = [err.get('loc')[0] for err in e.errors() if err.get('loc')]
+        old_envs = {}
+
+        # Temporarily remove invalid keys from os.environ to prevent re-reading invalid env vars
+        for k in invalid_keys:
+            if isinstance(k, str):
+                env_key = f"AUTOGEN_{k.upper()}"
+                old_envs[env_key] = os.environ.pop(env_key, None)
+
+        # We must provide the default values in kwargs to override invalid entries in the .env file
+        kwargs = {}
+        for k in invalid_keys:
+            if k == "api_key":
+                kwargs["api_key"] = ""
+            elif isinstance(k, str) and k in ConfigModel.model_fields:
+                default_val = ConfigModel.model_fields[k].get_default()
+                if default_val is not None:
+                    kwargs[k] = default_val
+
+        # Explicit settings take precedence
+        kwargs.update(input_kwargs)
+
+        try:
+            # Initialize with kwargs (defaults + explicit overrides)
+            model = ConfigModel(**kwargs)
+        except ValidationError as final_e:
+            # Re-raise if explicitly provided values are themselves invalid
+            raise final_e
+        finally:
+            # Restore the environment variables
+            for env_key, val in old_envs.items():
+                if val is not None:
+                    os.environ[env_key] = val
+
+    return model
+
+
 def get_settings() -> dict:
     """Get application settings."""
     # Migrate legacy JSON config to .env if needed
@@ -100,35 +145,7 @@ def get_settings() -> dict:
         finally:
             save_json(SETTINGS_FILE, {})
 
-    try:
-        model = ConfigModel()
-    except ValidationError as e:
-        invalid_keys = [err.get('loc')[0] for err in e.errors() if err.get('loc')]
-        old_envs = {}
-
-        # Temporarily remove invalid keys from os.environ to prevent re-reading invalid env vars
-        for k in invalid_keys:
-            env_key = f"AUTOGEN_{k.upper()}"
-            old_envs[env_key] = os.environ.pop(env_key, None)
-
-        # We must provide the default values in kwargs to override invalid entries in the .env file
-        kwargs = {}
-        for k in invalid_keys:
-            if k == "api_key":
-                kwargs["api_key"] = ""
-            elif k in ConfigModel.model_fields:
-                default_val = ConfigModel.model_fields[k].get_default()
-                if default_val is not None:
-                    kwargs[k] = default_val
-
-        try:
-            # Initialize with kwargs (defaults) to override .env configuration, preserving valid vars
-            model = ConfigModel(**kwargs)
-        finally:
-            # Restore the environment variables
-            for env_key, val in old_envs.items():
-                if val is not None:
-                    os.environ[env_key] = val
+    model = _validate_config()
 
     validated_settings = model.model_dump(mode="json")
     validated_settings["api_key"] = model.api_key
@@ -144,8 +161,8 @@ def save_settings(settings: dict):
     # Filter out masked api_key from incoming data
     filtered_settings = {k: v for k, v in settings.items() if not (k == "api_key" and v == "**********")}
 
-    # Validate before saving
-    model = ConfigModel(**filtered_settings)
+    # Validate before saving (handles unrelated invalid env vars gracefully)
+    model = _validate_config(filtered_settings)
     validated_settings = model.model_dump(mode="json")
     validated_settings["api_key"] = model.api_key
 

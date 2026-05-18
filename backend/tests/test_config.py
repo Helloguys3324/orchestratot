@@ -200,3 +200,18 @@ def test_save_settings_clear_api_key():
         content = ENV_FILE.read_text(encoding="utf-8")
         assert "valid-key-12345" not in content
         assert "AUTOGEN_API_KEY=''" not in content and "AUTOGEN_API_KEY=" not in content
+
+def test_save_settings_ignores_unrelated_invalid_env_vars(monkeypatch):
+    # Setup an unrelated invalid env var
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "invalid_int")
+
+    # saving a different, valid setting should succeed and not crash
+    # due to the invalid max_rounds environment variable.
+    save_settings({"temperature": 0.8})
+
+    # Verify the partial update was written
+    if ENV_FILE.exists():
+        content = ENV_FILE.read_text(encoding="utf-8")
+        assert "AUTOGEN_TEMPERATURE='0.8'" in content or "AUTOGEN_TEMPERATURE=0.8" in content
+    else:
+        pytest.fail("ENV_FILE was not created")
