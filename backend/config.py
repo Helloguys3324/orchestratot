@@ -90,6 +90,11 @@ def save_json(filepath: Path, data):
 
 def get_settings() -> dict:
     """Get application settings."""
+    # Migrate legacy JSON config to .env if needed
+    legacy_settings = load_json(SETTINGS_FILE, {})
+    if legacy_settings:
+        save_settings(legacy_settings)
+
     try:
         model = ConfigModel()
     except ValidationError as e:

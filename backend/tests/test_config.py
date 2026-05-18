@@ -4,11 +4,17 @@ import pytest
 from pydantic import SecretStr, ValidationError
 from backend.config import get_settings, save_settings, ENV_FILE, ConfigModel
 
+from backend.config import SETTINGS_FILE, save_json
+
 @pytest.fixture(autouse=True)
 def setup_teardown_settings():
     original_env = None
     if ENV_FILE.exists():
         original_env = ENV_FILE.read_text(encoding="utf-8")
+
+    original_json = None
+    if SETTINGS_FILE.exists():
+        original_json = SETTINGS_FILE.read_text(encoding="utf-8")
 
     orig_env_var = os.environ.get("AUTOGEN_API_KEY")
     if "AUTOGEN_API_KEY" in os.environ:
@@ -21,6 +27,12 @@ def setup_teardown_settings():
     else:
         if ENV_FILE.exists():
             ENV_FILE.unlink()
+
+    if original_json is not None:
+        SETTINGS_FILE.write_text(original_json, encoding="utf-8")
+    else:
+        if SETTINGS_FILE.exists():
+            SETTINGS_FILE.unlink()
 
     if orig_env_var is not None:
         os.environ["AUTOGEN_API_KEY"] = orig_env_var
@@ -123,3 +135,33 @@ def test_save_settings_validation():
 
     # Should safely ignore placeholder api_key
     save_settings({"api_key": "**********", "temperature": 0.6})
+
+def test_legacy_json_migration():
+    from backend.config import SETTINGS_FILE, save_json, load_json
+
+    # Create a legacy JSON file with some settings
+    test_settings = {"temperature": 0.3, "max_rounds": 42}
+    save_json(SETTINGS_FILE, test_settings)
+
+    # Make sure ENV_FILE doesn't have these to prove migration works
+    if ENV_FILE.exists():
+        content = ENV_FILE.read_text(encoding="utf-8")
+        if "AUTOGEN_MAX_ROUNDS" in content:
+            ENV_FILE.unlink()
+
+    # get_settings should read it, migrate to .env, and clear JSON
+    settings = get_settings()
+
+    assert settings["temperature"] == 0.3
+    assert settings["max_rounds"] == 42
+
+    # verify .env has it
+    if ENV_FILE.exists():
+        content = ENV_FILE.read_text(encoding="utf-8")
+        assert "AUTOGEN_TEMPERATURE='0.3'" in content or "AUTOGEN_TEMPERATURE=0.3" in content
+        assert "AUTOGEN_MAX_ROUNDS='42'" in content or "AUTOGEN_MAX_ROUNDS=42" in content
+    else:
+        pytest.fail("ENV_FILE was not created during migration")
+
+    # verify JSON is cleared securely
+    assert load_json(SETTINGS_FILE) == {}
