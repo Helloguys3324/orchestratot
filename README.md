@@ -1,6 +1,44 @@
 # AutoGen AI Factory
 
+*The autonomous AI orchestration platform for continuous development.*
+
 Welcome to AutoGen AI Factory! This project acts as an autonomous AI orchestration platform that utilizes Directed Acyclic Graph (DAG) task routing, asyncio, and the Model Context Protocol (MCP) to manage a multi-agent continuous workflow.
+
+## Why this project matters
+The AI Factory demonstrates how a team of specialized AI agents can autonomously operate, maintain, and expand a full-stack web application. By operating in a continuous, zero-human-in-the-loop pipeline, it explores the boundaries of long-running autonomous development and self-healing systems.
+
+## Main Features
+- **Autonomous Multi-Agent Workflow:** A scheduled GitHub Actions pipeline that orchestrates specialized AI agents (Planner, Implementer, Tester, Reviewer, Documenter, Security, Architect, Refactorer) to continuously improve the codebase.
+- **DAG-Based Task Routing:** Dynamic task generation and assignment based on explicit dependencies and capabilities.
+- **Model Context Protocol (MCP):** Safe, standardized tool execution and skill integration for agents.
+- **Strict Validation Protocol:** Zero-trust verification requiring comprehensive testing, secret scanning, and syntax checks before any change is merged.
+- **FastAPI & Asyncio Backend:** A scalable, non-blocking orchestration server built with Python 3.12.
+- **Vanilla JS Frontend:** A lightweight, dependency-free frontend with native Node.js testing.
+
+## AI Factory Architecture Summary
+The AI Factory runs locally for interactive development and in GitHub Actions for continuous autonomy.
+- **The Queue (`task_queue.json`):** Tasks are pulled from a central backlog, defining strict scopes and constraints.
+- **The Orchestrator:** The Python backend, driven by Pydantic models and asynchronous session management, manages agent lifecycles, skill execution, and workspace I/O.
+- **The Pipeline (`ai-factory-jules.yml`):** The CI/CD workflow dispatches agents sequentially, validates their pull requests, and automerges safe changes.
+
+## Agent Roles
+The factory operates using specialized roles, each with defined capabilities and boundaries:
+- **Planner:** Manages the task backlog and determines the next priority.
+- **Implementer:** Writes backend and frontend application code.
+- **Tester:** Improves test coverage and adds validation checks.
+- **Reviewer:** Reviews recent PRs for architecture drift and code quality.
+- **Documenter:** Maintains and improves documentation and setup guides.
+- **Security:** Audits dependencies and hardens application boundaries.
+- **Architect:** Updates high-level architecture decisions and state.
+- **Refactorer:** Improves code readability and reduces duplication.
+
+## Lifecycle & Automerge Policy
+Automerge is intentionally conservative to prevent autonomous regressions:
+- A PR can be merged automatically **only** when `AI Factory Validate` passes, it is not a draft, the title starts with `ai-factory(documenter):` or `ai-factory(tester):`, and it has the label `ai-factory:safe-automerge`.
+- All implementation, refactor, security, and architecture PRs require human review.
+
+## Screenshots / UI Preview
+*(Screenshots are planned.)*
 
 ## Quickstart
 
@@ -92,6 +130,8 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
 
 Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
 
+**Authoritative Validation:** GitHub Actions validation is the single source of truth for repository checks. Local validation commands mirror the remote pipeline, but PRs cannot merge if the remote pipeline fails.
+
 For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
@@ -147,3 +187,14 @@ If any files in `frontend/` are modified, you must visually inspect the UI local
 3. Walk through the changed UI area and affected user flows.
 4. Check browser console for errors.
 5. Check for layout issues (overlapping text, hidden content, etc.) across different viewport sizes.
+
+## Limitations
+- The orchestrator operates under strict token and round limits.
+- Agent tools are confined to the local workspace boundary to prevent arbitrary system modification.
+- Only specific backend configurations are accessible via the UI or `.env`.
+
+## Roadmap
+- Additional robust UI components and dark-mode themes for the command center.
+- Broader MCP plugin integration.
+- Stronger agent-to-agent communication pathways and self-correcting review loops.
+- Extended metrics dashboard.
