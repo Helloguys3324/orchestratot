@@ -158,6 +158,10 @@ class SkillsManager:
         except AttributeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
 
+        skill_code = data.get("code", "")
+        if not isinstance(skill_code, str):
+            raise SkillValidationError("Skill code must be a string")
+
         skill_id = f"custom_{uuid.uuid4().hex[:8]}"
         skill = {
             "id": skill_id,
@@ -168,7 +172,7 @@ class SkillsManager:
             "builtin": False,
             "enabled": True,
             "source": "custom",
-            "code": data.get("code", ""),
+            "code": skill_code,
         }
         # Save code to file
         if skill["code"]:
