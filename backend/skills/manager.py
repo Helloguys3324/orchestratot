@@ -199,7 +199,7 @@ class SkillsManager:
         from urllib.parse import urlparse
         try:
             parsed_url = urlparse(url)
-        except ValueError as e:
+        except (ValueError, AttributeError, TypeError) as e:
             raise SkillValidationError(f"Invalid URL format: {e}") from e
 
         if parsed_url.scheme not in ("http", "https"):
