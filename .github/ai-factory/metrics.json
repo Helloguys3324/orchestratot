@@ -13,5 +13,26 @@
   "task_abandoned": 0,
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs."
-  ]
+  ],
+  "queue_size": 8,
+  "active_work": 1,
+  "role_distribution": {
+    "implementer": 2,
+    "refactorer": 1,
+    "documenter": 1,
+    "tester": 1,
+    "planner": 1,
+    "reviewer": 1,
+    "security": 1
+  },
+  "lane_distribution": {
+    "backend": 3,
+    "docs": 3,
+    "frontend": 1,
+    "security": 1
+  },
+  "safe_automerge_count": 0,
+  "manual_review_count": 0,
+  "recent_failure_reasons": [],
+  "automation_health": "unknown"
 }
