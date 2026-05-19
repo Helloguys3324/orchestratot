@@ -105,7 +105,12 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    ```bash
    cp .env.example .env
    ```
-2. **Configure Credentials**: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
+2. **Configure Credentials**: Your local `.env` file is meant for development. Key environment variables include:
+   - `AUTOGEN_API_KEY`: Your language model API key.
+   - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
+   - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
+
+   The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
 3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
    ```bash
    python .github/scripts/scan_secrets.py
@@ -169,6 +174,7 @@ PYTHONPATH=. python -m pytest -q
 ### Frontend Validation
 ```bash
 # Run frontend tests using native node runner (no extra npm packages required)
+# Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
 
