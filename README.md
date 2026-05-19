@@ -128,7 +128,7 @@ python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)
-node --experimental-test-coverage --test frontend/tests/*.js
+node --experimental-test-coverage --test frontend/tests/*.test.js
 
 # Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
