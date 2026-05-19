@@ -6,15 +6,11 @@ async def call_live_api(api_key: str, model: str, messages: list[dict], temperat
     client = genai.Client(api_key=api_key)
 
     # Extract system prompt and build conversation text
-    system_text = ""
-    conversation = ""
-    for msg in messages:
-        if msg["role"] == "system":
-            system_text = msg["content"]
-        elif msg["role"] == "user":
-            conversation += f"User: {msg['content']}\n\n"
-        elif msg["role"] == "assistant":
-            conversation += f"Assistant: {msg['content']}\n\n"
+    system_text = next((msg["content"] for msg in messages if msg["role"] == "system"), "")
+    conversation = "\n\n".join(
+        f"{msg['role'].capitalize()}: {msg['content']}"
+        for msg in messages if msg["role"] in ("user", "assistant")
+    ) + ("\n\n" if any(msg["role"] in ("user", "assistant") for msg in messages) else "")
 
     config = types.LiveConnectConfig(
         response_modalities=[types.Modality.TEXT],
