@@ -21,11 +21,13 @@ load_dotenv(dotenv_path=ENV_FILE)
 DATA_DIR = Path(os.getenv("AUTOGEN_DATA_DIR") or BASE_DIR / "data")
 SKILLS_DIR = Path(os.getenv("AUTOGEN_SKILLS_DIR") or BASE_DIR / "skills_library")
 CUSTOM_SKILLS_DIR = Path(os.getenv("AUTOGEN_CUSTOM_SKILLS_DIR") or BASE_DIR / "custom_skills")
+WORKSPACE_DIR = Path(os.getenv("AUTOGEN_WORKSPACE_DIR") or BASE_DIR / "workspace")
 
 # Create directories if they don't exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 SKILLS_DIR.mkdir(parents=True, exist_ok=True)
 CUSTOM_SKILLS_DIR.mkdir(parents=True, exist_ok=True)
+WORKSPACE_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── Data files ──────────────────────────────────────────
 AGENTS_FILE = DATA_DIR / "agents.json"

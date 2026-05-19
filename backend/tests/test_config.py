@@ -265,11 +265,12 @@ def test_path_configuration_env_vars():
     env["AUTOGEN_DATA_DIR"] = "/tmp/mock_data"
     env["AUTOGEN_SKILLS_DIR"] = "/tmp/mock_skills"
     env["AUTOGEN_CUSTOM_SKILLS_DIR"] = "/tmp/mock_custom_skills"
+    env["AUTOGEN_WORKSPACE_DIR"] = "/tmp/mock_workspace"
 
     code = (
         "import sys\n"
-        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR\n"
-        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR))\n"
+        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR, WORKSPACE_DIR\n"
+        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR) + '|' + str(WORKSPACE_DIR))\n"
     )
 
     result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
@@ -279,13 +280,14 @@ def test_path_configuration_env_vars():
     assert paths[0] == "/tmp/mock_data"
     assert paths[1] == "/tmp/mock_skills"
     assert paths[2] == "/tmp/mock_custom_skills"
+    assert paths[3] == "/tmp/mock_workspace"
 
 def test_path_configuration_dotenv_subprocess(tmp_path):
     import subprocess
     import sys
 
     mock_env = tmp_path / ".env"
-    mock_env.write_text("AUTOGEN_DATA_DIR=/tmp/dotenv_data\nAUTOGEN_SKILLS_DIR=/tmp/dotenv_skills\nAUTOGEN_CUSTOM_SKILLS_DIR=/tmp/dotenv_custom_skills\n")
+    mock_env.write_text("AUTOGEN_DATA_DIR=/tmp/dotenv_data\nAUTOGEN_SKILLS_DIR=/tmp/dotenv_skills\nAUTOGEN_CUSTOM_SKILLS_DIR=/tmp/dotenv_custom_skills\nAUTOGEN_WORKSPACE_DIR=/tmp/dotenv_workspace\n")
 
     code = (
         "import sys, os\n"
@@ -296,14 +298,16 @@ def test_path_configuration_dotenv_subprocess(tmp_path):
         "load_dotenv(dotenv_path=backend.config.ENV_FILE)\n"
         "backend.config.DATA_DIR = Path(os.getenv('AUTOGEN_DATA_DIR') or backend.config.BASE_DIR / 'data')\n"
         "backend.config.SKILLS_DIR = Path(os.getenv('AUTOGEN_SKILLS_DIR') or backend.config.BASE_DIR / 'skills_library')\n"
-        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR') or backend.config.BASE_DIR / 'custom_skills')\n"
-        "sys.stdout.write(str(backend.config.DATA_DIR) + '|' + str(backend.config.SKILLS_DIR) + '|' + str(backend.config.CUSTOM_SKILLS_DIR))\n"
+        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR') or backend.config.BASE_DIR / 'custom_skills')\n" \
+        "backend.config.WORKSPACE_DIR = Path(os.getenv('AUTOGEN_WORKSPACE_DIR') or backend.config.BASE_DIR / 'workspace')\n"
+        "sys.stdout.write(str(backend.config.DATA_DIR) + '|' + str(backend.config.SKILLS_DIR) + '|' + str(backend.config.CUSTOM_SKILLS_DIR) + '|' + str(backend.config.WORKSPACE_DIR))\n"
     )
 
     env = os.environ.copy()
     if "AUTOGEN_DATA_DIR" in env: del env["AUTOGEN_DATA_DIR"]
     if "AUTOGEN_SKILLS_DIR" in env: del env["AUTOGEN_SKILLS_DIR"]
     if "AUTOGEN_CUSTOM_SKILLS_DIR" in env: del env["AUTOGEN_CUSTOM_SKILLS_DIR"]
+    if "AUTOGEN_WORKSPACE_DIR" in env: del env["AUTOGEN_WORKSPACE_DIR"]
 
     result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
     assert result.returncode == 0
@@ -312,6 +316,7 @@ def test_path_configuration_dotenv_subprocess(tmp_path):
     assert paths[0] == "/tmp/dotenv_data"
     assert paths[1] == "/tmp/dotenv_skills"
     assert paths[2] == "/tmp/dotenv_custom_skills"
+    assert paths[3] == "/tmp/dotenv_workspace"
 
 def test_path_configuration_empty_env_vars() -> None:
     import subprocess
@@ -322,11 +327,12 @@ def test_path_configuration_empty_env_vars() -> None:
     env["AUTOGEN_DATA_DIR"] = ""
     env["AUTOGEN_SKILLS_DIR"] = ""
     env["AUTOGEN_CUSTOM_SKILLS_DIR"] = ""
+    env["AUTOGEN_WORKSPACE_DIR"] = ""
 
     code = (
         "import sys\n"
-        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR, BASE_DIR\n"
-        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR))\n"
+        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR, WORKSPACE_DIR, BASE_DIR\n"
+        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR) + '|' + str(WORKSPACE_DIR))\n"
     )
 
     result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
@@ -339,3 +345,4 @@ def test_path_configuration_empty_env_vars() -> None:
     assert paths[0] == str(BASE_DIR / "data")
     assert paths[1] == str(BASE_DIR / "skills_library")
     assert paths[2] == str(BASE_DIR / "custom_skills")
+    assert paths[3] == str(BASE_DIR / "workspace")
