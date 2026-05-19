@@ -180,16 +180,21 @@ The `.github/ai-factory/metrics.json` file tracks various metrics related to the
 
 ```mermaid
 stateDiagram-v2
-    [*] --> InQueue: Human creates task
-    InQueue --> Claimed: Agent assigned
-    Claimed --> Working: Task execution
-    Working --> Validating: PR created
-    Validating --> Failed: Validation error
-    Validating --> ReviewRequired: Validation passed
-    Failed --> Working: Agent retries
-    ReviewRequired --> Merged: Human approves
-    ReviewRequired --> Merged: Automerged (if safe)
-    Merged --> [*]: Task completed
+    [*] --> pending: Planner creates task
+    pending --> claimed: Orchestrator assigns task
+    claimed --> running: Agent begins execution
+    running --> completed: PR merged or goal satisfied
+    running --> failed: Validation or execution error
+    failed --> pending: Task returned for retry
+    claimed --> abandoned: Timeout reached
+    running --> abandoned: Timeout reached
+    pending --> obsolete: Deprecated by planner
+    pending --> duplicate: Merged by planner
+    pending --> blocked: Awaiting dependencies
+    completed --> [*]
+    abandoned --> [*]
+    obsolete --> [*]
+    duplicate --> [*]
 ```
 
 ### PR Lifecycle

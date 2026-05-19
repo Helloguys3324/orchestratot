@@ -102,19 +102,17 @@ playwright install chromium
 ```
 
 ### 3. Secrets & Configuration
-Never commit secrets, API keys, or credentials. Copy the example environment file to configure your local runtime:
+Never commit secrets, API keys, or credentials. Follow these steps to configure your local runtime:
 
-```bash
-cp .env.example .env
-```
-
-*Note: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.*
-
-**Important:** You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
-
-```bash
-python .github/scripts/scan_secrets.py
-```
+1. **Create Environment File**: Copy the example environment file:
+   ```bash
+   cp .env.example .env
+   ```
+2. **Configure Credentials**: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
+3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
+   ```bash
+   python .github/scripts/scan_secrets.py
+   ```
 
 ### 4. Continuous Integration & AI Factory
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
@@ -157,6 +155,7 @@ This starts the application at `http://localhost:8000`.
 
 Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
+### Core Validation
 ```bash
 # Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
@@ -166,13 +165,22 @@ python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests (ensure local testing dependencies are installed)
 PYTHONPATH=. python -m pytest -q
+```
 
+### Frontend Validation
+```bash
 # Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.test.js
+```
 
+### File-Specific Validation
+```bash
 # Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
+```
 
+### Vulnerability Scanning
+```bash
 # Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be explicitly installed first)
 pip-audit -r backend/requirements.txt
 ```
