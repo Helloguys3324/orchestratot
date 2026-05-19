@@ -141,9 +141,8 @@ class SkillsManager:
 
     def get_skill(self, skill_id: str) -> dict | None:
         try:
-            for s in BUILTIN_SKILLS + self._custom_skills:
-                if s["id"] == skill_id:
-                    return s
+            if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
+                return s
         except (TypeError, KeyError) as e:
             raise SkillValidationError("Invalid skill data provided") from e
 
