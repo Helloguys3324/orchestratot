@@ -144,6 +144,6 @@ When a user sends a message via `POST /api/sessions/{session_id}/chat`, the Sess
 
 - `python-multipart` should be kept at version `>= 0.0.28` to mitigate vulnerabilities including CVE-2026-24486, CVE-2026-40347, and CVE-2026-42561.
 - `fastapi` and `starlette` are upgraded to `>= 0.136.1` and `>= 0.49.1` respectively, to fix starlette vulnerabilities such as CVE-2025-54121 and CVE-2025-62727.
-- `pyautogen` is upgraded to `>= 0.2.36` to remove the vulnerable `diskcache` dependency which mitigates CVE-2025-69872.
+- `pyautogen` is constrained to `>= 0.2.36,<0.4.0` due to massive breaking API changes in AutoGen 0.4.x+. Because 0.2.x and 0.3.x still rely on the `diskcache` dependency, `CVE-2025-69872` remains unmitigated. A complete application rewrite is required before we can upgrade to `pyautogen>=0.4.0` and safely remove `diskcache`.
 - `uvicorn[standard]` is upgraded to `>= 0.47.0` to fix security vulnerabilities in older versions.
 - `aiofiles` is upgraded to `>= 25.1.0` to fix security vulnerabilities in older versions.
