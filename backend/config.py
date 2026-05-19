@@ -11,6 +11,13 @@ import re
 
 # ─── Paths ───────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# ─── Load .env ──────────────────────────────────────────
+from dotenv import load_dotenv
+
+ENV_FILE = BASE_DIR / ".env"
+load_dotenv(dotenv_path=ENV_FILE)
+
 DATA_DIR = Path(os.getenv("AUTOGEN_DATA_DIR", BASE_DIR / "data"))
 SKILLS_DIR = Path(os.getenv("AUTOGEN_SKILLS_DIR", BASE_DIR / "skills_library"))
 CUSTOM_SKILLS_DIR = Path(os.getenv("AUTOGEN_CUSTOM_SKILLS_DIR", BASE_DIR / "custom_skills"))
@@ -25,12 +32,6 @@ AGENTS_FILE = DATA_DIR / "agents.json"
 SESSIONS_FILE = DATA_DIR / "sessions.json"
 SKILLS_FILE = DATA_DIR / "skills.json"
 SETTINGS_FILE = DATA_DIR / "settings.json"
-
-# ─── Load .env ──────────────────────────────────────────
-from dotenv import load_dotenv
-
-ENV_FILE = BASE_DIR / ".env"
-load_dotenv(dotenv_path=ENV_FILE)
 
 # ─── Security ───────────────────────────────────────────
 class ConfigModel(BaseSettings):

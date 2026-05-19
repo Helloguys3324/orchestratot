@@ -279,3 +279,36 @@ def test_path_configuration_env_vars():
     assert paths[0] == "/tmp/mock_data"
     assert paths[1] == "/tmp/mock_skills"
     assert paths[2] == "/tmp/mock_custom_skills"
+
+def test_path_configuration_dotenv_subprocess(tmp_path):
+    import subprocess
+    import sys
+
+    mock_env = tmp_path / ".env"
+    mock_env.write_text("AUTOGEN_DATA_DIR=/tmp/dotenv_data\nAUTOGEN_SKILLS_DIR=/tmp/dotenv_skills\nAUTOGEN_CUSTOM_SKILLS_DIR=/tmp/dotenv_custom_skills\n")
+
+    code = (
+        "import sys, os\n"
+        "from pathlib import Path\n"
+        "import backend.config\n"
+        "backend.config.ENV_FILE = Path('" + str(mock_env) + "')\n"
+        "from dotenv import load_dotenv\n"
+        "load_dotenv(dotenv_path=backend.config.ENV_FILE)\n"
+        "backend.config.DATA_DIR = Path(os.getenv('AUTOGEN_DATA_DIR', backend.config.BASE_DIR / 'data'))\n"
+        "backend.config.SKILLS_DIR = Path(os.getenv('AUTOGEN_SKILLS_DIR', backend.config.BASE_DIR / 'skills_library'))\n"
+        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR', backend.config.BASE_DIR / 'custom_skills'))\n"
+        "sys.stdout.write(str(backend.config.DATA_DIR) + '|' + str(backend.config.SKILLS_DIR) + '|' + str(backend.config.CUSTOM_SKILLS_DIR))\n"
+    )
+
+    env = os.environ.copy()
+    if "AUTOGEN_DATA_DIR" in env: del env["AUTOGEN_DATA_DIR"]
+    if "AUTOGEN_SKILLS_DIR" in env: del env["AUTOGEN_SKILLS_DIR"]
+    if "AUTOGEN_CUSTOM_SKILLS_DIR" in env: del env["AUTOGEN_CUSTOM_SKILLS_DIR"]
+
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert result.returncode == 0
+
+    paths = result.stdout.split('|')
+    assert paths[0] == "/tmp/dotenv_data"
+    assert paths[1] == "/tmp/dotenv_skills"
+    assert paths[2] == "/tmp/dotenv_custom_skills"
