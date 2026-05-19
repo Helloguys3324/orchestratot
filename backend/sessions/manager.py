@@ -304,17 +304,20 @@ class SessionManager:
         workspace = Path(session.get("workspace", ""))
         if not workspace.exists():
             return []
-        files = []
-        for f in workspace.rglob("*"):
-            if f.is_file():
-                try:
-                    content = f.read_text(encoding="utf-8")
-                except Exception:
-                    content = "(binary file)"
-                files.append({
-                    "path": str(f.relative_to(workspace)),
-                    "full_path": str(f),
-                    "size": f.stat().st_size,
-                    "content": content[:5000],
-                })
-        return files
+
+        def _read_content(f: Path) -> str:
+            try:
+                return f.read_text(encoding="utf-8")[:5000]
+            except Exception:
+                return "(binary file)"
+
+        return [
+            {
+                "path": str(f.relative_to(workspace)),
+                "full_path": str(f),
+                "size": f.stat().st_size,
+                "content": _read_content(f),
+            }
+            for f in workspace.rglob("*")
+            if f.is_file()
+        ]

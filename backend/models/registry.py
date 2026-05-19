@@ -300,12 +300,11 @@ def _get_models_by_category(category: str) -> list[dict]:
     return [m for m in AVAILABLE_MODELS.values() if m.get("category") == category]
 
 def list_models_by_category() -> dict:
-    result = {}
-    for cat_id, cat_info in CATEGORIES.items():
-        models = _get_models_by_category(cat_id)
-        if models:
-            result[cat_id] = {"info": cat_info, "models": models}
-    return result
+    return {
+        cat_id: {"info": cat_info, "models": models}
+        for cat_id, cat_info in CATEGORIES.items()
+        if (models := _get_models_by_category(cat_id))
+    }
 
 
 def get_model(model_id: str) -> dict | None:
