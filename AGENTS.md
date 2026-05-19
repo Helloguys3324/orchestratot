@@ -37,10 +37,15 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
+# (If ModuleNotFoundError occurs, ensure backend/requirements.txt and testing dependencies are installed)
 PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner
+# (Note: Always run the full suite. Running a single file will falsely report lower overall coverage.)
 node --experimental-test-coverage --test frontend/tests/*.test.js
+
+# Validate JSON syntax (required if JSON files are modified)
+python -m json.tool <filepath>
 ```
 
 If validation cannot be run, the PR body must clearly explain why.
@@ -1755,6 +1760,7 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
+python -m json.tool <filepath>
 ```
 
 If validation commands exist in:

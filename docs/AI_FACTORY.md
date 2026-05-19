@@ -114,6 +114,7 @@ python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)
+# Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
 # Validate JSON syntax (if JSON files are modified)
@@ -159,6 +160,7 @@ cp .env.example .env
 AUTOGEN_API_KEY=...
 AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
 AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
+AUTOGEN_WORKSPACE_DIR=workspace
 ```
 
 The application uses Pydantic `SecretStr` to prevent accidental logging or JSON serialization of secrets loaded from `.env`. Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted. Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields. Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults, however they are allowed during API updates to intentionally clear credentials.
