@@ -9,7 +9,7 @@ import subprocess
 from datetime import datetime, timezone
 from typing import Optional, Callable
 from pathlib import Path
-from backend.config import SESSIONS_FILE, BASE_DIR, load_json, save_json, get_settings
+from backend.config import SESSIONS_FILE, BASE_DIR, WORKSPACE_DIR, load_json, save_json, get_settings
 from backend.agents.manager import AgentManager
 from backend.models.registry import get_config_list
 from backend.llm.provider import call_llm
@@ -19,9 +19,6 @@ try:
     AUTOGEN_AVAILABLE = True
 except ImportError:
     AUTOGEN_AVAILABLE = False
-
-WORKSPACE_DIR = BASE_DIR / "workspace"
-WORKSPACE_DIR.mkdir(exist_ok=True)
 
 
 class SessionManager:
