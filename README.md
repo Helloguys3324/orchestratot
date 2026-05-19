@@ -26,7 +26,7 @@ python run.py
 - `frontend/` - Static HTML/CSS/JS UI files.
 - `skills_library/` and `custom_skills/` - Skill implementations.
 - `data/` - Runtime JSON state.
-- `.github/ai-factory/` - Autonomous development state and task planning files.
+- `.github/ai-factory/` - Autonomous development state, task planning files, and metrics tracking (`metrics.json`).
 
 ## Local Development Setup
 
@@ -70,7 +70,7 @@ Never commit secrets, API keys, or credentials. Copy the example environment fil
 cp .env.example .env
 ```
 
-*Note: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.*
+*Note: Your local `.env` file is meant for development and should contain runtime credentials like `AUTOGEN_API_KEY`. The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.*
 
 **Important:** You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
 
@@ -89,6 +89,8 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - `AUTOGEN_API_KEY` (if your models require authentication)
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
 5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
+
+Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
 
 For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
@@ -109,9 +111,11 @@ python run.py
 ```
 This starts the application at `http://localhost:8000`.
 
+*Note: If running the application in the background (e.g., `python run.py > app_output.log 2>&1 &`), you must explicitly remove the generated log files (e.g., `rm app_output.log`) when finished to prevent accidentally committing generated runtime logs.*
+
 ## Validation Commands
 
-Running the full validation suite is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
+Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
 ```bash
 # Verify Python syntax and compilation

@@ -101,7 +101,7 @@ All implementation, refactor, security, and architecture PRs require human revie
 
 ## Validation
 
-The validation workflow runs the following full suite:
+The validation workflow runs the following full suite. When running locally, ensure you execute these commands from the **repository root**:
 
 ```bash
 # Verify Python syntax and compilation
@@ -169,6 +169,10 @@ python .github/scripts/scan_secrets.py
 ```
 
 If a key was committed previously, rotate it immediately.
+
+## Metrics Tracking
+
+The `.github/ai-factory/metrics.json` file tracks various metrics related to the AI Factory's operation, such as `task_started`, `task_claimed`, `pr_created`, `validation_passed`, `pr_merged`, and `task_completed`. When updating these metrics, logical consistency must be maintained across interdependent fields. For example, if `pr_merged` is greater than zero, `pr_created` and `validation_passed` must logically be at least equal to that number. Note that empty PRs (where no code modifications were made due to no meaningful safe change existing) are included in the counts for `pr_merged` and `task_completed`, as they still progress through the full task and PR lifecycle.
 
 ## Workflows & Diagrams
 
