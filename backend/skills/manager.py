@@ -157,29 +157,21 @@ class SkillsManager:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
         return f"{skill_id}.py"
 
+    def _validate_string_field(self, data: dict, field: str, default: str = "", required: bool = False) -> str:
+        value = data.get(field, default)
+        if required and not value:
+            raise SkillValidationError(f"Skill {field} is required")
+        if not isinstance(value, str):
+            raise SkillValidationError(f"Skill {field} must be a string")
+        return value
+
     def _add_custom_skill(self, prefix: str, data: dict, default_category: str, source: str) -> dict:
         try:
-            name = data.get("name")
-            if not name:
-                raise SkillValidationError("Skill name is required")
-            if not isinstance(name, str):
-                raise SkillValidationError("Skill name must be a string")
-
-            icon = data.get("icon", "🔧" if prefix == "custom" else "📦")
-            if not isinstance(icon, str):
-                raise SkillValidationError("Skill icon must be a string")
-
-            description = data.get("description", "")
-            if not isinstance(description, str):
-                raise SkillValidationError("Skill description must be a string")
-
-            category = data.get("category", default_category)
-            if not isinstance(category, str):
-                raise SkillValidationError("Skill category must be a string")
-
-            skill_code = data.get("code", "")
-            if not isinstance(skill_code, str):
-                raise SkillValidationError("Skill code must be a string")
+            name = self._validate_string_field(data, "name", required=True)
+            icon = self._validate_string_field(data, "icon", default="🔧" if prefix == "custom" else "📦")
+            description = self._validate_string_field(data, "description", default="")
+            category = self._validate_string_field(data, "category", default=default_category)
+            skill_code = self._validate_string_field(data, "code", default="")
         except AttributeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
 
