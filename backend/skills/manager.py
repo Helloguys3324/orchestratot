@@ -151,7 +151,7 @@ class SkillsManager:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
         return f"{skill_id}.py"
 
-    def create_skill(self, data: dict) -> dict:
+    def _add_custom_skill(self, prefix: str, data: dict, default_category: str, source: str) -> dict:
         try:
             if not data.get("name"):
                 raise SkillValidationError("Skill name is required")
@@ -162,25 +162,27 @@ class SkillsManager:
         if not isinstance(skill_code, str):
             raise SkillValidationError("Skill code must be a string")
 
-        skill_id = f"custom_{uuid.uuid4().hex[:8]}"
+        skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
         skill = {
             "id": skill_id,
             "name": data.get("name"),
-            "icon": data.get("icon", "🔧"),
+            "icon": data.get("icon", "🔧") if prefix == "custom" else data.get("icon", "📦"),
             "description": data.get("description", ""),
-            "category": data.get("category", "custom"),
+            "category": data.get("category", default_category),
             "builtin": False,
             "enabled": True,
-            "source": "custom",
+            "source": source,
             "code": skill_code,
         }
-        # Save code to file
         if skill["code"]:
             skill["file"] = self._write_skill_file(skill_id, skill["code"])
 
         self._custom_skills.append(skill)
         self._save()
         return skill
+
+    def create_skill(self, data: dict) -> dict:
+        return self._add_custom_skill("custom", data, "custom", "custom")
 
     def delete_skill(self, skill_id: str) -> bool:
         for i, s in enumerate(self._custom_skills):
@@ -221,20 +223,9 @@ class SkillsManager:
         except httpx.RequestError as e:
             raise SkillInstallError(f"Request error occurred: {str(e)}") from e
 
-        skill_id = f"imported_{uuid.uuid4().hex[:8]}"
-        skill = {
-            "id": skill_id,
-            "name": name or f"Imported Skill",
-            "icon": "📦",
+        data = {
+            "name": name or "Imported Skill",
             "description": f"Imported from {url}",
-            "category": "imported",
-            "builtin": False,
-            "enabled": True,
-            "source": url,
             "code": code,
         }
-        skill["file"] = self._write_skill_file(skill_id, code)
-
-        self._custom_skills.append(skill)
-        self._save()
-        return skill
+        return self._add_custom_skill("imported", data, "imported", url)
