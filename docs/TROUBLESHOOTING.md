@@ -85,10 +85,3 @@ python -m json.tool <filepath>
 3. Visually inspect the changes across different viewport sizes (e.g., 1440x900, 1024x768, 390x844).
 4. Check the browser console for any runtime errors and fix them before opening a PR.
 
-### Issue: Playwright complains about missing browsers or executable paths
-**Symptom:** During UI validation, Playwright fails to launch or reports that a browser executable is not found.
-**Solution:** Ensure you have installed the necessary Playwright browsers in your environment. Run the following commands line-by-line:
-```bash
-pip install playwright
-playwright install chromium
-```

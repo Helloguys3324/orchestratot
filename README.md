@@ -96,9 +96,6 @@ pip install -r backend/requirements.txt
 # Local backend testing dependencies
 pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings
 
-# UI testing dependencies (Optional, only needed if making UI changes)
-pip install playwright
-playwright install chromium
 ```
 
 ### 3. Secrets & Configuration
@@ -121,8 +118,10 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
 1. **App Installation:** Install/connect the repository in the Jules web app.
 2. **API Key Creation:** Create a Jules API key.
 3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**):
-   - `JULES_API_KEY` (your Jules API key)
-   - `AUTOGEN_API_KEY` (if your models require authentication)
+   - Name: `JULES_API_KEY`
+     Value: your Jules API key
+   - Name: `AUTOGEN_API_KEY` (if your models require authentication)
+     Value: your LLM provider API key
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
 5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
 
@@ -182,6 +181,7 @@ python -m json.tool <filepath>
 ### Vulnerability Scanning
 ```bash
 # Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be explicitly installed first)
+pip install pip-audit
 pip-audit -r backend/requirements.txt
 ```
 
