@@ -124,6 +124,19 @@ def test_create_skill_invalid_code_type(manager):
     with pytest.raises(SkillValidationError, match="Skill code must be a string"):
         manager.create_skill({"name": "test", "code": 123})
 
+def test_create_skill_invalid_types(manager):
+    with pytest.raises(SkillValidationError, match="Skill name must be a string"):
+        manager.create_skill({"name": 123, "code": "print('hello')"})
+
+    with pytest.raises(SkillValidationError, match="Skill icon must be a string"):
+        manager.create_skill({"name": "test", "icon": [], "code": "print('hello')"})
+
+    with pytest.raises(SkillValidationError, match="Skill description must be a string"):
+        manager.create_skill({"name": "test", "description": {}, "code": "print('hello')"})
+
+    with pytest.raises(SkillValidationError, match="Skill category must be a string"):
+        manager.create_skill({"name": "test", "category": 1.5, "code": "print('hello')"})
+
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")

@@ -159,22 +159,37 @@ class SkillsManager:
 
     def _add_custom_skill(self, prefix: str, data: dict, default_category: str, source: str) -> dict:
         try:
-            if not data.get("name"):
+            name = data.get("name")
+            if not name:
                 raise SkillValidationError("Skill name is required")
+            if not isinstance(name, str):
+                raise SkillValidationError("Skill name must be a string")
+
+            icon = data.get("icon", "🔧" if prefix == "custom" else "📦")
+            if not isinstance(icon, str):
+                raise SkillValidationError("Skill icon must be a string")
+
+            description = data.get("description", "")
+            if not isinstance(description, str):
+                raise SkillValidationError("Skill description must be a string")
+
+            category = data.get("category", default_category)
+            if not isinstance(category, str):
+                raise SkillValidationError("Skill category must be a string")
+
+            skill_code = data.get("code", "")
+            if not isinstance(skill_code, str):
+                raise SkillValidationError("Skill code must be a string")
         except AttributeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
-
-        skill_code = data.get("code", "")
-        if not isinstance(skill_code, str):
-            raise SkillValidationError("Skill code must be a string")
 
         skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
         skill = {
             "id": skill_id,
-            "name": data.get("name"),
-            "icon": data.get("icon", "🔧") if prefix == "custom" else data.get("icon", "📦"),
-            "description": data.get("description", ""),
-            "category": data.get("category", default_category),
+            "name": name,
+            "icon": icon,
+            "description": description,
+            "category": category,
             "builtin": False,
             "enabled": True,
             "source": source,
