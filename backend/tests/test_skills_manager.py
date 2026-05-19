@@ -287,6 +287,13 @@ def test_install_from_url_invalid_format(manager) -> None:
     with pytest.raises(SkillValidationError, match="Invalid URL format"):
         asyncio.run(manager.install_from_url("http://[::1"))
 
+def test_install_from_url_invalid_type(manager) -> None:
+    with pytest.raises(SkillValidationError, match="Invalid URL format"):
+        asyncio.run(manager.install_from_url(123))
+
+    with pytest.raises(SkillValidationError, match="Invalid URL scheme"):
+        asyncio.run(manager.install_from_url(None))
+
 def test_install_from_url_invalid_hostname(manager):
     with pytest.raises(SkillValidationError, match="Invalid URL hostname"):
         asyncio.run(manager.install_from_url("http://localhost:8080/skill.py"))
