@@ -294,9 +294,9 @@ def test_path_configuration_dotenv_subprocess(tmp_path):
         "backend.config.ENV_FILE = Path('" + str(mock_env) + "')\n"
         "from dotenv import load_dotenv\n"
         "load_dotenv(dotenv_path=backend.config.ENV_FILE)\n"
-        "backend.config.DATA_DIR = Path(os.getenv('AUTOGEN_DATA_DIR', backend.config.BASE_DIR / 'data'))\n"
-        "backend.config.SKILLS_DIR = Path(os.getenv('AUTOGEN_SKILLS_DIR', backend.config.BASE_DIR / 'skills_library'))\n"
-        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR', backend.config.BASE_DIR / 'custom_skills'))\n"
+        "backend.config.DATA_DIR = Path(os.getenv('AUTOGEN_DATA_DIR') or backend.config.BASE_DIR / 'data')\n"
+        "backend.config.SKILLS_DIR = Path(os.getenv('AUTOGEN_SKILLS_DIR') or backend.config.BASE_DIR / 'skills_library')\n"
+        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR') or backend.config.BASE_DIR / 'custom_skills')\n"
         "sys.stdout.write(str(backend.config.DATA_DIR) + '|' + str(backend.config.SKILLS_DIR) + '|' + str(backend.config.CUSTOM_SKILLS_DIR))\n"
     )
 
@@ -312,3 +312,30 @@ def test_path_configuration_dotenv_subprocess(tmp_path):
     assert paths[0] == "/tmp/dotenv_data"
     assert paths[1] == "/tmp/dotenv_skills"
     assert paths[2] == "/tmp/dotenv_custom_skills"
+
+def test_path_configuration_empty_env_vars() -> None:
+    import subprocess
+    import sys
+    import os
+
+    env = os.environ.copy()
+    env["AUTOGEN_DATA_DIR"] = ""
+    env["AUTOGEN_SKILLS_DIR"] = ""
+    env["AUTOGEN_CUSTOM_SKILLS_DIR"] = ""
+
+    code = (
+        "import sys\n"
+        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR, BASE_DIR\n"
+        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR))\n"
+    )
+
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert result.returncode == 0
+
+    paths = result.stdout.split('|')
+
+    # Note: BASE_DIR in the subprocess will be the absolute path to backend
+    from backend.config import BASE_DIR
+    assert paths[0] == str(BASE_DIR / "data")
+    assert paths[1] == str(BASE_DIR / "skills_library")
+    assert paths[2] == str(BASE_DIR / "custom_skills")
