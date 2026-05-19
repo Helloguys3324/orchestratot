@@ -135,11 +135,10 @@ class SessionManager:
 
     async def _run_orchestrated_chat(self, session, user_message, api_key, settings):
         """Smart orchestrated chat: router picks agents, agents write files."""
-        agent_configs = []
-        for aid in session["agent_ids"]:
-            agent_data = self.agent_manager.get_agent(aid)
-            if agent_data and agent_data.get("enabled", True):
-                agent_configs.append(agent_data)
+        agent_configs = [
+            agent_data for aid in session["agent_ids"]
+            if (agent_data := self.agent_manager.get_agent(aid)) and agent_data.get("enabled", True)
+        ]
 
         if not agent_configs:
             await self._error_msg(session, "No enabled agents.")
@@ -201,10 +200,7 @@ class SessionManager:
             ac = agent_map.get(next_agent_name)
             if not ac:
                 # Fuzzy match
-                for name in agent_names:
-                    if name.lower() in next_agent_name.lower() or next_agent_name.lower() in name.lower():
-                        ac = agent_map[name]
-                        break
+                ac = next((agent_map[name] for name in agent_names if name.lower() in next_agent_name.lower() or next_agent_name.lower() in name.lower()), None)
                 if not ac:
                     ac = agent_configs[round_num % len(agent_configs)]
 
