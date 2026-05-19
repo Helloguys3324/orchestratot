@@ -131,15 +131,21 @@ class SkillsManager:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
 
     def list_skills(self) -> list[dict]:
-        return BUILTIN_SKILLS + self._custom_skills
+        try:
+            return BUILTIN_SKILLS + self._custom_skills
+        except TypeError as e:
+            raise SkillValidationError("Invalid skill data provided") from e
 
     def list_marketplace(self) -> list[dict]:
         return MARKETPLACE_SKILLS
 
     def get_skill(self, skill_id: str) -> dict | None:
-        for s in BUILTIN_SKILLS + self._custom_skills:
-            if s["id"] == skill_id:
-                return s
+        try:
+            for s in BUILTIN_SKILLS + self._custom_skills:
+                if s["id"] == skill_id:
+                    return s
+        except (TypeError, KeyError) as e:
+            raise SkillValidationError("Invalid skill data provided") from e
 
         raise SkillNotFoundError("Skill not found")
 
@@ -185,18 +191,21 @@ class SkillsManager:
         return self._add_custom_skill("custom", data, "custom", "custom")
 
     def delete_skill(self, skill_id: str) -> bool:
-        for i, s in enumerate(self._custom_skills):
-            if s["id"] == skill_id:
-                # Remove file if exists
-                filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-                if filepath.exists():
-                    try:
-                        filepath.unlink()
-                    except OSError as e:
-                        raise SkillInstallError(f"Failed to delete skill file: {e}") from e
-                self._custom_skills.pop(i)
-                self._save()
-                return True
+        try:
+            for i, s in enumerate(self._custom_skills):
+                if s["id"] == skill_id:
+                    # Remove file if exists
+                    filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
+                    if filepath.exists():
+                        try:
+                            filepath.unlink()
+                        except OSError as e:
+                            raise SkillInstallError(f"Failed to delete skill file: {e}") from e
+                    self._custom_skills.pop(i)
+                    self._save()
+                    return True
+        except (TypeError, KeyError) as e:
+            raise SkillValidationError("Invalid skill data provided") from e
 
         raise SkillNotFoundError("Skill not found")
 

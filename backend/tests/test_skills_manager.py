@@ -14,6 +14,22 @@ def mock_load_json():
 def manager(mock_load_json):
     return SkillsManager()
 
+def test_list_skills_malformed(manager):
+    manager._custom_skills = {"not": "list"}
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+        manager.list_skills()
+
+def test_get_skill_malformed(manager):
+    manager._custom_skills = ["not a dict"]
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+        manager.get_skill("123")
+
+def test_delete_skill_malformed(manager):
+    manager._custom_skills = [{"no_id": "value"}]
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+        manager.delete_skill("123")
+
+
 def test_manager_init(manager, mock_load_json):
     mock_load_json.assert_called_once()
     assert manager._custom_skills == []
