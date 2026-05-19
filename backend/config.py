@@ -11,14 +11,14 @@ import re
 
 # ─── Paths ───────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
-SKILLS_DIR = BASE_DIR / "skills_library"
-CUSTOM_SKILLS_DIR = BASE_DIR / "custom_skills"
+DATA_DIR = Path(os.getenv("AUTOGEN_DATA_DIR", BASE_DIR / "data"))
+SKILLS_DIR = Path(os.getenv("AUTOGEN_SKILLS_DIR", BASE_DIR / "skills_library"))
+CUSTOM_SKILLS_DIR = Path(os.getenv("AUTOGEN_CUSTOM_SKILLS_DIR", BASE_DIR / "custom_skills"))
 
 # Create directories if they don't exist
-DATA_DIR.mkdir(exist_ok=True)
-SKILLS_DIR.mkdir(exist_ok=True)
-CUSTOM_SKILLS_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
+SKILLS_DIR.mkdir(parents=True, exist_ok=True)
+CUSTOM_SKILLS_DIR.mkdir(parents=True, exist_ok=True)
 
 # ─── Data files ──────────────────────────────────────────
 AGENTS_FILE = DATA_DIR / "agents.json"

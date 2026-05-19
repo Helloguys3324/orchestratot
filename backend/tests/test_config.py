@@ -255,3 +255,27 @@ def test_get_settings_out_of_bounds_fallback(monkeypatch):
     assert settings["temperature"] == 0.7  # Default from model
     assert settings["max_rounds"] == 15  # Default from model
     assert settings["max_tokens"] == 4096  # Default from model
+
+def test_path_configuration_env_vars():
+    import subprocess
+    import sys
+
+    # Run python in a subprocess with mocked env vars to verify parsing
+    env = os.environ.copy()
+    env["AUTOGEN_DATA_DIR"] = "/tmp/mock_data"
+    env["AUTOGEN_SKILLS_DIR"] = "/tmp/mock_skills"
+    env["AUTOGEN_CUSTOM_SKILLS_DIR"] = "/tmp/mock_custom_skills"
+
+    code = (
+        "import sys\n"
+        "from backend.config import DATA_DIR, SKILLS_DIR, CUSTOM_SKILLS_DIR\n"
+        "sys.stdout.write(str(DATA_DIR) + '|' + str(SKILLS_DIR) + '|' + str(CUSTOM_SKILLS_DIR))\n"
+    )
+
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert result.returncode == 0
+
+    paths = result.stdout.split('|')
+    assert paths[0] == "/tmp/mock_data"
+    assert paths[1] == "/tmp/mock_skills"
+    assert paths[2] == "/tmp/mock_custom_skills"
