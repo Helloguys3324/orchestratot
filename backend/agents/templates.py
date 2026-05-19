@@ -219,10 +219,4 @@ def get_template(template_id: str) -> dict | None:
 
 def list_templates() -> list[dict]:
     """List all available templates."""
-    result = []
-    for tid, template in AGENT_TEMPLATES.items():
-        result.append({
-            "id": tid,
-            **template,
-        })
-    return result
+    return [{"id": tid, **template} for tid, template in AGENT_TEMPLATES.items()]
