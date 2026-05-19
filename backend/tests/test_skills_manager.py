@@ -104,6 +104,10 @@ def test_create_skill_invalid_data_type(manager):
     with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
         manager.create_skill(None)
 
+def test_create_skill_invalid_code_type(manager):
+    with pytest.raises(SkillValidationError, match="Skill code must be a string"):
+        manager.create_skill({"name": "test", "code": 123})
+
 @patch("backend.skills.manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
