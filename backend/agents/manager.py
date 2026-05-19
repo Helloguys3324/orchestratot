@@ -76,14 +76,8 @@ class AgentManager:
             "template": template_id or "custom",
         }
 
-        for field in self.UPDATABLE_FIELDS:
-            # Fallback priority: data -> base -> defaults
-            if field in data:
-                agent[field] = data[field]
-            elif field in base:
-                agent[field] = base[field]
-            elif field in defaults:
-                agent[field] = defaults[field]
+        merged = {**defaults, **base, **data}
+        agent.update({k: merged[k] for k in self.UPDATABLE_FIELDS if k in merged})
 
         self._agents[agent_id] = agent
         self._save()
@@ -96,9 +90,7 @@ class AgentManager:
 
         agent = self._agents[agent_id]
         # Update only provided fields
-        for field in self.UPDATABLE_FIELDS:
-            if field in data:
-                agent[field] = data[field]
+        agent.update({k: data[k] for k in self.UPDATABLE_FIELDS if k in data})
 
         self._agents[agent_id] = agent
         self._save()
