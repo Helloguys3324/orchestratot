@@ -40,7 +40,7 @@ python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner
-node --experimental-test-coverage --test frontend/tests/*.js
+node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
 
 If validation cannot be run, the PR body must clearly explain why.
@@ -1754,7 +1754,7 @@ Recommended validation examples:
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.js
+node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
 
 If validation commands exist in:

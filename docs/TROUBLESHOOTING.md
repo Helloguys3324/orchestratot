@@ -23,7 +23,7 @@ pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydanti
 ```
 
 ### Issue: Validation commands fail due to missing `node` or test runner issues
-**Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.js`.
+**Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.test.js`.
 **Solution:** Ensure you have Node.js version 20 or higher installed, as it natively includes the `node:test` module. You do not need to `npm install` anything for standard test runs.
 
 ### Issue: `pip-audit` reports false positives or missing dependencies
