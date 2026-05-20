@@ -298,10 +298,10 @@ def test_path_configuration_dotenv_subprocess(tmp_path):
         "backend.config.ENV_FILE = Path('" + str(mock_env) + "')\n"
         "from dotenv import load_dotenv\n"
         "load_dotenv(dotenv_path=backend.config.ENV_FILE)\n"
-        "backend.config.DATA_DIR = Path(os.getenv('AUTOGEN_DATA_DIR') or backend.config.BASE_DIR / 'data')\n"
-        "backend.config.SKILLS_DIR = Path(os.getenv('AUTOGEN_SKILLS_DIR') or backend.config.BASE_DIR / 'skills_library')\n"
-        "backend.config.CUSTOM_SKILLS_DIR = Path(os.getenv('AUTOGEN_CUSTOM_SKILLS_DIR') or backend.config.BASE_DIR / 'custom_skills')\n" \
-        "backend.config.WORKSPACE_DIR = Path(os.getenv('AUTOGEN_WORKSPACE_DIR') or backend.config.BASE_DIR / 'workspace')\n"
+        "backend.config.DATA_DIR = backend.config._get_path_env('AUTOGEN_DATA_DIR', 'data')\n"
+        "backend.config.SKILLS_DIR = backend.config._get_path_env('AUTOGEN_SKILLS_DIR', 'skills_library')\n"
+        "backend.config.CUSTOM_SKILLS_DIR = backend.config._get_path_env('AUTOGEN_CUSTOM_SKILLS_DIR', 'custom_skills')\n" \
+        "backend.config.WORKSPACE_DIR = backend.config._get_path_env('AUTOGEN_WORKSPACE_DIR', 'workspace')\n"
         "sys.stdout.write(str(backend.config.DATA_DIR) + '|' + str(backend.config.SKILLS_DIR) + '|' + str(backend.config.CUSTOM_SKILLS_DIR) + '|' + str(backend.config.WORKSPACE_DIR))\n"
     )
 
@@ -395,3 +395,18 @@ def test_validate_config_ignores_unrelated_kwargs():
 
     assert model.temperature == 0.8
     assert not hasattr(model, "some_unknown_field")
+
+def test_get_path_env_populated(monkeypatch):
+    from backend.config import _get_path_env, BASE_DIR
+    monkeypatch.setenv("AUTOGEN_DATA_DIR", "/tmp/populated_data")
+    from pathlib import Path; assert _get_path_env("AUTOGEN_DATA_DIR", "data") == Path("/tmp/populated_data")
+
+def test_get_path_env_empty_string(monkeypatch):
+    from backend.config import _get_path_env, BASE_DIR
+    monkeypatch.setenv("AUTOGEN_DATA_DIR", "")
+    assert _get_path_env("AUTOGEN_DATA_DIR", "data") == BASE_DIR / "data"
+
+def test_get_path_env_unset(monkeypatch):
+    from backend.config import _get_path_env, BASE_DIR
+    monkeypatch.delenv("AUTOGEN_DATA_DIR", raising=False)
+    assert _get_path_env("AUTOGEN_DATA_DIR", "data") == BASE_DIR / "data"
