@@ -65,6 +65,21 @@ class ConfigModel(BaseSettings):
         # Priority: init_settings > env_settings > dotenv_settings
         return init_settings, env_settings, dotenv_settings, file_secret_settings
 
+    @field_validator('base_url', mode='before')
+    def validate_base_url(cls, v):
+        import urllib.parse
+        if v is None or v == "":
+            return v
+        try:
+            parsed = urllib.parse.urlparse(v)
+            if hasattr(parsed.scheme, "decode"):
+                raise ValueError("URL must be a string")
+            if not parsed.scheme or not parsed.netloc:
+                raise ValueError("Invalid URL format. Must include scheme and netloc.")
+        except (ValueError, AttributeError, TypeError) as e:
+            raise ValueError(f"Invalid base_url: {e}")
+        return v
+
     @field_validator('api_key', mode='before')
     def validate_api_key(cls, v):
         if not v:

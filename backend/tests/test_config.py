@@ -348,3 +348,24 @@ def test_path_configuration_empty_env_vars() -> None:
     assert paths[1] == str(BASE_DIR / "skills_library")
     assert paths[2] == str(BASE_DIR / "custom_skills")
     assert paths[3] == str(BASE_DIR / "workspace")
+
+def test_config_model_base_url_validation() -> None:
+    # Valid URL
+    model = ConfigModel(base_url="https://api.example.com/v1/")
+    assert model.base_url == "https://api.example.com/v1/"
+
+    # Invalid URL format (missing scheme/netloc)
+    with pytest.raises(ValidationError):
+        ConfigModel(base_url="invalid_url")
+
+    # Invalid URL format (missing scheme)
+    with pytest.raises(ValidationError):
+        ConfigModel(base_url="api.example.com/v1/")
+
+    # Invalid type
+    with pytest.raises(ValidationError):
+        ConfigModel(base_url=123)
+
+    # Invalid type (bytes)
+    with pytest.raises(ValidationError):
+        ConfigModel(base_url=b"https://api.example.com/v1/")
