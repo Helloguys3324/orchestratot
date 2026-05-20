@@ -42,7 +42,7 @@ pip install pytest pytest-cov pytest-asyncio
 
 ### Issue: Configuration defaults are not being overridden by environment variables
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
-**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings. The configuration is set to ignore empty strings on load (`env_ignore_empty=True`). However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
+**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings (except for path variables like `AUTOGEN_DATA_DIR`, which explicitly support empty strings to fallback to defaults). The configuration is set to ignore empty strings on load (`env_ignore_empty=True`) for credentials and general settings. However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
 
 ### Issue: JSON files fail validation or cause errors
 **Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
@@ -60,7 +60,7 @@ python -m json.tool <filepath>
 ### Issue: AI tasks are repeatedly failing or getting stuck
 **Symptom:** You notice that AI tasks in the queue are failing consecutively without making progress.
 **Solution:**
-1. Stop the autonomous background processes by creating a file named `AUTOPILOT_STOP` in the root directory.
+1. Stop the autonomous background processes by creating a file named `AUTOPILOT_STOP` in the repository root directory.
    ```bash
    touch AUTOPILOT_STOP
    ```

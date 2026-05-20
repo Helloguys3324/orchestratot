@@ -118,7 +118,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    **Configuration Handling Details:**
-   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load.
+   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load, except for path variables (e.g., `AUTOGEN_DATA_DIR`) which explicitly support empty strings to fallback to their defaults.
    - **Legacy Migration**: Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
    - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
@@ -139,7 +139,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
-5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start. (Note: The automated workflow checks for this file; if it exists, autonomous execution will safely halt.)
+5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start. (Note: The automated workflow checks for this file in the root directory; if it exists, autonomous execution will safely halt.)
 
 Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
 
@@ -149,7 +149,7 @@ For detailed workflows and auto-merge requirements, refer to [AI Factory Operati
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
 ### 5. Emergency Stop Protocol
-If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the root directory:
+If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the repository root directory:
 ```bash
 touch AUTOPILOT_STOP
 ```
