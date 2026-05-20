@@ -159,6 +159,7 @@ cp .env.example .env
 ```bash
 AUTOGEN_API_KEY=...
 AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
+AUTOGEN_ROUTER_MODEL=gemini-3-flash-live
 AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
 AUTOGEN_WORKSPACE_DIR=workspace
 ```

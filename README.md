@@ -108,6 +108,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
 2. **Configure Credentials**: Your local `.env` file is meant for development. Key environment variables include:
    - `AUTOGEN_API_KEY`: Your language model API key.
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
+   - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
