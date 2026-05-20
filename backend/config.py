@@ -122,15 +122,18 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
             for k in invalid_keys if isinstance(k, str)
         }
 
-        # We must provide the default values in kwargs to override invalid entries in the .env file
-        kwargs = {
+        UPDATABLE_FIELDS = set(ConfigModel.model_fields.keys())
+
+        # We must provide the default values to override invalid entries in the .env file
+        defaults = {
             k: ("" if k == "api_key" else default_val)
-            for k in invalid_keys if isinstance(k, str) and k in ConfigModel.model_fields
+            for k in invalid_keys if isinstance(k, str) and k in UPDATABLE_FIELDS
             if k == "api_key" or (default_val := ConfigModel.model_fields[k].get_default()) is not None
         }
 
         # Explicit settings take precedence
-        kwargs.update(input_kwargs)
+        merged = {**defaults, **input_kwargs}
+        kwargs = {k: merged[k] for k in UPDATABLE_FIELDS if k in merged}
 
         try:
             # Initialize with kwargs (defaults + explicit overrides)
