@@ -175,7 +175,7 @@ The application relies on several mechanisms to handle secrets safely and ergono
 - **Masking**: Pydantic `SecretStr` is used to prevent accidental logging or JSON serialization of secrets loaded from `.env`.
 - **Legacy Migration**: Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted.
 - **UI/API Updates**: Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields.
-- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, they are allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
+- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults (though path variables explicitly support them to fallback to defaults). However, they are allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
 
 You can verify that no secrets are accidentally committed by running:
 ```bash

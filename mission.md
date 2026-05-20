@@ -15,10 +15,13 @@ Operating rules:
 
 - Prefer small pull requests with one clear purpose.
 - Run the repository validation commands (including mandatory JSON syntax validation if JSON files were changed) before opening a PR.
+  - `python -m compileall backend skills_library run.py`
+  - `python .github/scripts/scan_secrets.py`
+  - `PYTHONPATH=. python -m pytest -q`
+  - `node --experimental-test-coverage --test frontend/tests/*.test.js`
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
 - Do not rewrite project history.
 - Treat `AUTOPILOT_STOP` as a hard stop for autonomous work.
 - Ensure local setup and operations documentation is always accurate, clear, and reflects the current repository state.
 - Visually inspect and validate frontend UI changes locally before opening a PR.
-
