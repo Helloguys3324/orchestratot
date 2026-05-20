@@ -11,17 +11,18 @@
     "obsolete": 0,
     "duplicate": 0
   },
-  "pr_created": 69,
-  "validation_passed": 69,
-  "validation_failed": 0,
-  "pr_merged": 66,
-  "pr_rejected": 0,
+  "pr_lifecycle": {
+    "pr_created": 69,
+    "validation_passed": 69,
+    "validation_failed": 0,
+    "pr_merged": 66,
+    "pr_rejected": 0
+  },
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs.",
-    "Metrics like safe_automerge_count, manual_review_count, recent_failure_reasons, and automation_health are currently unavailable."
+    "Metrics like safe_automerge_count, manual_review_count, recent_failure_reasons, and automation_health are currently unavailable.",
+    "Removed root-level 'queue_size' and 'active_work' fields as they duplicate 'task_lifecycle.pending' and 'task_lifecycle.running'."
   ],
-  "queue_size": 8,
-  "active_work": 1,
   "role_distribution": {
     "implementer": 2,
     "refactorer": 1,
