@@ -109,6 +109,13 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_API_KEY`: Your language model API key.
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
    - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
+   - `AUTOGEN_BASE_URL`: The base URL for the API endpoint (defaults to Google's Gemini API).
+   - `AUTOGEN_MAX_ROUNDS`: The maximum number of conversational rounds allowed (defaults to 15).
+   - `AUTOGEN_TEMPERATURE`: The temperature parameter for model generation (defaults to 0.7).
+   - `AUTOGEN_MAX_TOKENS`: The maximum tokens parameter for model generation (defaults to 4096).
+   - `AUTOGEN_DATA_DIR`: The directory where runtime JSON data is stored.
+   - `AUTOGEN_SKILLS_DIR`: The directory for built-in skills.
+   - `AUTOGEN_CUSTOM_SKILLS_DIR`: The directory for custom skills.
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used. Note: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
