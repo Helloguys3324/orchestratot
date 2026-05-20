@@ -157,6 +157,8 @@ class SkillsManager:
         return f"{skill_id}.py"
 
     def _validate_string_field(self, data: dict, field: str, default: str = "", required: bool = False) -> str:
+        if not isinstance(data, dict):
+            raise SkillValidationError("Invalid skill data provided")
         value = data.get(field, default)
         if required and not value:
             raise SkillValidationError(f"Skill {field} is required")
@@ -218,6 +220,9 @@ class SkillsManager:
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
         from urllib.parse import urlparse
+        if not isinstance(url, str):
+            raise SkillValidationError("Invalid URL format: URL must be a string")
+
         try:
             parsed_url = urlparse(url)
         except (ValueError, AttributeError, TypeError) as e:
