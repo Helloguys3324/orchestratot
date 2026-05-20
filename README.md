@@ -110,7 +110,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
-   The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
+   The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used. Note: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
 3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
    ```bash
    python .github/scripts/scan_secrets.py
@@ -128,7 +128,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
-5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start.
+5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start. (Note: The automated workflow checks for this file; if it exists, autonomous execution will safely halt.)
 
 Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
 
@@ -200,7 +200,7 @@ If any files in `frontend/` are modified, you must visually inspect the UI local
 2. Open `http://localhost:8000` in a browser.
 3. Walk through the changed UI area and affected user flows.
 4. Check browser console for errors.
-5. Check for layout issues (overlapping text, hidden content, etc.) across different viewport sizes.
+5. Check for layout issues (overlapping text, hidden content, etc.) across different viewport sizes (e.g., 1440x900 desktop, 1024x768 tablet, 390x844 mobile).
 
 ## Limitations
 - The orchestrator operates under strict token and round limits.
