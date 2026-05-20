@@ -101,23 +101,18 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
         model = ConfigModel(**input_kwargs)
     except ValidationError as e:
         invalid_keys = [err.get('loc')[0] for err in e.errors() if err.get('loc')]
-        old_envs = {}
-
         # Temporarily remove invalid keys from os.environ to prevent re-reading invalid env vars
-        for k in invalid_keys:
-            if isinstance(k, str):
-                env_key = f"AUTOGEN_{k.upper()}"
-                old_envs[env_key] = os.environ.pop(env_key, None)
+        old_envs = {
+            f"AUTOGEN_{k.upper()}": os.environ.pop(f"AUTOGEN_{k.upper()}", None)
+            for k in invalid_keys if isinstance(k, str)
+        }
 
         # We must provide the default values in kwargs to override invalid entries in the .env file
-        kwargs = {}
-        for k in invalid_keys:
-            if k == "api_key":
-                kwargs["api_key"] = ""
-            elif isinstance(k, str) and k in ConfigModel.model_fields:
-                default_val = ConfigModel.model_fields[k].get_default()
-                if default_val is not None:
-                    kwargs[k] = default_val
+        kwargs = {
+            k: ("" if k == "api_key" else default_val)
+            for k in invalid_keys if isinstance(k, str) and k in ConfigModel.model_fields
+            if k == "api_key" or (default_val := ConfigModel.model_fields[k].get_default()) is not None
+        }
 
         # Explicit settings take precedence
         kwargs.update(input_kwargs)
