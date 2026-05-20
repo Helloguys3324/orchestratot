@@ -111,6 +111,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
    - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
    - `AUTOGEN_BASE_URL`: The base URL for the API endpoint (defaults to Google's Gemini API).
+   - `AUTOGEN_ENV_FILE`: The path to the custom .env configuration file (defaults to .env in project root).
    - `AUTOGEN_MAX_ROUNDS`: The maximum number of conversational rounds allowed (defaults to 15).
    - `AUTOGEN_TEMPERATURE`: The temperature parameter for model generation (defaults to 0.7).
    - `AUTOGEN_MAX_TOKENS`: The maximum tokens parameter for model generation (defaults to 4096).
@@ -141,7 +142,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
 4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
-5. **Autopilot Activation:** Remove or rename `AUTOPILOT_STOP` when scheduled autonomous work should start. (Note: The automated workflow checks for this file in the root directory; if it exists, autonomous execution will safely halt.)
+5. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP`.
 
 Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
 
@@ -183,6 +184,10 @@ python .github/scripts/scan_secrets.py
 # Run all backend unit and integration tests (ensure local testing dependencies are installed)
 # Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
+
+# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
+# created during testing to avoid accidentally committing them.
+rm -f .coverage
 ```
 
 ### Frontend Validation

@@ -28,7 +28,7 @@ pip install pytest pytest-cov pytest-asyncio
 
 ### Issue: `pip-audit` reports false positives or missing dependencies
 **Symptom:** Running `pip-audit -r backend/requirements.txt` fails or flags vulnerabilities for package versions that aren't actually installed in the target environment.
-**Solution:** Ensure you have installed the project core requirements locally first (`pip install -r backend/requirements.txt`). To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.
+**Solution:** Ensure you have installed the project core requirements locally first (`pip install -r backend/requirements.txt`). To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions. Note that PyAutoGen v0.4.x introduces breaking API changes and cannot be used to mitigate CVE-2025-69872 without a complete application rewrite.
 
 ## Secrets and Configuration
 
