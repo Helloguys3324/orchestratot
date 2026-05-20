@@ -2,6 +2,7 @@ import asyncio
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock, PropertyMock
 from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS
+from backend.skills.errors import SkillError
 from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
 @pytest.fixture
@@ -494,3 +495,16 @@ def test_install_from_url_generic_exception(mock_client_class, manager):
 
     with pytest.raises(SkillInstallError, match="Unexpected error downloading skill: Download error"):
         asyncio.run(manager.install_from_url("http://example.com/skill.py"))
+
+@patch("backend.skills.manager.load_json", side_effect=SkillError("Base custom error"))
+def test_load_skill_error_not_wrapped(mock_load_json) -> None:
+    with pytest.raises(SkillError, match="Base custom error") as exc:
+        SkillsManager()
+    assert type(exc.value) is SkillError
+
+@patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
+def test_list_skills_skill_error_not_wrapped(mock_builtin, manager) -> None:
+    mock_builtin.__add__.side_effect = SkillError("List skill error")
+    with pytest.raises(SkillError, match="List skill error") as exc:
+        manager.list_skills()
+    assert type(exc.value) is SkillError

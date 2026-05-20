@@ -123,6 +123,8 @@ class SkillsManager:
             self._custom_skills = load_json(SKILLS_FILE, [])
         except (json.JSONDecodeError, OSError) as e:
             raise SkillInstallError(f"Failed to load skills file: {e}") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillInstallError(f"Unexpected error loading skills file: {e}") from e
 
@@ -131,6 +133,8 @@ class SkillsManager:
             save_json(SKILLS_FILE, self._custom_skills)
         except (TypeError, ValueError, OSError) as e:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillInstallError(f"Unexpected error saving skills file: {e}") from e
 
@@ -139,6 +143,8 @@ class SkillsManager:
             return BUILTIN_SKILLS + self._custom_skills
         except TypeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillValidationError(f"Unexpected error listing skills: {e}") from e
 
@@ -151,6 +157,8 @@ class SkillsManager:
                 return s
         except (TypeError, KeyError) as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillValidationError(f"Unexpected error getting skill: {e}") from e
 
@@ -162,6 +170,8 @@ class SkillsManager:
             filepath.write_text(code, encoding="utf-8")
         except OSError as e:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillInstallError(f"Unexpected error writing skill file: {e}") from e
         return f"{skill_id}.py"
@@ -244,6 +254,8 @@ class SkillsManager:
             parsed_url = urlparse(url)
         except (ValueError, AttributeError, TypeError) as e:
             raise SkillValidationError(f"Invalid URL format: {e}") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillValidationError(f"Unexpected error parsing URL: {e}") from e
 
@@ -261,6 +273,8 @@ class SkillsManager:
             raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}") from e
         except httpx.RequestError as e:
             raise SkillInstallError(f"Request error occurred: {str(e)}") from e
+        except SkillError:
+            raise
         except Exception as e:
             raise SkillInstallError(f"Unexpected error downloading skill: {str(e)}") from e
 
