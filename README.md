@@ -46,9 +46,11 @@ Automerge is intentionally conservative to prevent autonomous regressions:
 python3 -m venv venv
 source venv/bin/activate
 pip install -r backend/requirements.txt
+pip install pytest pytest-cov pytest-asyncio  # testing dependencies
 cp .env.example .env
 python run.py
 ```
+*(Note: See [Local Development Setup](#local-development-setup) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
 
 ## Documentation
 
@@ -179,6 +181,7 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests (ensure local testing dependencies are installed)
+# Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 ```
 
