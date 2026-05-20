@@ -255,6 +255,8 @@ def test_get_settings_out_of_bounds_fallback(monkeypatch):
     assert settings["temperature"] == 0.7  # Default from model
     assert settings["max_rounds"] == 15  # Default from model
     assert settings["max_tokens"] == 4096  # Default from model
+    assert settings["router_model"] == "gemini-3-flash-live"
+    assert settings["default_model"] == "gemini-2.5-flash"
 
 def test_path_configuration_env_vars():
     import subprocess

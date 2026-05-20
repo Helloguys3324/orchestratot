@@ -143,7 +143,7 @@ class SessionManager:
 
         base_url = settings.get("base_url", "https://generativelanguage.googleapis.com/v1beta/openai/")
         # Use Live API for routing (unlimited RPM = free routing decisions)
-        router_model = "gemini-3-flash-live"
+        router_model = settings.get("router_model", "gemini-3-flash-live")
         workspace = Path(session.get("workspace", WORKSPACE_DIR / session["id"]))
         workspace.mkdir(parents=True, exist_ok=True)
 
@@ -207,7 +207,7 @@ class SessionManager:
                 "\U0001f4e2", "#6366F1")
 
             # ── Step 2: Agent responds ──
-            agent_model = ac.get("model", "gemini-2.5-flash")
+            agent_model = ac.get("model") or settings.get("default_model", "gemini-2.5-flash")
             file_instructions = (
                 "\n\n--- FILE WRITING ---\n"
                 "You can write files to the project workspace.\n"
