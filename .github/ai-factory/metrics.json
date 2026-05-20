@@ -30,12 +30,17 @@
     "tester": 1,
     "planner": 1,
     "reviewer": 1,
-    "security": 1
+    "security": 1,
+    "architect": 0
   },
   "lane_distribution": {
     "backend": 3,
     "docs": 3,
     "frontend": 1,
-    "security": 1
+    "security": 1,
+    "skills": 0,
+    "tests": 0,
+    "architecture": 0,
+    "workflow": 0
   }
 }
