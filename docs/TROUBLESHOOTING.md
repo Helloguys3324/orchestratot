@@ -19,7 +19,7 @@ PYTHONPATH=. python -m pytest -q
 ```
 Also, ensure the testing dependencies are installed:
 ```bash
-pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings
+pip install pytest pytest-cov pytest-asyncio
 ```
 
 ### Issue: Validation commands fail due to missing `node` or test runner issues
