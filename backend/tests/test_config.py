@@ -369,3 +369,29 @@ def test_config_model_base_url_validation() -> None:
     # Invalid type (bytes)
     with pytest.raises(ValidationError):
         ConfigModel(base_url=b"https://api.example.com/v1/")
+
+def test_validate_config_merging_logic(monkeypatch):
+    """Test that _validate_config properly merges and filters env vars, defaults, and kwargs."""
+    from backend.config import _validate_config, ConfigModel
+
+    # Simulate an invalid env var for temperature and an unrelated bad env var
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "invalid_float")
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "50")
+
+    # Pass explicit input kwargs that should override
+    model = _validate_config({"temperature": 0.5})
+
+    # 50 from env
+    assert model.max_rounds == 50
+    # 0.5 from input_kwargs (overrides invalid env and default)
+    assert model.temperature == 0.5
+
+def test_validate_config_ignores_unrelated_kwargs():
+    """Test that _validate_config filters out keys not in UPDATABLE_FIELDS."""
+    from backend.config import _validate_config
+
+    # Pass arbitrary extra keys
+    model = _validate_config({"temperature": 0.8, "some_unknown_field": 123})
+
+    assert model.temperature == 0.8
+    assert not hasattr(model, "some_unknown_field")
