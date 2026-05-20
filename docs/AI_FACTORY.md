@@ -99,90 +99,9 @@ Automerge is intentionally conservative. A PR can be merged automatically only w
 
 All implementation, refactor, security, and architecture PRs require human review.
 
-## Validation
+## Validation & Secrets
 
-The validation workflow runs the following full suite. When running locally, ensure you execute these commands from the **repository root**:
-
-```bash
-# Verify Python syntax and compilation
-python -m compileall backend skills_library run.py
-
-# Ensure no API keys, credentials, or secrets are accidentally committed
-python .github/scripts/scan_secrets.py
-
-# Run all backend unit and integration tests (ensure local testing dependencies are installed)
-# Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
-PYTHONPATH=. python -m pytest -q
-
-# Run frontend tests using native node runner (no extra npm packages required)
-# Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
-node --experimental-test-coverage --test frontend/tests/*.test.js
-
-# Validate JSON syntax (if JSON files are modified)
-python -m json.tool <filepath>
-```
-
-The pytest step runs when tests exist outside ignored runtime workspace directories.
-
-### Vulnerability Scanning
-
-To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Because `pip-audit` needs to accurately evaluate transitive dependencies, ensure the project core requirements are installed in your local environment first:
-
-```bash
-# Ensure core requirements are installed
-pip install -r backend/requirements.txt
-
-# Run the security audit
-pip install pip-audit
-pip-audit -r backend/requirements.txt
-```
-
-*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
-
-### Frontend Visual Validation
-
-When frontend files are changed, visual inspection is mandatory. Start the app locally (`python run.py`), open the UI in a browser, and manually walk through the changed flows to ensure no layout breakages or console errors exist.
-
-## Secrets
-
-Never commit real API keys, credentials, or `.env` files to source control.
-
-**CI/CD Environments:**
-Use GitHub Actions Secrets (navigate to **Settings -> Secrets and variables -> Actions**) to securely store production and testing keys.
-
-**Local Development:**
-Local runtime credentials should use environment variables (e.g., by placing them in a `.env` file at the root of the project, which is automatically parsed by `pydantic-settings`). You can copy the provided `.env.example` file to create your local `.env` configuration:
-
-```bash
-cp .env.example .env
-```
-
-```bash
-AUTOGEN_API_KEY=...
-AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
-AUTOGEN_ROUTER_MODEL=gemini-3-flash-live
-AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
-AUTOGEN_MAX_ROUNDS=15
-AUTOGEN_TEMPERATURE=0.7
-AUTOGEN_MAX_TOKENS=4096
-AUTOGEN_DATA_DIR=data
-AUTOGEN_SKILLS_DIR=skills_library
-AUTOGEN_CUSTOM_SKILLS_DIR=custom_skills
-AUTOGEN_WORKSPACE_DIR=workspace
-```
-
-The application relies on several mechanisms to handle secrets safely and ergonomically:
-- **Masking**: Pydantic `SecretStr` is used to prevent accidental logging or JSON serialization of secrets loaded from `.env`.
-- **Legacy Migration**: Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted.
-- **UI/API Updates**: Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields.
-- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults (though path variables explicitly support them to fallback to defaults). However, they are allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
-
-You can verify that no secrets are accidentally committed by running:
-```bash
-python .github/scripts/scan_secrets.py
-```
-
-If a key was committed previously, rotate it immediately.
+Please refer to [docs/SETUP.md](SETUP.md) for detailed validation commands and secrets management instructions.
 
 ## Metrics Tracking
 
