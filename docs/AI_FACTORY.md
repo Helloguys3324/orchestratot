@@ -111,6 +111,7 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests (ensure local testing dependencies are installed)
+# Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 
 # Run frontend tests using native node runner (no extra npm packages required)

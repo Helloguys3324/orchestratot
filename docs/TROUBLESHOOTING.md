@@ -46,7 +46,7 @@ pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydanti
 
 ### Issue: JSON files fail validation or cause errors
 **Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
-**Solution:** Run the built-in JSON tool to identify the exact line containing the syntax error:
+**Solution:** The AI Factory orchestrator enforces strict JSON syntax for its state and planning files. Run the built-in JSON tool to identify the exact line containing the syntax error:
 ```bash
 python -m json.tool <filepath>
 ```
