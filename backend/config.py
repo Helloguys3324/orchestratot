@@ -15,7 +15,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─── Load .env ──────────────────────────────────────────
 from dotenv import load_dotenv
 
-ENV_FILE = BASE_DIR / ".env"
+ENV_FILE = Path(os.environ.get("AUTOGEN_ENV_FILE", BASE_DIR / ".env"))
 load_dotenv(dotenv_path=ENV_FILE)
 
 def _get_path_env(key: str, default_subpath: str) -> Path:

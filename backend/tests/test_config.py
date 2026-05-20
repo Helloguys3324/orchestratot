@@ -410,3 +410,30 @@ def test_get_path_env_unset(monkeypatch):
     from backend.config import _get_path_env, BASE_DIR
     monkeypatch.delenv("AUTOGEN_DATA_DIR", raising=False)
     assert _get_path_env("AUTOGEN_DATA_DIR", "data") == BASE_DIR / "data"
+
+def test_autogen_env_file_location(tmp_path):
+    import subprocess
+    import sys
+    import os
+
+    mock_env = tmp_path / "custom.env"
+    mock_env.write_text("AUTOGEN_TEMPERATURE=0.99\n", encoding="utf-8")
+
+    env = os.environ.copy()
+    env["AUTOGEN_ENV_FILE"] = str(mock_env)
+    env["PYTHONPATH"] = "."
+    if "AUTOGEN_TEMPERATURE" in env:
+        del env["AUTOGEN_TEMPERATURE"]
+
+    code = (
+        "import sys\n"
+        "from backend.config import ENV_FILE, get_settings\n"
+        "sys.stdout.write(str(ENV_FILE) + '|' + str(get_settings()['temperature']))\n"
+    )
+
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert result.returncode == 0
+
+    parts = result.stdout.split('|')
+    assert parts[0] == str(mock_env)
+    assert parts[1] == "0.99"
