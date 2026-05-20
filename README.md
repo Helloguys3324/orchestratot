@@ -94,8 +94,7 @@ Once activated, install the necessary packages for the backend and testing tools
 pip install -r backend/requirements.txt
 
 # Local backend testing dependencies
-pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydantic pydantic-settings
-
+pip install pytest pytest-cov pytest-asyncio
 ```
 
 ### 3. Secrets & Configuration
@@ -118,7 +117,11 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_CUSTOM_SKILLS_DIR`: The directory for custom skills.
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
-   The backend utilizes `pydantic-settings` to safely load these, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration. When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used. Note: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
+   **Configuration Handling Details:**
+   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load.
+   - **Legacy Migration**: Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.
+   - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
+   - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
 3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
    ```bash
    python .github/scripts/scan_secrets.py
