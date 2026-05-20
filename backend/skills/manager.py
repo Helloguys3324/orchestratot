@@ -7,7 +7,7 @@ import httpx
 import json
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
-from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
 
 
 # Built-in skills metadata
@@ -123,18 +123,24 @@ class SkillsManager:
             self._custom_skills = load_json(SKILLS_FILE, [])
         except (json.JSONDecodeError, OSError) as e:
             raise SkillInstallError(f"Failed to load skills file: {e}") from e
+        except Exception as e:
+            raise SkillInstallError(f"Unexpected error loading skills file: {e}") from e
 
     def _save(self) -> None:
         try:
             save_json(SKILLS_FILE, self._custom_skills)
         except (TypeError, ValueError, OSError) as e:
             raise SkillInstallError(f"Failed to save skills file: {e}") from e
+        except Exception as e:
+            raise SkillInstallError(f"Unexpected error saving skills file: {e}") from e
 
     def list_skills(self) -> list[dict]:
         try:
             return BUILTIN_SKILLS + self._custom_skills
         except TypeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except Exception as e:
+            raise SkillValidationError(f"Unexpected error listing skills: {e}") from e
 
     def list_marketplace(self) -> list[dict]:
         return MARKETPLACE_SKILLS
@@ -145,6 +151,8 @@ class SkillsManager:
                 return s
         except (TypeError, KeyError) as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except Exception as e:
+            raise SkillValidationError(f"Unexpected error getting skill: {e}") from e
 
         raise SkillNotFoundError("Skill not found")
 
@@ -154,6 +162,8 @@ class SkillsManager:
             filepath.write_text(code, encoding="utf-8")
         except OSError as e:
             raise SkillInstallError(f"Failed to write skill file: {e}") from e
+        except Exception as e:
+            raise SkillInstallError(f"Unexpected error writing skill file: {e}") from e
         return f"{skill_id}.py"
 
     def _validate_string_field(self, data: dict, field: str, default: str = "", required: bool = False) -> str:
@@ -175,6 +185,10 @@ class SkillsManager:
             skill_code = self._validate_string_field(data, "code", default="")
         except AttributeError as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except SkillError:
+            raise
+        except Exception as e:
+            raise SkillValidationError(f"Unexpected error validating skill: {e}") from e
 
         skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
         skill = {
@@ -213,6 +227,10 @@ class SkillsManager:
                 return True
         except (TypeError, KeyError) as e:
             raise SkillValidationError("Invalid skill data provided") from e
+        except SkillError:
+            raise
+        except Exception as e:
+            raise SkillInstallError(f"Unexpected error deleting skill: {e}") from e
 
         raise SkillNotFoundError("Skill not found")
 
@@ -226,6 +244,8 @@ class SkillsManager:
             parsed_url = urlparse(url)
         except (ValueError, AttributeError, TypeError) as e:
             raise SkillValidationError(f"Invalid URL format: {e}") from e
+        except Exception as e:
+            raise SkillValidationError(f"Unexpected error parsing URL: {e}") from e
 
         if parsed_url.scheme not in ("http", "https"):
             raise SkillValidationError("Invalid URL scheme. Only http and https are allowed.")
@@ -241,6 +261,8 @@ class SkillsManager:
             raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}") from e
         except httpx.RequestError as e:
             raise SkillInstallError(f"Request error occurred: {str(e)}") from e
+        except Exception as e:
+            raise SkillInstallError(f"Unexpected error downloading skill: {str(e)}") from e
 
         data = {
             "name": name or "Imported Skill",
