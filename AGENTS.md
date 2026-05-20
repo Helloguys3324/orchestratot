@@ -40,6 +40,10 @@ python .github/scripts/scan_secrets.py
 # (If ModuleNotFoundError occurs, ensure backend/requirements.txt and testing dependencies are installed)
 PYTHONPATH=. python -m pytest -q
 
+# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
+# created during testing to avoid accidentally committing them.
+rm -f .coverage
+
 # Run frontend tests using native node runner
 # (Note: Always run the full suite. Running a single file will falsely report lower overall coverage.)
 node --experimental-test-coverage --test frontend/tests/*.test.js
