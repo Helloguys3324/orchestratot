@@ -42,7 +42,7 @@ pip install pytest pytest-cov pytest-asyncio python-dotenv fastapi httpx pydanti
 
 ### Issue: Configuration defaults are not being overridden by environment variables
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
-**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings. The configuration is set to ignore empty strings on load (`env_ignore_empty=True`). However, you can deliberately clear API keys or other fields out by updating settings through the UI, which writes the empty string to the `.env` file.
+**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings. The configuration is set to ignore empty strings on load (`env_ignore_empty=True`). However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
 
 ### Issue: JSON files fail validation or cause errors
 **Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
