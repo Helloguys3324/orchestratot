@@ -324,7 +324,7 @@ def test_install_from_url_invalid_type(manager) -> None:
     with pytest.raises(SkillValidationError, match="Invalid URL format"):
         asyncio.run(manager.install_from_url(123))
 
-    with pytest.raises(SkillValidationError, match="Invalid URL scheme"):
+    with pytest.raises(SkillValidationError, match="Invalid URL format"):
         asyncio.run(manager.install_from_url(None))
 
 def test_install_from_url_invalid_hostname(manager):
@@ -420,3 +420,13 @@ def test_install_from_url_write_oserror(mock_client_class, mock_dir, mock_uuid, 
     with pytest.raises(SkillInstallError, match="Failed to write skill file: Generic write error") as exc:
         asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
     assert isinstance(exc.value.__cause__, OSError)
+
+def test_validate_string_field_type_error(manager):
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+        manager._validate_string_field(None, "name", required=True)
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+        manager._validate_string_field("not a dict", "name", required=True)
+
+def test_install_from_url_bytes_handling(manager):
+    with pytest.raises(SkillValidationError, match="Invalid URL format"):
+        asyncio.run(manager.install_from_url(None))
