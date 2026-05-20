@@ -7,7 +7,7 @@ from backend.websocket.handler import ConnectionManager
 def manager():
     return ConnectionManager()
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.anyio
 async def test_connect(manager):
     ws = AsyncMock()
     await manager.connect(ws, "session1")
@@ -15,21 +15,21 @@ async def test_connect(manager):
     assert ws in manager.active_connections["session1"]
     ws.accept.assert_awaited_once()
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.anyio
 async def test_disconnect(manager):
     ws = AsyncMock()
     await manager.connect(ws, "session1")
     manager.disconnect(ws, "session1")
     assert "session1" not in manager.active_connections
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.anyio
 async def test_send_message(manager):
     ws = AsyncMock()
     await manager.connect(ws, "session1")
     await manager.send_message("session1", {"type": "test"})
     ws.send_json.assert_awaited_once_with({"type": "test"})
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.anyio
 async def test_send_message_dead_socket(manager):
     ws = AsyncMock()
     ws.send_json.side_effect = Exception("Connection closed")
@@ -38,7 +38,7 @@ async def test_send_message_dead_socket(manager):
     await manager.send_message("session1", {"type": "test"})
     assert "session1" not in manager.active_connections
 
-@pytest.mark.asyncio(loop_scope="function")
+@pytest.mark.anyio
 async def test_broadcast(manager):
     ws1 = AsyncMock()
     ws2 = AsyncMock()
