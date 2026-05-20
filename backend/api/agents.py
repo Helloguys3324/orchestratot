@@ -1,27 +1,9 @@
 from fastapi import APIRouter, HTTPException, Depends
-from pydantic import BaseModel, Field
 from backend.state import agent_manager
 from backend.api.dependencies import get_agent_or_404
+from backend.api.schemas import AgentCreateRequest, AgentUpdateRequest
 
 router = APIRouter(prefix="/api/agents", tags=["agents"])
-
-class AgentBaseRequest(BaseModel):
-    name: str | None = None
-    icon: str | None = None
-    color: str | None = None
-    description: str | None = None
-    system_prompt: str | None = None
-    skills: list[str] | None = None
-    model: str | None = None
-    temperature: float | None = Field(None, ge=0.0, le=2.0)
-    max_tokens: int | None = Field(None, ge=1)
-    enabled: bool | None = None
-
-class AgentCreateRequest(AgentBaseRequest):
-    template: str | None = None
-
-class AgentUpdateRequest(AgentBaseRequest):
-    pass
 
 @router.get("")
 async def api_list_agents():

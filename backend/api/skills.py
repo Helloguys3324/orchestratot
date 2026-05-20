@@ -1,9 +1,8 @@
 from contextlib import contextmanager
-from typing import Optional
-from pydantic import BaseModel
 from fastapi import APIRouter, HTTPException
 from backend.state import skills_manager
 from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.api.schemas import SkillCreateRequest, SkillInstallRequest
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
 
@@ -19,17 +18,6 @@ def handle_skill_exceptions():
         raise HTTPException(status_code=500, detail=str(e))
     except SkillError as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-class SkillCreateRequest(BaseModel):
-    name: str | None = None
-    icon: str | None = None
-    description: str | None = None
-    category: str | None = None
-    code: str | None = None
-
-class SkillInstallRequest(BaseModel):
-    url: str
-    name: Optional[str] = None
 
 @router.get("")
 async def api_list_skills():
