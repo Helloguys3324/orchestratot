@@ -40,6 +40,7 @@ class ConfigModel(BaseSettings):
     """Validates configuration and wraps sensitive keys in SecretStr."""
     api_key: SecretStr = SecretStr("")
     default_model: str = "gemini-2.5-flash"
+    router_model: str = "gemini-3-flash-live"
     base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
     max_rounds: int = Field(default=15, ge=1, le=100)
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
