@@ -157,7 +157,13 @@ class SkillsManager:
         return f"{skill_id}.py"
 
     def _validate_string_field(self, data: dict, field: str, default: str = "", required: bool = False) -> str:
-        value = data.get(field, default)
+        try:
+            value = data[field]
+        except KeyError:
+            value = default
+        except TypeError as e:
+            raise SkillValidationError("Invalid skill data provided") from e
+
         if required and not value:
             raise SkillValidationError(f"Skill {field} is required")
         if not isinstance(value, str):
@@ -165,14 +171,11 @@ class SkillsManager:
         return value
 
     def _add_custom_skill(self, prefix: str, data: dict, default_category: str, source: str) -> dict:
-        try:
-            name = self._validate_string_field(data, "name", required=True)
-            icon = self._validate_string_field(data, "icon", default="🔧" if prefix == "custom" else "📦")
-            description = self._validate_string_field(data, "description", default="")
-            category = self._validate_string_field(data, "category", default=default_category)
-            skill_code = self._validate_string_field(data, "code", default="")
-        except AttributeError as e:
-            raise SkillValidationError("Invalid skill data provided") from e
+        name = self._validate_string_field(data, "name", required=True)
+        icon = self._validate_string_field(data, "icon", default="🔧" if prefix == "custom" else "📦")
+        description = self._validate_string_field(data, "description", default="")
+        category = self._validate_string_field(data, "category", default=default_category)
+        skill_code = self._validate_string_field(data, "code", default="")
 
         skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
         skill = {

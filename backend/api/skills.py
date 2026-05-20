@@ -33,11 +33,13 @@ class SkillInstallRequest(BaseModel):
 
 @router.get("")
 async def api_list_skills():
-    return skills_manager.list_skills()
+    with handle_skill_exceptions():
+        return skills_manager.list_skills()
 
 @router.get("/marketplace")
 async def api_list_marketplace():
-    return skills_manager.list_marketplace()
+    with handle_skill_exceptions():
+        return skills_manager.list_marketplace()
 
 @router.post("")
 async def api_create_skill(request: SkillCreateRequest):
