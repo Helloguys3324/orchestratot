@@ -430,3 +430,11 @@ def test_validate_string_field_type_error(manager):
 def test_install_from_url_bytes_handling(manager):
     with pytest.raises(SkillValidationError, match="Invalid URL format"):
         asyncio.run(manager.install_from_url(None))
+
+
+@patch("backend.skills.manager.SkillsManager._validate_string_field")
+def test_create_skill_attribute_error(mock_validate, manager):
+    mock_validate.side_effect = AttributeError("Mocked attribute error")
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided") as exc:
+        manager.create_skill({"name": "test"})
+    assert isinstance(exc.value.__cause__, AttributeError)
