@@ -18,10 +18,14 @@ from dotenv import load_dotenv
 ENV_FILE = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_FILE)
 
-DATA_DIR = Path(os.getenv("AUTOGEN_DATA_DIR") or BASE_DIR / "data")
-SKILLS_DIR = Path(os.getenv("AUTOGEN_SKILLS_DIR") or BASE_DIR / "skills_library")
-CUSTOM_SKILLS_DIR = Path(os.getenv("AUTOGEN_CUSTOM_SKILLS_DIR") or BASE_DIR / "custom_skills")
-WORKSPACE_DIR = Path(os.getenv("AUTOGEN_WORKSPACE_DIR") or BASE_DIR / "workspace")
+def _get_path_env(key: str, default_subpath: str) -> Path:
+    val = os.getenv(key)
+    return Path(val) if val else BASE_DIR / default_subpath
+
+DATA_DIR = _get_path_env("AUTOGEN_DATA_DIR", "data")
+SKILLS_DIR = _get_path_env("AUTOGEN_SKILLS_DIR", "skills_library")
+CUSTOM_SKILLS_DIR = _get_path_env("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
+WORKSPACE_DIR = _get_path_env("AUTOGEN_WORKSPACE_DIR", "workspace")
 
 # Create directories if they don't exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
