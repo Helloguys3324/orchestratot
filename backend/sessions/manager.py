@@ -113,21 +113,19 @@ class SessionManager:
         # Add user message
         await self._add_message(session, "user", "You", user_message, "\U0001f464", "#FFFFFF")
 
-        if not api_key:
-            await self._error_msg(session,
-                "\u274c API key not set! Go to Settings, paste your Google AI Studio key, click Save.")
-            session["status"] = "idle"
-            self._save()
-            return
-
         try:
+            if not api_key:
+                await self._error_msg(session,
+                    "\u274c API key not set! Go to Settings, paste your Google AI Studio key, click Save.")
+                return
+
             await self._run_orchestrated_chat(session, user_message, api_key, settings)
         except Exception as e:
             await self._error_msg(session,
                 f"\u274c Error: {type(e).__name__}: {str(e)}")
-
-        session["status"] = "idle"
-        self._save()
+        finally:
+            session["status"] = "idle"
+            self._save()
 
     async def _run_orchestrated_chat(self, session, user_message, api_key, settings):
         """Smart orchestrated chat: router picks agents, agents write files."""
@@ -255,8 +253,7 @@ class SessionManager:
             await asyncio.sleep(1.5)  # Rate limit spacing
 
         # Final summary
-        ws_files = list(workspace.rglob("*"))
-        ws_files = [f for f in ws_files if f.is_file()]
+        ws_files = [f for f in workspace.rglob("*") if f.is_file()]
         if ws_files:
             file_list = "\n".join([f"  \U0001f4c4 {f.relative_to(workspace)}" for f in ws_files[:20]])
             await self._sys_msg(session,
