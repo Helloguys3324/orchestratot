@@ -200,18 +200,17 @@ class SkillsManager:
 
     def delete_skill(self, skill_id: str) -> bool:
         try:
-            for i, s in enumerate(self._custom_skills):
-                if s["id"] == skill_id:
-                    # Remove file if exists
-                    filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-                    if filepath.exists():
-                        try:
-                            filepath.unlink()
-                        except OSError as e:
-                            raise SkillInstallError(f"Failed to delete skill file: {e}") from e
-                    self._custom_skills.pop(i)
-                    self._save()
-                    return True
+            if skill := next((s for s in self._custom_skills if s["id"] == skill_id), None):
+                # Remove file if exists
+                filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
+                if filepath.exists():
+                    try:
+                        filepath.unlink()
+                    except OSError as e:
+                        raise SkillInstallError(f"Failed to delete skill file: {e}") from e
+                self._custom_skills.remove(skill)
+                self._save()
+                return True
         except (TypeError, KeyError) as e:
             raise SkillValidationError("Invalid skill data provided") from e
 

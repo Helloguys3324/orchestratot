@@ -67,8 +67,7 @@ class SessionManager:
         return session
 
     def delete_session(self, session_id: str) -> bool:
-        if session_id in self._sessions:
-            del self._sessions[session_id]
+        if self._sessions.pop(session_id, None):
             self._save()
             return True
         return False
@@ -284,8 +283,8 @@ class SessionManager:
         return written
 
     def clear_messages(self, session_id: str) -> bool:
-        if session_id in self._sessions:
-            self._sessions[session_id]["messages"] = []
+        if session := self._sessions.get(session_id):
+            session["messages"] = []
             self._save()
             return True
         return False

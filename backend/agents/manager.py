@@ -85,32 +85,27 @@ class AgentManager:
 
     def update_agent(self, agent_id: str, data: dict) -> Optional[dict]:
         """Update an existing agent."""
-        if agent_id not in self._agents:
-            return None
-
-        agent = self._agents[agent_id]
-        # Update only provided fields
-        agent.update({k: data[k] for k in self.UPDATABLE_FIELDS if k in data})
-
-        self._agents[agent_id] = agent
-        self._save()
-        return agent
+        if agent := self._agents.get(agent_id):
+            # Update only provided fields
+            agent.update({k: data[k] for k in self.UPDATABLE_FIELDS if k in data})
+            self._agents[agent_id] = agent
+            self._save()
+            return agent
+        return None
 
     def delete_agent(self, agent_id: str) -> bool:
         """Delete an agent."""
-        if agent_id in self._agents:
-            del self._agents[agent_id]
+        if self._agents.pop(agent_id, None):
             self._save()
             return True
         return False
 
     def duplicate_agent(self, agent_id: str) -> Optional[dict]:
         """Duplicate an existing agent with a new ID."""
-        if agent_id not in self._agents:
-            return None
-
-        source = self._agents[agent_id].copy()
-        source["name"] = f"{source['name']} (Copy)"
-        # Remove the old ID so create_agent generates a new one
-        del source["id"]
-        return self.create_agent(source)
+        if source := self._agents.get(agent_id):
+            source = source.copy()
+            source["name"] = f"{source['name']} (Copy)"
+            # Remove the old ID so create_agent generates a new one
+            del source["id"]
+            return self.create_agent(source)
+        return None
