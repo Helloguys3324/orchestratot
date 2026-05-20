@@ -147,8 +147,8 @@ class SessionManager:
         workspace.mkdir(parents=True, exist_ok=True)
 
         # Build agent name list for the router
-        agent_names = [ac["name"] for ac in agent_configs]
         agent_map = {ac["name"]: ac for ac in agent_configs}
+        agent_names = list(agent_map.keys())
 
         # Conversation history for context
         conv_history = [{"role": "user", "content": user_message}]
@@ -246,7 +246,7 @@ class SessionManager:
 
             # Show files written
             if files_written:
-                file_list = "\n".join([f"\U0001f4c4 {f}" for f in files_written])
+                file_list = "\n".join(f"\U0001f4c4 {f}" for f in files_written)
                 await self._sys_msg(session,
                     f"\U0001f4be Files written to workspace:\n{file_list}",
                     "\U0001f4be", "#10B981")
