@@ -437,3 +437,31 @@ def test_autogen_env_file_location(tmp_path):
     parts = result.stdout.split('|')
     assert parts[0] == str(mock_env)
     assert parts[1] == "0.99"
+
+def test_config_model_default_paths():
+    from backend.config import ConfigModel, BASE_DIR
+    model = ConfigModel()
+    assert model.data_dir == BASE_DIR / "data"
+    assert model.skills_dir == BASE_DIR / "skills_library"
+    assert model.custom_skills_dir == BASE_DIR / "custom_skills"
+    assert model.workspace_dir == BASE_DIR / "workspace"
+
+def test_config_model_custom_paths():
+    from backend.config import ConfigModel
+    from pathlib import Path
+    custom_data = Path("/tmp/data")
+    custom_skills = Path("/tmp/skills")
+    custom_custom_skills = Path("/tmp/custom_skills")
+    custom_workspace = Path("/tmp/workspace")
+
+    model = ConfigModel(
+        data_dir=custom_data,
+        skills_dir=custom_skills,
+        custom_skills_dir=custom_custom_skills,
+        workspace_dir=custom_workspace
+    )
+
+    assert model.data_dir == custom_data
+    assert model.skills_dir == custom_skills
+    assert model.custom_skills_dir == custom_custom_skills
+    assert model.workspace_dir == custom_workspace

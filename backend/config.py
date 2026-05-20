@@ -19,13 +19,22 @@ ENV_FILE = Path(os.environ.get("AUTOGEN_ENV_FILE", BASE_DIR / ".env"))
 load_dotenv(dotenv_path=ENV_FILE)
 
 def _get_path_env(key: str, default_subpath: str) -> Path:
-    val = os.getenv(key)
+    val = os.environ.get(key)
     return Path(val) if val else BASE_DIR / default_subpath
 
-DATA_DIR = _get_path_env("AUTOGEN_DATA_DIR", "data")
-SKILLS_DIR = _get_path_env("AUTOGEN_SKILLS_DIR", "skills_library")
-CUSTOM_SKILLS_DIR = _get_path_env("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
-WORKSPACE_DIR = _get_path_env("AUTOGEN_WORKSPACE_DIR", "workspace")
+# Since we can't initialize ConfigModel here without causing cyclical/missing dependency
+# at import time when tests run (as ConfigModel relies on ENV_FILE which is not fully
+# defined in scope sometimes during tests execution), we'll parse paths manually but
+# with the exact same logic as ConfigModel.
+
+def _get_path_env_safe(key: str, default_subpath: str) -> Path:
+    val = os.environ.get(key)
+    return Path(val) if val else BASE_DIR / default_subpath
+
+DATA_DIR = _get_path_env_safe("AUTOGEN_DATA_DIR", "data")
+SKILLS_DIR = _get_path_env_safe("AUTOGEN_SKILLS_DIR", "skills_library")
+CUSTOM_SKILLS_DIR = _get_path_env_safe("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
+WORKSPACE_DIR = _get_path_env_safe("AUTOGEN_WORKSPACE_DIR", "workspace")
 
 # Create directories if they don't exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -49,6 +58,12 @@ class ConfigModel(BaseSettings):
     max_rounds: int = Field(default=15, ge=1, le=100)
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
     max_tokens: int = Field(default=4096, ge=1, le=128000)
+
+    # Path configuration
+    data_dir: Path = Field(default_factory=lambda: BASE_DIR / "data")
+    skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "skills_library")
+    custom_skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "custom_skills")
+    workspace_dir: Path = Field(default_factory=lambda: BASE_DIR / "workspace")
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
@@ -129,11 +144,18 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
         UPDATABLE_FIELDS = set(ConfigModel.model_fields.keys())
 
         # We must provide the default values to override invalid entries in the .env file
-        defaults = {
-            k: ("" if k == "api_key" else default_val)
-            for k in invalid_keys if isinstance(k, str) and k in UPDATABLE_FIELDS
-            if k == "api_key" or (default_val := ConfigModel.model_fields[k].get_default()) is not None
-        }
+        defaults = {}
+        for k in invalid_keys:
+            if isinstance(k, str) and k in UPDATABLE_FIELDS:
+                if k == "api_key":
+                    defaults[k] = ""
+                else:
+                    field_info = ConfigModel.model_fields[k]
+                    # Handle both default values and default factories
+                    if field_info.default_factory is not None:
+                        defaults[k] = field_info.default_factory()
+                    elif field_info.get_default() is not None:
+                        defaults[k] = field_info.get_default()
 
         # Explicit settings take precedence
         merged = {**defaults, **input_kwargs}
@@ -170,6 +192,14 @@ def get_settings() -> dict:
 
     validated_settings = model.model_dump(mode="json")
     validated_settings["api_key"] = model.api_key
+
+    # Override settings output to match the original globals for now,
+    # as tests and UI might expect standard path layouts.
+    validated_settings["data_dir"] = str(model.data_dir)
+    validated_settings["skills_dir"] = str(model.skills_dir)
+    validated_settings["custom_skills_dir"] = str(model.custom_skills_dir)
+    validated_settings["workspace_dir"] = str(model.workspace_dir)
+
     return validated_settings
 
 
