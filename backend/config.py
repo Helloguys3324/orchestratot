@@ -82,7 +82,9 @@ class ConfigModel(BaseSettings):
         file_secret_settings: PydanticBaseSettingsSource,
     ) -> Tuple[PydanticBaseSettingsSource, ...]:
         # Priority: init_settings > env_settings > dotenv_settings
-        return init_settings, env_settings, dotenv_settings, file_secret_settings
+        from pydantic_settings import DotEnvSettingsSource
+        # Ensure we dynamically reload DotEnvSettingsSource based on the current ENV_FILE path (important for tests)
+        return init_settings, env_settings, DotEnvSettingsSource(settings_cls, env_file=str(ENV_FILE)), file_secret_settings
 
     @field_validator('base_url', mode='before')
     def validate_base_url(cls, v):
