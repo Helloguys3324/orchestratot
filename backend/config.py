@@ -210,7 +210,7 @@ def get_settings() -> dict:
     model = _validate_config()
 
     validated_settings = model.model_dump(mode="json")
-    validated_settings["api_key"] = model.api_key
+    validated_settings["api_key"] = "**********" if model.api_key.get_secret_value() else ""
 
     # Override settings output to match the original globals for now,
     # as tests and UI might expect standard path layouts.
@@ -234,7 +234,7 @@ def save_settings(settings: dict):
     # Validate before saving (handles unrelated invalid env vars gracefully)
     model = _validate_config(filtered_settings)
     validated_settings = model.model_dump(mode="json")
-    validated_settings["api_key"] = model.api_key
+    validated_settings["api_key"] = model.api_key.get_secret_value()
 
     # Only save keys that were actually provided in the settings payload
     keys_to_save = [k for k in settings.keys() if k in validated_settings]
@@ -242,10 +242,7 @@ def save_settings(settings: dict):
     for k in keys_to_save:
         v = validated_settings[k]
 
-        if isinstance(v, SecretStr):
-            str_v = v.get_secret_value()
-        else:
-            str_v = str(v)
+        str_v = str(v)
 
         env_key = f"AUTOGEN_{k.upper()}"
         if str_v == "":
