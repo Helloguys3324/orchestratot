@@ -7,37 +7,33 @@ from backend.config import get_settings, save_settings, ENV_FILE, ConfigModel
 from backend.config import SETTINGS_FILE, save_json
 
 @pytest.fixture(autouse=True)
-def setup_teardown_settings():
-    original_env = None
-    if ENV_FILE.exists():
-        original_env = ENV_FILE.read_text(encoding="utf-8")
+def setup_teardown_settings(tmp_path, monkeypatch):
+    import backend.config
 
-    original_json = None
-    if SETTINGS_FILE.exists():
-        original_json = SETTINGS_FILE.read_text(encoding="utf-8")
+    # Create temporary paths for tests
+    temp_env_file = tmp_path / ".env"
+    temp_settings_file = tmp_path / "settings.json"
 
-    orig_env_var = os.environ.get("AUTOGEN_API_KEY")
+    # Store original values
+    orig_env_file = backend.config.ENV_FILE
+    orig_settings_file = backend.config.SETTINGS_FILE
+
+    # Override configuration paths dynamically
+    backend.config.ENV_FILE = temp_env_file
+    backend.config.SETTINGS_FILE = temp_settings_file
+
+    # Override environment variable so child processes also see the temp file
+    monkeypatch.setenv("AUTOGEN_ENV_FILE", str(temp_env_file))
+
+    # Ensure AUTOGEN_API_KEY is unset in the environment initially
     if "AUTOGEN_API_KEY" in os.environ:
-        del os.environ["AUTOGEN_API_KEY"]
+        monkeypatch.delenv("AUTOGEN_API_KEY", raising=False)
 
     yield
 
-    if original_env is not None:
-        ENV_FILE.write_text(original_env, encoding="utf-8")
-    else:
-        if ENV_FILE.exists():
-            ENV_FILE.unlink()
-
-    if original_json is not None:
-        SETTINGS_FILE.write_text(original_json, encoding="utf-8")
-    else:
-        if SETTINGS_FILE.exists():
-            SETTINGS_FILE.unlink()
-
-    if orig_env_var is not None:
-        os.environ["AUTOGEN_API_KEY"] = orig_env_var
-    elif "AUTOGEN_API_KEY" in os.environ:
-        del os.environ["AUTOGEN_API_KEY"]
+    # Restore original paths
+    backend.config.ENV_FILE = orig_env_file
+    backend.config.SETTINGS_FILE = orig_settings_file
 
 def test_secret_str_prevents_json_dump():
     secret = SecretStr("my-super-secret-key")
@@ -76,8 +72,9 @@ def test_save_settings_writes_to_env():
     test_settings = {"api_key": SecretStr("key-to-scrub"), "max_rounds": 25}
     save_settings(test_settings)
 
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    import backend.config
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         assert "AUTOGEN_API_KEY" in content
         assert "AUTOGEN_MAX_ROUNDS" in content
     else:
@@ -85,14 +82,15 @@ def test_save_settings_writes_to_env():
 
 def test_save_settings_partial_update():
     # Make sure we start fresh for this test
-    if ENV_FILE.exists():
-        ENV_FILE.unlink()
+    import backend.config
+    if backend.config.ENV_FILE.exists():
+        backend.config.ENV_FILE.unlink()
 
     test_settings = {"max_rounds": 30}
     save_settings(test_settings)
 
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         assert "AUTOGEN_MAX_ROUNDS" in content
         assert "AUTOGEN_TEMPERATURE" not in content
     else:
@@ -143,11 +141,12 @@ def test_legacy_json_migration():
     test_settings = {"temperature": 0.3, "max_rounds": 42}
     save_json(SETTINGS_FILE, test_settings)
 
+    import backend.config
     # Make sure ENV_FILE doesn't have these to prove migration works
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         if "AUTOGEN_MAX_ROUNDS" in content:
-            ENV_FILE.unlink()
+            backend.config.ENV_FILE.unlink()
 
     # get_settings should read it, migrate to .env, and clear JSON
     settings = get_settings()
@@ -156,8 +155,8 @@ def test_legacy_json_migration():
     assert settings["max_rounds"] == 42
 
     # verify .env has it
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         assert "AUTOGEN_TEMPERATURE='0.3'" in content or "AUTOGEN_TEMPERATURE=0.3" in content
         assert "AUTOGEN_MAX_ROUNDS='42'" in content or "AUTOGEN_MAX_ROUNDS=42" in content
     else:
@@ -183,25 +182,27 @@ def test_legacy_json_migration_invalid_data():
     assert load_json(SETTINGS_FILE) == {}
 
 def test_save_settings_clear_api_key():
+    import backend.config
     # Make sure we start fresh
-    if ENV_FILE.exists():
-        ENV_FILE.unlink()
+    if backend.config.ENV_FILE.exists():
+        backend.config.ENV_FILE.unlink()
 
     # Save a valid key
     save_settings({"api_key": "valid-key-12345"})
 
-    content = ENV_FILE.read_text(encoding="utf-8")
+    content = backend.config.ENV_FILE.read_text(encoding="utf-8")
     assert "valid-key-12345" in content
 
     # Clear it
     save_settings({"api_key": ""})
 
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         assert "valid-key-12345" not in content
         assert "AUTOGEN_API_KEY=''" not in content and "AUTOGEN_API_KEY=" not in content
 
 def test_save_settings_ignores_unrelated_invalid_env_vars(monkeypatch):
+    import backend.config
     # Setup an unrelated invalid env var
     monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "invalid_int")
 
@@ -210,8 +211,8 @@ def test_save_settings_ignores_unrelated_invalid_env_vars(monkeypatch):
     save_settings({"temperature": 0.8})
 
     # Verify the partial update was written
-    if ENV_FILE.exists():
-        content = ENV_FILE.read_text(encoding="utf-8")
+    if backend.config.ENV_FILE.exists():
+        content = backend.config.ENV_FILE.read_text(encoding="utf-8")
         assert "AUTOGEN_TEMPERATURE='0.8'" in content or "AUTOGEN_TEMPERATURE=0.8" in content
     else:
         pytest.fail("ENV_FILE was not created")
