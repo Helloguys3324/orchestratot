@@ -145,3 +145,58 @@ test('UI.withLoading handles case where btn is nullified during action (dynamic 
 test.afterEach(() => {
     delete global.document;
 });
+
+test('UI handles Node environment without module.exports', () => {
+    const originalModule = global.module;
+    global.module = undefined; // Force the if condition to fail
+
+    // Evaluate the code using eval
+    const fs = require('fs');
+    const path = require('path');
+    const code = fs.readFileSync(path.join(__dirname, '../js/ui.js'), 'utf8');
+
+    eval(code);
+
+    assert.strictEqual(typeof UI.renderModelOptions, 'function');
+
+    global.module = originalModule;
+});
+
+test('UI.withLoading handles finally block gracefully when button disappears', async () => {
+    let btnState = { textContent: 'Initial', disabled: false };
+    global.document = {
+        getElementById: () => btnState
+    };
+
+    let actionCalled = false;
+    await UI.withLoading('btn', 'Wait...', async () => {
+        actionCalled = true;
+        // Simulate button removal from DOM
+        global.document.getElementById = () => null;
+    });
+
+    assert.strictEqual(actionCalled, true);
+    // Note: The Finally block is hit but `btn` reference was saved locally, so it still updates the detached object
+    assert.strictEqual(btnState.textContent, 'Initial');
+    assert.strictEqual(btnState.disabled, false);
+});
+
+test('UI.withLoading nullifies btn reference explicitly for finally coverage', async () => {
+    let btnState = { textContent: 'Initial', disabled: false };
+
+    // In ui.js:
+    // const btn = document.getElementById(btnId);
+    // try { await actionFn(); } finally { if (btn) { ... } }
+    //
+    // Since `btn` is a const reference local to withLoading, we can't change it to null from outside.
+    // The only way to hit `if (btn)` being false in finally is if it was false in the beginning.
+
+    global.document = { getElementById: () => null };
+
+    let actionCalled = false;
+    await UI.withLoading('btn', 'Wait...', async () => {
+        actionCalled = true;
+    });
+
+    assert.strictEqual(actionCalled, true);
+});
