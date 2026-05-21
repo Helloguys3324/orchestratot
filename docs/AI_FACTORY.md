@@ -137,14 +137,14 @@ To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Be
 
 ```bash
 # Ensure core requirements are installed
-pip install -r backend/requirements.txt
+pip install -q -r backend/requirements.txt
 
 # Run the security audit
 pip install -q pip-audit
 pip-audit -r backend/requirements.txt
 ```
 
-*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
+*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install -q "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
 
 ### Frontend Visual Validation
 
@@ -182,7 +182,7 @@ The application relies on several mechanisms to handle secrets safely and ergono
 - **Masking**: Pydantic `SecretStr` is used to prevent accidental logging or JSON serialization of secrets loaded from `.env`.
 - **Legacy Migration**: Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted.
 - **UI/API Updates**: Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields.
-- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, empty strings explicitly trigger fallbacks to default values in path variables (e.g., `AUTOGEN_DATA_DIR`) or fields using `@field_validator(mode='before')` combined with `json_schema_extra={"env_ignore_empty": False}`. Empty strings are also allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
+- **Clearing Credentials**: Empty strings and whitespace-only strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, empty or whitespace strings explicitly trigger fallbacks to default values in path variables (e.g., `AUTOGEN_DATA_DIR`) or fields using `@field_validator(mode='before')` combined with `json_schema_extra={"env_ignore_empty": False}`. Empty strings are also allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
 
 You can verify that no secrets are accidentally committed by running:
 ```bash
