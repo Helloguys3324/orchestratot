@@ -138,7 +138,7 @@ To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Be
 pip install -r backend/requirements.txt
 
 # Run the security audit
-pip install pip-audit
+pip install -q pip-audit
 pip-audit -r backend/requirements.txt
 ```
 

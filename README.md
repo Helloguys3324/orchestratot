@@ -188,10 +188,11 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    **Configuration Handling Details:**
-   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load, except for path variables (e.g., `AUTOGEN_DATA_DIR`) which explicitly support empty strings to fallback to their defaults.
+   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. For path variables (e.g., `AUTOGEN_DATA_DIR`) that explicitly support empty strings to fallback to their defaults, a `@field_validator(mode='before')` must be used to catch falsy strings and properly retrieve fallbacks, instead of parsing `""` as `Path(".")`.
    - **Legacy Migration**: Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
    - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
+   - **Testing .env Isolation**: When testing configuration logic that interacts with `.env` files, tests must not mutate the root `.env` file. Instead, override `AUTOGEN_ENV_FILE` and `backend.config.ENV_FILE` to point to a temporary file path to maintain test determinism.
 3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
    ```bash
    python .github/scripts/scan_secrets.py
@@ -234,7 +235,7 @@ python run.py
 ```
 This starts the application at `http://localhost:8000`.
 
-*Note: If running the application in the background (e.g., `python run.py > app_output.log 2>&1 &`), you must explicitly remove the generated log files (e.g., `rm app_output.log`) when finished to prevent accidentally committing generated runtime logs.*
+*Note: If running the application in the background, prefer writing logs to `/tmp/` (e.g., `python run.py > /tmp/app_output.log 2>&1 &`) to prevent accidentally committing generated runtime logs. If generated in the working directory, you must explicitly remove them.*
 
 ## Validation Commands
 
@@ -274,7 +275,7 @@ python -m json.tool <filepath>
 ### Vulnerability Scanning
 ```bash
 # Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be explicitly installed first)
-pip install pip-audit
+pip install -q pip-audit
 pip-audit -r backend/requirements.txt
 ```
 

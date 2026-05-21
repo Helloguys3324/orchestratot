@@ -45,11 +45,12 @@ PYTHONPATH=. python -m pytest -q
 rm -f .coverage
 
 # Run frontend tests using native node runner
-# (Note: Always run the full suite. Running a single file will falsely report lower overall coverage.)
+# (Note: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite.)
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
 # Validate JSON syntax (required if JSON files are modified)
 python -m json.tool <filepath>
+# Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.
 ```
 
 If validation cannot be run, the PR body must clearly explain why.
