@@ -155,6 +155,8 @@ source venv/bin/activate
 venv\Scripts\activate
 ```
 
+*Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. The sandbox environment will block the execution. Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).*
+
 Once activated, install the necessary packages for the backend and testing tools:
 ```bash
 # Core backend dependencies
@@ -188,7 +190,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    **Configuration Handling Details:**
-   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. Empty environment variables are intentionally ignored on load. For path variables (e.g., `AUTOGEN_DATA_DIR`) that explicitly support empty strings to fallback to their defaults, a `@field_validator(mode='before')` must be used to catch falsy strings and properly retrieve fallbacks, instead of parsing `""` as `Path(".")`.
+   - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. By default, `env_ignore_empty=True` is used to ignore empty environment variables. However, this setting only applies to the environment. If empty strings (`""`) are passed directly via `**kwargs` (e.g., from UI updates) to fields, they bypass this setting and can inadvertently overwrite valid defaults. To ensure robust fallbacks for kwarg-provided empty strings (or for path fields that explicitly support empty strings), a `@field_validator(mode='before')` must be used to intercept falsy strings and retrieve the fallback. Additionally, fields relying on this pre-validator should set `json_schema_extra={"env_ignore_empty": False}` to ensure the validator also catches empty values originating from `.env`.
    - **Legacy Migration**: Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults.
    - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
@@ -249,8 +251,9 @@ python -m compileall backend skills_library run.py
 # Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
 
-# Run all backend unit and integration tests (ensure local testing dependencies are installed)
-# Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
+# Run all backend unit and integration tests
+# Note: Test dependencies (pytest, pytest-cov) are not in backend/requirements.txt. Install them manually first.
+# Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 
 # Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)

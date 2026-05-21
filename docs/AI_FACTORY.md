@@ -110,8 +110,9 @@ python -m compileall backend skills_library run.py
 # Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
 
-# Run all backend unit and integration tests (ensure local testing dependencies are installed)
-# Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
+# Run all backend unit and integration tests
+# Note: Test dependencies (pytest, pytest-cov) are not in backend/requirements.txt. Install them manually first.
+# Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 
 # Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
@@ -180,7 +181,7 @@ The application relies on several mechanisms to handle secrets safely and ergono
 - **Masking**: Pydantic `SecretStr` is used to prevent accidental logging or JSON serialization of secrets loaded from `.env`.
 - **Legacy Migration**: Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted.
 - **UI/API Updates**: Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields.
-- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, empty strings explicitly trigger fallbacks to default values in path variables (e.g., `AUTOGEN_DATA_DIR`). Empty strings are also allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
+- **Clearing Credentials**: Empty strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, empty strings explicitly trigger fallbacks to default values in path variables (e.g., `AUTOGEN_DATA_DIR`) or fields using `@field_validator(mode='before')` combined with `json_schema_extra={"env_ignore_empty": False}`. Empty strings are also allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
 
 You can verify that no secrets are accidentally committed by running:
 ```bash
