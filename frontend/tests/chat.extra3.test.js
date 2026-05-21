@@ -2,19 +2,25 @@ const test = require('node:test');
 const assert = require('node:assert');
 
 test('ChatPage handles Node environment without module.exports', () => {
-    const originalModule = global.module;
-    global.module = undefined; // Force the if condition to fail
-
-    // Evaluate the code using eval
     const fs = require('fs');
     const path = require('path');
-    const code = fs.readFileSync(path.join(__dirname, '../js/chat.js'), 'utf8');
+    let code = fs.readFileSync(path.join(__dirname, '../js/chat.js'), 'utf8');
 
-    eval(code);
+    // Make the locally scoped variable accessible on the context object
+    code = code.replace('const ChatPage =', 'ChatPage =');
 
-    assert.strictEqual(typeof ChatPage.render, 'function');
+    // Stub global dependencies ChatPage requires in the browser
+    const context = {
+        module: undefined,
+        document: {},
+        API: {},
+        UI: {},
+        ws: {},
+        console: console
+    };
+    require('vm').runInNewContext(code, context);
 
-    global.module = originalModule;
+    assert.strictEqual(typeof context.ChatPage.render, 'function');
 });
 
 test('ChatPage empty messages array and empty ws listener', async () => {
@@ -51,7 +57,7 @@ test('ChatPage empty messages array and empty ws listener', async () => {
     delete global.API;
 });
 
-test('ChatPage empty string branch in formatContent - else case', () => {
+test('ChatPage empty string branch in formatContent - else case', async () => {
     // Already covered mostly, but maybe ws callback branch with agent message and NO content
     const ChatPage = require('../js/chat.js');
     let wsCallback = null;
@@ -64,12 +70,24 @@ test('ChatPage empty string branch in formatContent - else case', () => {
         getSession: async () => ({ id: '123' })
     };
 
-    ChatPage.render({ set innerHTML() {}, querySelector:()=>null, insertAdjacentHTML:()=>{} }, { set innerHTML() {} }, '123');
+    const originalDocument = global.document;
+    global.document = {
+        getElementById: () => null,
+        body: { insertAdjacentHTML: () => {} }
+    };
+
+    await ChatPage.render({ set innerHTML(val) {}, querySelector:()=>null, insertAdjacentHTML:()=>{} }, { set innerHTML(val) {} }, '123');
 
     // simulate agent message without content and non-system
     ChatPage.addMessage = () => {};
     ChatPage.showTyping = () => {};
     ChatPage.scrollToBottom = () => {};
 
-    wsCallback({ type: 'agent_message', data: { role: 'user', content: null } });
+    if (wsCallback) {
+        wsCallback({ type: 'agent_message', data: { role: 'user', content: null } });
+    }
+
+    global.document = originalDocument;
+    delete global.ws;
+    delete global.API;
 });
