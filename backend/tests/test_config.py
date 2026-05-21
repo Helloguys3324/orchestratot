@@ -543,3 +543,23 @@ def test_config_model_env_var_parsing(monkeypatch):
     monkeypatch.delenv("AUTOGEN_DEFAULT_MODEL", raising=False)
     monkeypatch.delenv("AUTOGEN_TEMPERATURE", raising=False)
     monkeypatch.delenv("AUTOGEN_MAX_TOKENS", raising=False)
+
+def test_empty_string_fallbacks_for_numeric_fields_whitespace(monkeypatch):
+    from backend.config import _validate_config
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "   ")
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "   ")
+    monkeypatch.setenv("AUTOGEN_MAX_TOKENS", "   ")
+    model = _validate_config()
+    assert model.temperature == 0.7
+    assert model.max_rounds == 15
+    assert model.max_tokens == 4096
+
+    model2 = _validate_config({"temperature": "   ", "max_rounds": "   ", "max_tokens": "   "})
+    assert model2.temperature == 0.7
+    assert model2.max_rounds == 15
+    assert model2.max_tokens == 4096
+
+def test_get_path_env_whitespace(monkeypatch):
+    from backend.config import _get_path_env, BASE_DIR
+    monkeypatch.setenv("AUTOGEN_DATA_DIR", "   ")
+    assert _get_path_env("AUTOGEN_DATA_DIR", "data") == BASE_DIR / "data"
