@@ -520,3 +520,26 @@ def test_config_model_base_url_none_bypass() -> None:
 
     with pytest.raises(ValidationError, match="URL must be a string"):
         ConfigModel(base_url=b"https://api.example.com/v1/")
+
+def test_config_model_base_url_whitespace_fallback(monkeypatch):
+    """Test that passing whitespace to base_url explicitly falls back to default via chaining validators."""
+    from backend.config import ConfigModel
+    # Setting the env var directly as whitespace
+    monkeypatch.setenv("AUTOGEN_BASE_URL", "   ")
+    model = ConfigModel()
+    assert model.base_url == "https://generativelanguage.googleapis.com/v1beta/openai/"
+    monkeypatch.delenv("AUTOGEN_BASE_URL", raising=False)
+
+def test_config_model_env_var_parsing(monkeypatch):
+    """Test that environment variables are correctly parsed by ConfigModel."""
+    from backend.config import ConfigModel
+    monkeypatch.setenv("AUTOGEN_DEFAULT_MODEL", "gpt-4")
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "1.2")
+    monkeypatch.setenv("AUTOGEN_MAX_TOKENS", "1024")
+    model = ConfigModel()
+    assert model.default_model == "gpt-4"
+    assert model.temperature == 1.2
+    assert model.max_tokens == 1024
+    monkeypatch.delenv("AUTOGEN_DEFAULT_MODEL", raising=False)
+    monkeypatch.delenv("AUTOGEN_TEMPERATURE", raising=False)
+    monkeypatch.delenv("AUTOGEN_MAX_TOKENS", raising=False)
