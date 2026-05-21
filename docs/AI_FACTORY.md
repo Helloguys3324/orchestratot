@@ -114,8 +114,13 @@ python .github/scripts/scan_secrets.py
 # Note: Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 
+# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
+# created during testing to avoid accidentally committing them.
+rm -f .coverage
+
 # Run frontend tests using native node runner (no extra npm packages required)
 # Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
+# When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
 # Validate JSON syntax (if JSON files are modified)
