@@ -40,9 +40,10 @@ def test_secret_str_prevents_json_dump():
     with pytest.raises(TypeError):
         json.dumps({"key": secret})
 
-def test_config_model_validation():
+def test_config_model_validation(monkeypatch):
+    monkeypatch.delenv('AUTOGEN_TEMPERATURE', raising=False)
     # Valid
-    model = ConfigModel(**{"api_key": "valid-api-key-123"})
+    model = ConfigModel(api_key="valid-api-key-123")
     assert model.api_key.get_secret_value() == "valid-api-key-123"
 
     # Invalid: too short
@@ -474,3 +475,13 @@ def test_config_model_empty_path_fallback():
     assert model.skills_dir == BASE_DIR / "skills_library"
     assert model.workspace_dir == BASE_DIR / "workspace"
     assert model.custom_skills_dir == BASE_DIR / "custom_skills"
+
+def test_validate_config_with_undefined_fallback(monkeypatch):
+    from pydantic_core import PydanticUndefined
+    from backend.config import _validate_config, ConfigModel
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "invalid_float")
+    monkeypatch.setenv("AUTOGEN_API_KEY", "invalid key")
+
+    config = _validate_config()
+    assert config.temperature == 0.7
+    assert config.api_key.get_secret_value() == ""
