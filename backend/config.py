@@ -27,14 +27,11 @@ def _get_path_env(key: str, default_subpath: str) -> Path:
 # defined in scope sometimes during tests execution), we'll parse paths manually but
 # with the exact same logic as ConfigModel.
 
-def _get_path_env_safe(key: str, default_subpath: str) -> Path:
-    val = os.environ.get(key)
-    return Path(val) if val else BASE_DIR / default_subpath
 
-DATA_DIR = _get_path_env_safe("AUTOGEN_DATA_DIR", "data")
-SKILLS_DIR = _get_path_env_safe("AUTOGEN_SKILLS_DIR", "skills_library")
-CUSTOM_SKILLS_DIR = _get_path_env_safe("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
-WORKSPACE_DIR = _get_path_env_safe("AUTOGEN_WORKSPACE_DIR", "workspace")
+DATA_DIR = _get_path_env("AUTOGEN_DATA_DIR", "data")
+SKILLS_DIR = _get_path_env("AUTOGEN_SKILLS_DIR", "skills_library")
+CUSTOM_SKILLS_DIR = _get_path_env("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
+WORKSPACE_DIR = _get_path_env("AUTOGEN_WORKSPACE_DIR", "workspace")
 
 # Create directories if they don't exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
@@ -60,10 +57,19 @@ class ConfigModel(BaseSettings):
     max_tokens: int = Field(default=4096, ge=1, le=128000)
 
     # Path configuration
-    data_dir: Path = Field(default_factory=lambda: BASE_DIR / "data")
-    skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "skills_library")
-    custom_skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "custom_skills")
-    workspace_dir: Path = Field(default_factory=lambda: BASE_DIR / "workspace")
+    data_dir: Path = Field(default_factory=lambda: BASE_DIR / "data", json_schema_extra={"env_ignore_empty": False})
+    skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "skills_library", json_schema_extra={"env_ignore_empty": False})
+    custom_skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "custom_skills", json_schema_extra={"env_ignore_empty": False})
+    workspace_dir: Path = Field(default_factory=lambda: BASE_DIR / "workspace", json_schema_extra={"env_ignore_empty": False})
+
+
+    @field_validator('data_dir', 'skills_dir', 'custom_skills_dir', 'workspace_dir', mode='before')
+    def validate_paths(cls, v, info):
+        if not v or str(v).strip() == "" or str(v) == ".":
+            factory = cls.model_fields[info.field_name].default_factory
+            if factory:
+                return factory()
+        return v
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),

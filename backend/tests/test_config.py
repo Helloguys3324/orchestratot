@@ -466,3 +466,11 @@ def test_config_model_custom_paths():
     assert model.skills_dir == custom_skills
     assert model.custom_skills_dir == custom_custom_skills
     assert model.workspace_dir == custom_workspace
+
+def test_config_model_empty_path_fallback():
+    from backend.config import ConfigModel, BASE_DIR
+    model = ConfigModel(data_dir="", skills_dir=" ", workspace_dir=".", custom_skills_dir=None)
+    assert model.data_dir == BASE_DIR / "data"
+    assert model.skills_dir == BASE_DIR / "skills_library"
+    assert model.workspace_dir == BASE_DIR / "workspace"
+    assert model.custom_skills_dir == BASE_DIR / "custom_skills"
