@@ -20,7 +20,6 @@
   },
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs.",
-    "Metrics like safe_automerge_count, manual_review_count, recent_failure_reasons, and automation_health are currently unavailable.",
     "Removed root-level 'queue_size' and 'active_work' fields as they duplicate 'task_lifecycle.pending' and 'task_lifecycle.running'."
   ],
   "role_distribution": {
@@ -42,5 +41,11 @@
     "tests": 0,
     "architecture": 0,
     "workflow": 0
+  },
+  "automation": {
+    "safe_automerge_count": 0,
+    "manual_review_count": 0,
+    "recent_failure_reasons": [],
+    "health_status": "unknown"
   }
 }
