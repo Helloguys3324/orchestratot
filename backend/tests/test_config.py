@@ -510,3 +510,15 @@ def test_empty_string_fallbacks_for_numeric_fields():
     assert model.temperature == 0.7
     assert model.max_rounds == 15
     assert model.max_tokens == 4096
+
+
+def test_config_model_base_url_none_bypass() -> None:
+    # Explicitly test that passing None (if it somehow bypassed the early return)
+    # or other types like int/bytes are caught by the explicit isinstance check.
+    # We can test by bypassing the validator entirely, or since None is returned by the early check,
+    # we can test bytes/ints which do hit the isinstance check.
+    with pytest.raises(ValidationError, match="URL must be a string"):
+        ConfigModel(base_url=123)
+
+    with pytest.raises(ValidationError, match="URL must be a string"):
+        ConfigModel(base_url=b"https://api.example.com/v1/")
