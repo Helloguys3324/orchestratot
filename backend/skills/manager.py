@@ -193,24 +193,25 @@ class SkillsManager:
             except AttributeError as e:
                 raise SkillValidationError("Invalid skill data provided") from e
 
-        skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
-        skill = {
-            "id": skill_id,
-            "name": name,
-            "icon": icon,
-            "description": description,
-            "category": category,
-            "builtin": False,
-            "enabled": True,
-            "source": source,
-            "code": skill_code,
-        }
-        if skill["code"]:
-            skill["file"] = self._write_skill_file(skill_id, skill["code"])
+        with catch_unexpected(SkillInstallError, "Unexpected error creating skill"):
+            skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
+            skill = {
+                "id": skill_id,
+                "name": name,
+                "icon": icon,
+                "description": description,
+                "category": category,
+                "builtin": False,
+                "enabled": True,
+                "source": source,
+                "code": skill_code,
+            }
+            if skill["code"]:
+                skill["file"] = self._write_skill_file(skill_id, skill["code"])
 
-        self._custom_skills.append(skill)
-        self._save()
-        return skill
+            self._custom_skills.append(skill)
+            self._save()
+            return skill
 
     def create_skill(self, data: dict) -> dict:
         return self._add_custom_skill("custom", data, "custom", "custom")

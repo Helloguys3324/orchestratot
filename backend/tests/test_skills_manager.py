@@ -508,3 +508,8 @@ def test_list_skills_skill_error_not_wrapped(mock_builtin, manager) -> None:
     with pytest.raises(SkillError, match="List skill error") as exc:
         manager.list_skills()
     assert type(exc.value) is SkillError
+
+def test_add_custom_skill_unexpected_error(manager):
+    manager._custom_skills = None  # Force an AttributeError on .append
+    with pytest.raises(SkillInstallError, match="Unexpected error creating skill"):
+        manager._add_custom_skill("custom", {"name": "test"}, "custom", "custom")
