@@ -18,6 +18,8 @@ def handle_skill_exceptions():
         raise HTTPException(status_code=500, detail=str(e))
     except SkillError as e:
         raise HTTPException(status_code=500, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @router.get("")
 async def api_list_skills():
