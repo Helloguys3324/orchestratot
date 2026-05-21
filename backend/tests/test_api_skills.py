@@ -78,3 +78,17 @@ def test_install_skill_install_error(mock_install):
 def test_install_skill_missing_url():
     response = client.post("/api/skills/install", json={})
     assert response.status_code == 422
+
+@patch("backend.api.skills.skills_manager.list_skills")
+def test_list_skills_validation_error(mock_list):
+    mock_list.side_effect = SkillValidationError("test error")
+    response = client.get("/api/skills")
+    assert response.status_code == 400
+    assert response.json()["detail"] == "test error"
+
+@patch("backend.api.skills.skills_manager.list_marketplace")
+def test_list_marketplace_validation_error(mock_list):
+    mock_list.side_effect = SkillValidationError("test error")
+    response = client.get("/api/skills/marketplace")
+    assert response.status_code == 400
+    assert response.json()["detail"] == "test error"
