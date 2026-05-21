@@ -8,7 +8,7 @@ This guide provides solutions to common issues encountered while setting up and 
 **Symptom:** You attempt to start the backend but Python cannot find certain modules (e.g., `fastapi`, `pydantic`).
 **Solution:** Ensure you have activated your virtual environment (if using one) and installed all required dependencies.
 ```bash
-pip install -r backend/requirements.txt
+pip install -q -r backend/requirements.txt
 ```
 
 ### Issue: `pytest` cannot find the `backend` module
@@ -19,7 +19,7 @@ PYTHONPATH=. python -m pytest -q
 ```
 Also, ensure the testing dependencies are installed:
 ```bash
-pip install pytest pytest-cov
+pip install -q pytest pytest-cov
 ```
 *Note: For async tests in pytest, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 
@@ -43,7 +43,7 @@ pip install pytest pytest-cov
 
 ### Issue: Configuration defaults are not being overridden by environment variables
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
-**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings (except for path variables like `AUTOGEN_DATA_DIR`, which explicitly support empty strings to fallback to defaults). The configuration is set to ignore empty strings on load (`env_ignore_empty=True`) for credentials and general settings. However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
+**Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings or whitespace-only strings (except for path variables like `AUTOGEN_DATA_DIR`, which explicitly support empty or whitespace strings to fallback to defaults). The configuration is set to ignore empty strings on load (`env_ignore_empty=True`) for credentials and general settings. However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
 
 ### Issue: JSON files appear truncated or incomplete in terminal output
 **Symptom:** When reading large JSON files (like `task_queue.json`) using `cat`, the output is truncated, missing the end of the file.
