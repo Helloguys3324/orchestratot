@@ -29,7 +29,7 @@ pip install pytest pytest-cov
 
 ### Issue: `pip-audit` reports false positives or missing dependencies
 **Symptom:** Running `pip-audit -r backend/requirements.txt` fails or flags vulnerabilities for package versions that aren't actually installed in the target environment.
-**Solution:** Ensure you have installed the project core requirements locally first (`pip install -r backend/requirements.txt`). To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions. Note that PyAutoGen v0.4.x introduces breaking API changes and cannot be used to mitigate CVE-2025-69872 without a complete application rewrite.
+**Solution:** Ensure you have installed the project core requirements locally first (`pip install -q -r backend/requirements.txt`). To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install -q "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions. Use the `-q` flag for `pip install` in automated bash sessions to prevent verbose logs from truncating subsequent output. Note that PyAutoGen v0.4.x introduces breaking API changes and cannot be used to mitigate CVE-2025-69872 without a complete application rewrite.
 
 ## Secrets and Configuration
 
@@ -44,6 +44,10 @@ pip install pytest pytest-cov
 ### Issue: Configuration defaults are not being overridden by environment variables
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
 **Solution:** The system uses `pydantic-settings`. Ensure your `.env` variables are correctly formatted and are not empty strings (except for path variables like `AUTOGEN_DATA_DIR`, which explicitly support empty strings to fallback to defaults). The configuration is set to ignore empty strings on load (`env_ignore_empty=True`) for credentials and general settings. However, you can deliberately clear API keys or other fields out by updating settings through the UI, which programmatically removes the key from the `.env` file (via `unset_key`) and the runtime environment (via `os.environ.pop`).
+
+### Issue: JSON files appear truncated or incomplete in terminal output
+**Symptom:** When reading large JSON files (like `task_queue.json`) using `cat`, the output is truncated, missing the end of the file.
+**Solution:** Avoid using `cat` for large JSON files. Instead, use `jq` (e.g., `jq . file.json`) or a Python script to ensure the full, un-truncated structure is correctly read and validated.
 
 ### Issue: JSON files fail validation or cause errors
 **Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
