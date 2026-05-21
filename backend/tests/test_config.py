@@ -485,3 +485,21 @@ def test_validate_config_with_undefined_fallback(monkeypatch):
     config = _validate_config()
     assert config.temperature == 0.7
     assert config.api_key.get_secret_value() == ""
+
+def test_empty_string_fallbacks_for_models_and_base_url():
+    from backend.config import ConfigModel, _validate_config
+    model = _validate_config({"default_model": "", "router_model": "    ", "base_url": ""})
+    assert model.default_model == "gemini-2.5-flash"
+    assert model.router_model == "gemini-3-flash-live"
+    assert model.base_url == "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+def test_empty_string_fallbacks_from_env_vars(monkeypatch):
+    from backend.config import ConfigModel, _validate_config
+    monkeypatch.setenv("AUTOGEN_DEFAULT_MODEL", "")
+    monkeypatch.setenv("AUTOGEN_ROUTER_MODEL", "    ")
+    monkeypatch.setenv("AUTOGEN_BASE_URL", "")
+
+    model = _validate_config()
+    assert model.default_model == "gemini-2.5-flash"
+    assert model.router_model == "gemini-3-flash-live"
+    assert model.base_url == "https://generativelanguage.googleapis.com/v1beta/openai/"

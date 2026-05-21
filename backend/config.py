@@ -50,9 +50,9 @@ SETTINGS_FILE = DATA_DIR / "settings.json"
 class ConfigModel(BaseSettings):
     """Validates configuration and wraps sensitive keys in SecretStr."""
     api_key: SecretStr = SecretStr("")
-    default_model: str = "gemini-2.5-flash"
-    router_model: str = "gemini-3-flash-live"
-    base_url: str = "https://generativelanguage.googleapis.com/v1beta/openai/"
+    default_model: str = Field(default="gemini-2.5-flash", json_schema_extra={"env_ignore_empty": False})
+    router_model: str = Field(default="gemini-3-flash-live", json_schema_extra={"env_ignore_empty": False})
+    base_url: str = Field(default="https://generativelanguage.googleapis.com/v1beta/openai/", json_schema_extra={"env_ignore_empty": False})
     max_rounds: int = Field(default=15, ge=1, le=100)
     temperature: float = Field(default=0.7, ge=0.0, le=2.0)
     max_tokens: int = Field(default=4096, ge=1, le=128000)
@@ -92,6 +92,16 @@ class ConfigModel(BaseSettings):
         from pydantic_settings import DotEnvSettingsSource
         # Ensure we dynamically reload DotEnvSettingsSource based on the current ENV_FILE path (important for tests)
         return init_settings, env_settings, DotEnvSettingsSource(settings_cls, env_file=str(ENV_FILE)), file_secret_settings
+
+    @field_validator('default_model', 'router_model', 'base_url', mode='before')
+    def validate_empty_strings(cls, v, info):
+        if v == "" or (isinstance(v, str) and not v.strip()):
+            field_info = cls.model_fields[info.field_name]
+            if field_info.default_factory is not None:
+                return field_info.default_factory()
+            elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
+                return field_info.get_default()
+        return v
 
     @field_validator('base_url', mode='before')
     def validate_base_url(cls, v):
