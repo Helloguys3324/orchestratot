@@ -58,16 +58,14 @@ def test_get_settings_masks_api_key(monkeypatch):
     monkeypatch.setenv("AUTOGEN_API_KEY", "test-key-from-env")
     settings = get_settings()
 
-    assert isinstance(settings["api_key"], SecretStr)
-    assert settings["api_key"].get_secret_value() == "test-key-from-env"
+    assert settings["api_key"] == "**********"
 
 def test_get_settings_invalid_key_fallback(monkeypatch):
     monkeypatch.setenv("AUTOGEN_API_KEY", "short")
     settings = get_settings()
 
     # It should catch ValidationError and default to empty SecretStr
-    assert isinstance(settings["api_key"], SecretStr)
-    assert settings["api_key"].get_secret_value() == ""
+    assert settings["api_key"] == ""
 
 def test_save_settings_writes_to_env():
     test_settings = {"api_key": SecretStr("key-to-scrub"), "max_rounds": 25}
@@ -177,7 +175,7 @@ def test_legacy_json_migration_invalid_data():
     settings = get_settings()
 
     # Default should be returned or an empty SecretStr for api_key
-    assert settings["api_key"].get_secret_value() == ""
+    assert settings["api_key"] == ""
 
     # verify JSON is cleared securely even after error
     assert load_json(SETTINGS_FILE) == {}
