@@ -200,7 +200,21 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    python .github/scripts/scan_secrets.py
    ```
 
-### 4. Continuous Integration & AI Factory
+### 4. Running Tests
+To ensure code reliability, run both backend and frontend validation locally before submitting changes.
+
+**Backend Validation:**
+```bash
+PYTHONPATH=. python -m pytest -q
+```
+*Note: If using `pytest --cov` locally, ensure the auto-generated `.coverage` binary artifact is deleted (e.g., `rm .coverage`) before final submission to prevent accidentally committing it.*
+
+**Frontend Validation:**
+```bash
+node --experimental-test-coverage --test frontend/tests/*.test.js
+```
+
+### 5. Continuous Integration & AI Factory
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
 
 **Required GitHub Setup:**
@@ -221,7 +235,7 @@ Make sure these setup steps are fully completed to ensure that continuous integr
 For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
-### 5. Emergency Stop Protocol
+### 6. Emergency Stop Protocol
 If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the repository root directory:
 ```bash
 touch AUTOPILOT_STOP
