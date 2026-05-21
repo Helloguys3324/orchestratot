@@ -27,14 +27,10 @@ def _get_path_env(key: str, default_subpath: str) -> Path:
 # defined in scope sometimes during tests execution), we'll parse paths manually but
 # with the exact same logic as ConfigModel.
 
-def _get_path_env_safe(key: str, default_subpath: str) -> Path:
-    val = os.environ.get(key)
-    return Path(val) if val else BASE_DIR / default_subpath
-
-DATA_DIR = _get_path_env_safe("AUTOGEN_DATA_DIR", "data")
-SKILLS_DIR = _get_path_env_safe("AUTOGEN_SKILLS_DIR", "skills_library")
-CUSTOM_SKILLS_DIR = _get_path_env_safe("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
-WORKSPACE_DIR = _get_path_env_safe("AUTOGEN_WORKSPACE_DIR", "workspace")
+DATA_DIR = _get_path_env("AUTOGEN_DATA_DIR", "data")
+SKILLS_DIR = _get_path_env("AUTOGEN_SKILLS_DIR", "skills_library")
+CUSTOM_SKILLS_DIR = _get_path_env("AUTOGEN_CUSTOM_SKILLS_DIR", "custom_skills")
+WORKSPACE_DIR = _get_path_env("AUTOGEN_WORKSPACE_DIR", "workspace")
 
 # Create directories if they don't exist
 DATA_DIR.mkdir(parents=True, exist_ok=True)
