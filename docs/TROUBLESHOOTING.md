@@ -62,6 +62,10 @@ python -m json.tool <filepath>
 **Symptom:** The AI Factory bots or GitHub Actions are rejecting a pull request because it modifies `.github/workflows/`, `.github/scripts/`, or `.github/CODEOWNERS`.
 **Solution:** AI agents are strictly forbidden from modifying these files. If infrastructure changes are required, a human must create a separate PR outside of the automated AI Factory framework.
 
+### Issue: GitHub Actions fails to push branch or create PR
+**Symptom:** The autonomous workflow runs successfully but fails at the final git push or gh pr create step with a "403 Forbidden" or permission error.
+**Solution:** The default GitHub Actions token might lack write permissions to your repository. Navigate to **Settings -> Actions -> General -> Workflow permissions**. Ensure **Read and write permissions** is selected, and check **Allow GitHub Actions to create and approve pull requests**.
+
 ### Issue: AI tasks are repeatedly failing or getting stuck
 **Symptom:** You notice that AI tasks in the queue are failing consecutively without making progress.
 **Solution:**

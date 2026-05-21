@@ -18,6 +18,7 @@ Operating rules:
   - `python -m compileall backend skills_library run.py`
   - `python .github/scripts/scan_secrets.py`
   - `PYTHONPATH=. python -m pytest -q`
+  - `rm -f .coverage`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.

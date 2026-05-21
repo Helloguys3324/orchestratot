@@ -120,6 +120,7 @@ PYTHONPATH=. python -m pytest -q
 rm -f .coverage
 
 # Run frontend tests using native node runner (no extra npm packages required)
+# (Note: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite.)
 # Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
 # When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
@@ -188,7 +189,7 @@ You can verify that no secrets are accidentally committed by running:
 python .github/scripts/scan_secrets.py
 ```
 
-If a key was committed previously, rotate it immediately.
+If a key was committed previously, rotate it immediately at your provider level, and close/delete the compromised branch or PR.
 
 ## Metrics Tracking
 
