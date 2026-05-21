@@ -46,7 +46,7 @@ Automerge is intentionally conservative to prevent autonomous regressions:
 python3 -m venv venv
 source venv/bin/activate
 pip install -r backend/requirements.txt
-pip install pytest pytest-cov pytest-asyncio  # testing dependencies
+pip install pytest pytest-cov  # testing dependencies
 cp .env.example .env
 python run.py
 ```
@@ -96,7 +96,7 @@ Once activated, install the necessary packages for the backend and testing tools
 pip install -r backend/requirements.txt
 
 # Local backend testing dependencies
-pip install pytest pytest-cov pytest-asyncio
+pip install pytest pytest-cov
 ```
 
 ### 3. Secrets & Configuration
