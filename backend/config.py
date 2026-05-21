@@ -21,7 +21,7 @@ load_dotenv(dotenv_path=ENV_FILE)
 
 def _get_path_env(key: str, default_subpath: str) -> Path:
     val = os.environ.get(key)
-    return Path(val) if val else BASE_DIR / default_subpath
+    return Path(val) if val and val.strip() else BASE_DIR / default_subpath
 
 # Since we can't initialize ConfigModel here without causing cyclical/missing dependency
 # at import time when tests run (as ConfigModel relies on ENV_FILE which is not fully
