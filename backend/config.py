@@ -108,10 +108,10 @@ class ConfigModel(BaseSettings):
         import urllib.parse
         if v is None or v == "":
             return v
+        if not isinstance(v, str):
+            raise ValueError("URL must be a string")
         try:
             parsed = urllib.parse.urlparse(v)
-            if hasattr(parsed.scheme, "decode"):
-                raise ValueError("URL must be a string")
             if not parsed.scheme or not parsed.netloc:
                 raise ValueError("Invalid URL format. Must include scheme and netloc.")
         except (ValueError, AttributeError, TypeError) as e:
