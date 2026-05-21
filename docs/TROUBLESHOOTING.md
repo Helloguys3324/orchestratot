@@ -25,7 +25,7 @@ pip install pytest pytest-cov
 
 ### Issue: Validation commands fail due to missing `node` or test runner issues
 **Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.test.js`.
-**Solution:** Ensure you have Node.js version 20 or higher installed, as it natively includes the `node:test` module. You do not need to `npm install` anything for standard test runs.
+**Solution:** Ensure you have Node.js version 20 or higher installed, as it natively includes the `node:test` module. You do not need to `npm install` anything for standard test runs. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 
 ### Issue: `pip-audit` reports false positives or missing dependencies
 **Symptom:** Running `pip-audit -r backend/requirements.txt` fails or flags vulnerabilities for package versions that aren't actually installed in the target environment.
