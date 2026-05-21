@@ -12,12 +12,18 @@ import re
 
 # ─── Paths ───────────────────────────────────────────────
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 # ─── Load .env ──────────────────────────────────────────
 from dotenv import load_dotenv
 
 ENV_FILE = Path(os.environ.get("AUTOGEN_ENV_FILE", BASE_DIR / ".env"))
 load_dotenv(dotenv_path=ENV_FILE)
+
+def _get_field_default(field_info):
+    if field_info.default_factory is not None:
+        return field_info.default_factory()
+    if getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
+        return field_info.get_default()
+    return None
 
 def _get_path_env(key: str, default_subpath: str) -> Path:
     val = os.environ.get(key)
@@ -63,13 +69,12 @@ class ConfigModel(BaseSettings):
     custom_skills_dir: Path = Field(default_factory=lambda: BASE_DIR / "custom_skills", json_schema_extra={"env_ignore_empty": False})
     workspace_dir: Path = Field(default_factory=lambda: BASE_DIR / "workspace", json_schema_extra={"env_ignore_empty": False})
 
-
     @field_validator('data_dir', 'skills_dir', 'custom_skills_dir', 'workspace_dir', mode='before')
     def validate_paths(cls, v, info):
         if not v or str(v).strip() == "" or str(v) == ".":
-            factory = cls.model_fields[info.field_name].default_factory
-            if factory:
-                return factory()
+            fallback = _get_field_default(cls.model_fields[info.field_name])
+            if fallback is not None:
+                return fallback
         return v
 
     model_config = SettingsConfigDict(
@@ -92,15 +97,12 @@ class ConfigModel(BaseSettings):
         from pydantic_settings import DotEnvSettingsSource
         # Ensure we dynamically reload DotEnvSettingsSource based on the current ENV_FILE path (important for tests)
         return init_settings, env_settings, DotEnvSettingsSource(settings_cls, env_file=str(ENV_FILE)), file_secret_settings
-
     @field_validator('default_model', 'router_model', 'base_url', 'max_rounds', 'temperature', 'max_tokens', mode='before')
     def validate_empty_strings(cls, v, info):
         if v == "" or (isinstance(v, str) and not v.strip()):
-            field_info = cls.model_fields[info.field_name]
-            if field_info.default_factory is not None:
-                return field_info.default_factory()
-            elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
-                return field_info.get_default()
+            fallback = _get_field_default(cls.model_fields[info.field_name])
+            if fallback is not None:
+                return fallback
         return v
 
     @field_validator('base_url', mode='before')
@@ -161,7 +163,6 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
         }
 
         UPDATABLE_FIELDS = set(ConfigModel.model_fields.keys())
-
         # We must provide the default values to override invalid entries in the .env file
         defaults = {}
         for k in invalid_keys:
@@ -169,12 +170,9 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
                 if k == "api_key":
                     defaults[k] = ""
                 else:
-                    field_info = ConfigModel.model_fields[k]
-                    # Handle both default values and default factories
-                    if field_info.default_factory is not None:
-                        defaults[k] = field_info.default_factory()
-                    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
-                        defaults[k] = field_info.get_default()
+                    fallback = _get_field_default(ConfigModel.model_fields[k])
+                    if fallback is not None:
+                        defaults[k] = fallback
 
         # Explicit settings take precedence
         merged = {**defaults, **input_kwargs}
