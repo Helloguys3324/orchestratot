@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import Type, Tuple
 from pydantic import SecretStr, field_validator, ValidationError, Field
 from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource
+from pydantic_core import PydanticUndefined
 import re
 
 # ─── Paths ───────────────────────────────────────────────
@@ -162,7 +163,7 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
                     # Handle both default values and default factories
                     if field_info.default_factory is not None:
                         defaults[k] = field_info.default_factory()
-                    elif field_info.get_default() is not None:
+                    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
                         defaults[k] = field_info.get_default()
 
         # Explicit settings take precedence
