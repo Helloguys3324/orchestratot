@@ -19,8 +19,9 @@ PYTHONPATH=. python -m pytest -q
 ```
 Also, ensure the testing dependencies are installed:
 ```bash
-pip install pytest pytest-cov pytest-asyncio
+pip install pytest pytest-cov
 ```
+*Note: For async tests in pytest, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 
 ### Issue: Validation commands fail due to missing `node` or test runner issues
 **Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.test.js`.

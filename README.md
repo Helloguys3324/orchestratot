@@ -46,7 +46,7 @@ Automerge is intentionally conservative to prevent autonomous regressions:
 python3 -m venv venv
 source venv/bin/activate
 pip install -r backend/requirements.txt
-pip install pytest pytest-cov pytest-asyncio  # testing dependencies
+pip install pytest pytest-cov  # testing dependencies
 cp .env.example .env
 python run.py
 ```
@@ -96,7 +96,9 @@ Once activated, install the necessary packages for the backend and testing tools
 pip install -r backend/requirements.txt
 
 # Local backend testing dependencies
-pip install pytest pytest-cov pytest-asyncio
+pip install pytest pytest-cov
+
+*Note: For async tests, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 ```
 
 ### 3. Secrets & Configuration
@@ -194,6 +196,7 @@ rm -f .coverage
 ```bash
 # Run frontend tests using native node runner (no extra npm packages required)
 # Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
+# When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
 
