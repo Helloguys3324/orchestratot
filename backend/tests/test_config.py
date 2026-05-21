@@ -503,3 +503,10 @@ def test_empty_string_fallbacks_from_env_vars(monkeypatch):
     assert model.default_model == "gemini-2.5-flash"
     assert model.router_model == "gemini-3-flash-live"
     assert model.base_url == "https://generativelanguage.googleapis.com/v1beta/openai/"
+
+def test_empty_string_fallbacks_for_numeric_fields():
+    from backend.config import ConfigModel, _validate_config
+    model = _validate_config({"temperature": "", "max_rounds": "", "max_tokens": ""})
+    assert model.temperature == 0.7
+    assert model.max_rounds == 15
+    assert model.max_tokens == 4096

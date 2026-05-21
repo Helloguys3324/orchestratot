@@ -93,7 +93,7 @@ class ConfigModel(BaseSettings):
         # Ensure we dynamically reload DotEnvSettingsSource based on the current ENV_FILE path (important for tests)
         return init_settings, env_settings, DotEnvSettingsSource(settings_cls, env_file=str(ENV_FILE)), file_secret_settings
 
-    @field_validator('default_model', 'router_model', 'base_url', mode='before')
+    @field_validator('default_model', 'router_model', 'base_url', 'max_rounds', 'temperature', 'max_tokens', mode='before')
     def validate_empty_strings(cls, v, info):
         if v == "" or (isinstance(v, str) and not v.strip()):
             field_info = cls.model_fields[info.field_name]
