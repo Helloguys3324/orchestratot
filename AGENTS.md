@@ -29,30 +29,18 @@ Every agent must respect task scopes, AI Factory ownership rules, validation req
 
 Run these before proposing a code PR when practical:
 
+Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
+
+Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. Install required dependencies directly into the existing environment instead.
+
 ```bash
-# Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
-
-# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
-# Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).
-
-# Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
-
-# Run all backend unit and integration tests
-# (If ModuleNotFoundError occurs, ensure backend/requirements.txt and testing dependencies are installed)
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
-
-# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
-# created during testing to avoid accidentally committing them.
 rm -f .coverage
-
-# Run frontend tests using native node runner
 node --experimental-test-coverage --test frontend/tests/*.test.js
-
-# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*

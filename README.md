@@ -254,41 +254,40 @@ This starts the application at `http://localhost:8000`.
 Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
 ### Core Validation
+
+Verify Python syntax, scan for secrets, and run backend tests. Test dependencies are not in `backend/requirements.txt` and must be installed manually first. Using `PYTHONPATH=.` is required to resolve internal `backend/` module imports during local development. Clean up any generated `.coverage` files or temporary artifacts to avoid accidentally committing them.
+
 ```bash
-# Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
-
-# Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
-
-# Run all backend unit and integration tests
-# Note: Test dependencies are not in backend/requirements.txt. Install them manually first:
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov
-# Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
-
-# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
-# created during testing to avoid accidentally committing them.
 rm -f .coverage
 ```
 
 ### Frontend Validation
+
+Run frontend tests using the native node runner (no extra npm packages required).
+
 ```bash
-# Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 ### File-Specific Validation
+
+Validate JSON syntax (required if any JSON files are modified).
+
 ```bash
-# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 ```
 
 ### Vulnerability Scanning
+
+Optional: Scan for known vulnerabilities in Python dependencies. This requires `backend/requirements.txt` to be explicitly installed first.
+
 ```bash
-# Optional: Scan for known vulnerabilities in Python dependencies (requires backend/requirements.txt to be explicitly installed first)
 pip install -q pip-audit
 pip-audit -r backend/requirements.txt
 ```
