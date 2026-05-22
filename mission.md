@@ -17,6 +17,7 @@ Operating rules:
 - Run the repository validation commands (including mandatory JSON syntax validation if JSON files were changed) before opening a PR.
   - `python -m compileall backend skills_library run.py`
   - `python .github/scripts/scan_secrets.py`
+  - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov`
   - `PYTHONPATH=. python -m pytest -q`
   - `rm -f .coverage`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`

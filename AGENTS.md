@@ -41,6 +41,8 @@ python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
 # (If ModuleNotFoundError occurs, ensure backend/requirements.txt and testing dependencies are installed)
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 
 # Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
