@@ -205,6 +205,8 @@ To ensure code reliability, run both backend and frontend validation locally bef
 
 **Backend Validation:**
 ```bash
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 ```
 *Note: If using `pytest --cov` locally, ensure the auto-generated `.coverage` binary artifact is deleted (e.g., `rm .coverage`) before final submission to prevent accidentally committing it.*
@@ -267,7 +269,9 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
-# Note: Test dependencies (pytest, pytest-cov) are not in backend/requirements.txt. Install them manually first.
+# Note: Test dependencies are not in backend/requirements.txt. Install them manually first:
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-cov
 # Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 

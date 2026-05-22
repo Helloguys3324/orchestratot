@@ -112,7 +112,9 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 
 # Run all backend unit and integration tests
-# Note: Test dependencies (pytest, pytest-cov) are not in backend/requirements.txt. Install them manually first.
+# Note: Test dependencies are not in backend/requirements.txt. Install them manually first:
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-cov
 # Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
 
