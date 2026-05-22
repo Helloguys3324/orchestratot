@@ -1,4 +1,4 @@
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
 from fastapi import APIRouter, HTTPException
 from backend.state import skills_manager
 from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
@@ -8,6 +8,17 @@ router = APIRouter(prefix="/api/skills", tags=["skills"])
 
 @contextmanager
 def handle_skill_exceptions():
+    try:
+        yield
+    except SkillValidationError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except SkillNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@asynccontextmanager
+async def async_handle_skill_exceptions():
     try:
         yield
     except SkillValidationError as e:
@@ -41,6 +52,6 @@ async def api_delete_skill(skill_id: str):
 
 @router.post("/install")
 async def api_install_skill(request: SkillInstallRequest):
-    with handle_skill_exceptions():
+    async with async_handle_skill_exceptions():
         skill = await skills_manager.install_from_url(request.url, request.name)
         return skill
