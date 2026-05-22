@@ -125,7 +125,7 @@ rm -f .coverage
 # When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
-# Validate JSON syntax (if JSON files are modified)
+# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 ```
 
