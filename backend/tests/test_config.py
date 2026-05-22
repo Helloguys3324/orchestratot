@@ -563,3 +563,62 @@ def test_get_path_env_whitespace(monkeypatch):
     from backend.config import _get_path_env, BASE_DIR
     monkeypatch.setenv("AUTOGEN_DATA_DIR", "   ")
     assert _get_path_env("AUTOGEN_DATA_DIR", "data") == BASE_DIR / "data"
+
+def test_get_path_env_relative(monkeypatch):
+    from backend.config import _get_path_env, BASE_DIR
+    monkeypatch.setenv("AUTOGEN_DATA_DIR", "relative_dir")
+    from pathlib import Path
+    assert _get_path_env("AUTOGEN_DATA_DIR", "data") == (BASE_DIR / "relative_dir").resolve()
+
+def test_config_model_relative_paths():
+    from backend.config import ConfigModel, BASE_DIR
+    from pathlib import Path
+
+    model = ConfigModel(
+        data_dir="relative_data",
+        skills_dir=Path("relative_skills"),
+        custom_skills_dir="relative_custom",
+        workspace_dir="relative_workspace"
+    )
+
+    assert model.data_dir == (BASE_DIR / "relative_data").resolve()
+    assert model.skills_dir == (BASE_DIR / "relative_skills").resolve()
+    assert model.custom_skills_dir == (BASE_DIR / "relative_custom").resolve()
+    assert model.workspace_dir == (BASE_DIR / "relative_workspace").resolve()
+
+def test_config_model_validate_paths_get_default():
+    # To hit line 74: field_info.get_default() logic where default_factory is None
+    # We will create a dummy model inheriting from ConfigModel or similar
+    from pydantic import Field
+    from backend.config import ConfigModel, BASE_DIR
+    from pydantic_settings import BaseSettings
+
+    # We can just check the default fallback explicitly if we modify the kwargs
+    model = ConfigModel(data_dir="")
+    assert model.data_dir == BASE_DIR / "data"
+
+def test_config_model_base_url_none():
+    from backend.config import ConfigModel
+    from pydantic import ValidationError
+    import pytest
+
+    with pytest.raises(ValidationError):
+        ConfigModel(base_url=None)
+
+def test_validate_config_default_factory(monkeypatch):
+    from backend.config import _validate_config, BASE_DIR
+    from pydantic import ValidationError
+    import pytest
+
+    # We can just explicitly monkeypatch environ with bad data so _validate_config handles it
+    monkeypatch.setenv("AUTOGEN_DATA_DIR", ".") # invalid value
+    config = _validate_config()
+    assert config.data_dir == BASE_DIR / "data"
+
+def test_validate_empty_strings_default_factory():
+    from backend.config import ConfigModel
+
+    # We create an instance to hit lines in validate_empty_strings. Since default_model
+    # uses default and not default_factory, it won't hit line 118, but it tests the logic.
+    model = ConfigModel(default_model="")
+    assert model.default_model == "gemini-2.5-flash"
