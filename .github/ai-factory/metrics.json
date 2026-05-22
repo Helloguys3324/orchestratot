@@ -6,17 +6,17 @@
     "running": 1,
     "completed": 69,
     "failed": 0,
-    "obsolete": 0,
-    "duplicate": 0,
     "blocked": 0,
-    "abandoned": 0
+    "abandoned": 0,
+    "obsolete": 0,
+    "duplicate": 0
   },
   "pr_lifecycle": {
-    "created": 69,
+    "pr_created": 69,
     "validation_passed": 69,
     "validation_failed": 0,
-    "merged": 66,
-    "rejected": 0
+    "pr_merged": 66,
+    "pr_rejected": 0
   },
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs.",
