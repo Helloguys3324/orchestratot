@@ -104,28 +104,16 @@ All implementation, refactor, security, and architecture PRs require human revie
 
 The validation workflow runs the following full suite. When running locally, ensure you execute these commands from the **repository root**:
 
+Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
+
 ```bash
-# Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
-
-# Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
-
-# Run all backend unit and integration tests
-# Note: Test dependencies are not in backend/requirements.txt. Install them manually first:
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov
-# Using PYTHONPATH=. is required to resolve internal backend/ module imports during local development.
 PYTHONPATH=. python -m pytest -q
-
-# Clean up any generated .coverage files or temporary artifacts (e.g. databases, skills)
-# created during testing to avoid accidentally committing them.
 rm -f .coverage
-
-# Run frontend tests using native node runner (no extra npm packages required)
 node --experimental-test-coverage --test frontend/tests/*.test.js
-
-# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
@@ -136,11 +124,10 @@ The pytest step runs when tests exist outside ignored runtime workspace director
 
 To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Because `pip-audit` needs to accurately evaluate transitive dependencies, ensure the project core requirements are installed in your local environment first:
 
-```bash
-# Ensure core requirements are installed
-pip install -q -r backend/requirements.txt
+Ensure core requirements are installed, then run the security audit.
 
-# Run the security audit
+```bash
+pip install -q -r backend/requirements.txt
 pip install -q pip-audit
 pip-audit -r backend/requirements.txt
 ```
