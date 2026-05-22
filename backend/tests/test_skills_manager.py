@@ -290,7 +290,7 @@ def test_install_from_url_failure(mock_client_class, manager):
     mock_client.get = AsyncMock(return_value=mock_response)
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="HTTP error occurred: 404 Not Found") as exc:
+    with pytest.raises(SkillInstallError, match="Failed to download skill") as exc:
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
     assert isinstance(exc.value.__cause__, httpx.HTTPStatusError)
 
@@ -304,7 +304,7 @@ def test_install_from_url_request_error(mock_client_class, manager):
     mock_client.get = AsyncMock(side_effect=httpx.RequestError("Connection failed", request=MagicMock()))
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="Request error occurred: Connection failed") as exc:
+    with pytest.raises(SkillInstallError, match="Failed to download skill") as exc:
         asyncio.run(manager.install_from_url("http://example.com/404.py"))
     assert isinstance(exc.value.__cause__, httpx.RequestError)
 
@@ -442,26 +442,26 @@ def test_create_skill_attribute_error(mock_validate, manager):
 
 @patch("backend.skills.manager.load_json", side_effect=RuntimeError("Generic load error"))
 def test_load_generic_exception(mock_load_json):
-    with pytest.raises(SkillInstallError, match="Unexpected error loading skills file: Generic load error"):
+    with pytest.raises(SkillInstallError, match="Failed to load skills file: Generic load error"):
         SkillsManager()
 
 @patch("backend.skills.manager.save_json", side_effect=RuntimeError("Generic save error"))
 def test_save_generic_exception(mock_save_json):
     with patch("backend.skills.manager.load_json", return_value=[]):
         manager = SkillsManager()
-        with pytest.raises(SkillInstallError, match="Unexpected error saving skills file: Generic save error"):
+        with pytest.raises(SkillInstallError, match="Failed to save skills file: Generic save error"):
             manager._save()
 
 @patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
 def test_list_skills_generic_exception(mock_builtin, manager):
     mock_builtin.__add__.side_effect = RuntimeError("List error")
-    with pytest.raises(SkillValidationError, match="Unexpected error listing skills: List error"):
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided: List error"):
         manager.list_skills()
 
 @patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
 def test_get_skill_generic_exception(mock_builtin, manager):
     mock_builtin.__add__.side_effect = RuntimeError("Get error")
-    with pytest.raises(SkillValidationError, match="Unexpected error getting skill: Get error"):
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided: Get error"):
         manager.get_skill("some_id")
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -470,21 +470,21 @@ def test_write_skill_file_generic_exception(mock_dir, manager):
     mock_file_path.write_text.side_effect = RuntimeError("Write error")
     mock_dir.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillInstallError, match="Unexpected error writing skill file: Write error"):
+    with pytest.raises(SkillInstallError, match="Failed to write skill file: Write error"):
         manager._write_skill_file("test_id", "code")
 
 @patch("backend.skills.manager.SkillsManager._validate_string_field", side_effect=RuntimeError("Validation err"))
 def test_add_custom_skill_generic_exception(mock_val, manager):
-    with pytest.raises(SkillValidationError, match="Unexpected error validating skill: Validation err"):
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided: Validation err"):
         manager._add_custom_skill("custom", {"name": "test"}, "custom", "custom")
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 def test_delete_skill_generic_exception(mock_dir, manager):
     manager._custom_skills = [{"id": "custom_1"}]
     mock_file = MagicMock()
-    mock_file.exists.side_effect = RuntimeError("Delete error")
+    mock_file.unlink.side_effect = RuntimeError("Delete error")
     mock_dir.__truediv__.return_value = mock_file
-    with pytest.raises(SkillInstallError, match="Unexpected error deleting skill: Delete error"):
+    with pytest.raises(SkillInstallError, match="Failed to delete skill file: Delete error"):
         manager.delete_skill("custom_1")
 
 @patch("backend.skills.manager.httpx.AsyncClient")
@@ -493,7 +493,7 @@ def test_install_from_url_generic_exception(mock_client_class, manager):
     mock_client.get = AsyncMock(side_effect=RuntimeError("Download error"))
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="Unexpected error downloading skill: Download error"):
+    with pytest.raises(SkillInstallError, match="Failed to download skill: Download error"):
         asyncio.run(manager.install_from_url("http://example.com/skill.py"))
 
 @patch("backend.skills.manager.load_json", side_effect=SkillError("Base custom error"))
