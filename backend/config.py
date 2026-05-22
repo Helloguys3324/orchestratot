@@ -18,7 +18,8 @@ from dotenv import load_dotenv
 
 _env_file_val = os.environ.get("AUTOGEN_ENV_FILE")
 if _env_file_val and _env_file_val.strip():
-    ENV_FILE = Path(_env_file_val.strip())
+    _env_p = Path(_env_file_val.strip())
+    ENV_FILE = _env_p if _env_p.is_absolute() else (BASE_DIR / _env_p).resolve()
 else:
     ENV_FILE = BASE_DIR / ".env"
 load_dotenv(dotenv_path=ENV_FILE)
@@ -33,7 +34,7 @@ def _get_path_env(key: str, default_subpath: str) -> Path:
 def _get_field_default(field_info):
     if field_info.default_factory is not None:
         return field_info.default_factory()
-    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
+    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not PydanticUndefined:
         return field_info.get_default()
     return None
 

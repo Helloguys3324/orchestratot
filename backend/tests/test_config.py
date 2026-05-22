@@ -674,3 +674,68 @@ def test_validate_config_concurrent_safety(monkeypatch):
 
     assert not errors, f"Errors found during concurrent execution: {errors}"
     assert os.environ.get("AUTOGEN_TEMPERATURE") == "invalid"
+
+def test_env_file_absolute_path(monkeypatch):
+    import subprocess
+    import sys
+    import os
+    from pathlib import Path
+
+    env = os.environ.copy()
+    env["AUTOGEN_ENV_FILE"] = "/tmp/absolute.env"
+    env["PYTHONPATH"] = "."
+    code = (
+        "from backend.config import ENV_FILE\n"
+        "from pathlib import Path\n"
+        "print(ENV_FILE == Path('/tmp/absolute.env'))\n"
+    )
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert "True" in result.stdout
+
+def test_field_default_none_return():
+    from pydantic.fields import FieldInfo
+    from backend.config import _get_field_default
+    fi = FieldInfo()
+    assert _get_field_default(fi) is None
+
+def test_env_file_relative_path_resolution(monkeypatch):
+    import subprocess
+    import sys
+    import os
+
+    env = os.environ.copy()
+    env["AUTOGEN_ENV_FILE"] = "relative.env"
+    env["PYTHONPATH"] = "."
+    code = (
+        "from backend.config import ENV_FILE, BASE_DIR\n"
+        "from pathlib import Path\n"
+        "print(ENV_FILE == (BASE_DIR / 'relative.env').resolve())\n"
+    )
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert "True" in result.stdout
+
+def test_reload_config_env_file_relative(monkeypatch):
+    import sys
+    import os
+    import importlib
+
+    # Store original state
+    monkeypatch.setenv("AUTOGEN_ENV_FILE", "relative2.env")
+
+    # Reload module
+    import backend.config
+    importlib.reload(backend.config)
+
+    assert backend.config.ENV_FILE == (backend.config.BASE_DIR / "relative2.env").resolve()
+
+def test_reload_config_env_file_absolute(monkeypatch):
+    import sys
+    import os
+    import importlib
+
+    monkeypatch.setenv("AUTOGEN_ENV_FILE", "/tmp/absolute2.env")
+
+    import backend.config
+    importlib.reload(backend.config)
+
+    assert str(backend.config.ENV_FILE) == "/tmp/absolute2.env"
