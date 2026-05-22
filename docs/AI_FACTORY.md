@@ -156,7 +156,7 @@ When frontend files are changed, visual inspection is mandatory. Start the app l
 Never commit real API keys, credentials, or `.env` files to source control.
 
 **CI/CD Environments:**
-Use GitHub Actions Secrets (navigate to **Settings -> Secrets and variables -> Actions**) to securely store production and testing keys.
+Use GitHub Actions **Repository Secrets** (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**) to securely store production and testing keys. Do not use Environment Secrets or Repository Variables, as workflows expect Repository Secrets.
 
 **Local Development:**
 Local runtime credentials should use environment variables (e.g., by placing them in a `.env` file at the root of the project, which is automatically parsed by `pydantic-settings`). You can copy the provided `.env.example` file to create your local `.env` configuration:
