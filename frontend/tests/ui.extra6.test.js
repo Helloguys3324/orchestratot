@@ -7,7 +7,7 @@ test('UI.renderModelOptions handles parameter type mismatches and rendering null
         { id: undefined, name: undefined, icon: undefined, rate_limits: undefined }
     ];
     const html = UI.renderModelOptions(models, undefined);
-    assert.ok(html.includes('undefined undefined (- RPM)'));
+    assert.ok(html.includes('undefined undefined (0 RPM)'));
 });
 
 test('UI.renderSkillCheckboxes handles parameter type mismatches and rendering null properties', () => {
