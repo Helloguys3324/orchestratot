@@ -23,22 +23,22 @@
     "Removed root-level 'queue_size' and 'active_work' fields as they duplicate 'task_lifecycle.pending' and 'task_lifecycle.running'."
   ],
   "role_distribution": {
+    "planner": 1,
+    "architect": 0,
     "implementer": 2,
+    "tester": 1,
     "refactorer": 1,
     "documenter": 1,
-    "tester": 1,
-    "planner": 1,
-    "reviewer": 1,
     "security": 1,
-    "architect": 0
+    "reviewer": 1
   },
   "lane_distribution": {
     "backend": 3,
-    "docs": 3,
     "frontend": 1,
-    "security": 1,
     "skills": 0,
     "tests": 0,
+    "docs": 3,
+    "security": 1,
     "architecture": 0,
     "workflow": 0
   },
