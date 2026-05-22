@@ -140,11 +140,11 @@ class SkillsManager:
         self._load()
 
     def _load(self) -> None:
-        with catch_unexpected(SkillInstallError, "Failed to load skills file"):
+        with catch_unexpected(SkillError, "Failed to load skills file"):
             self._custom_skills = load_json(SKILLS_FILE, [])
 
     def _save(self) -> None:
-        with catch_unexpected(SkillInstallError, "Failed to save skills file"):
+        with catch_unexpected(SkillError, "Failed to save skills file"):
             save_json(SKILLS_FILE, self._custom_skills)
 
     def list_skills(self) -> list[dict]:
@@ -164,7 +164,7 @@ class SkillsManager:
 
     def _write_skill_file(self, skill_id: str, code: str) -> str:
         filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-        with catch_unexpected(SkillInstallError, "Failed to write skill file"):
+        with catch_unexpected(SkillError, "Failed to write skill file"):
             filepath.write_text(code, encoding="utf-8")
         return f"{skill_id}.py"
 
@@ -186,7 +186,7 @@ class SkillsManager:
             category = self._validate_string_field(data, "category", default=default_category)
             skill_code = self._validate_string_field(data, "code", default="")
 
-        with catch_unexpected(SkillInstallError, "Unexpected error creating skill"):
+        with catch_unexpected(SkillError, "Unexpected error creating skill"):
             skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
             skill = {
                 "id": skill_id,
@@ -216,7 +216,7 @@ class SkillsManager:
         if skill:
             # Remove file if exists
             filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-            with catch_unexpected(SkillInstallError, "Failed to delete skill file"):
+            with catch_unexpected(SkillError, "Failed to delete skill file"):
                 if filepath.exists():
                     filepath.unlink()
 
