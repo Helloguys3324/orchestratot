@@ -130,46 +130,31 @@ class SkillsManager:
         self._load()
 
     def _load(self) -> None:
-        with catch_unexpected(SkillInstallError, "Unexpected error loading skills file"):
-            try:
-                self._custom_skills = load_json(SKILLS_FILE, [])
-            except (json.JSONDecodeError, OSError) as e:
-                raise SkillInstallError(f"Failed to load skills file: {e}") from e
+        with catch_unexpected(SkillInstallError, "Failed to load skills file"):
+            self._custom_skills = load_json(SKILLS_FILE, [])
 
     def _save(self) -> None:
-        with catch_unexpected(SkillInstallError, "Unexpected error saving skills file"):
-            try:
-                save_json(SKILLS_FILE, self._custom_skills)
-            except (TypeError, ValueError, OSError) as e:
-                raise SkillInstallError(f"Failed to save skills file: {e}") from e
+        with catch_unexpected(SkillInstallError, "Failed to save skills file"):
+            save_json(SKILLS_FILE, self._custom_skills)
 
     def list_skills(self) -> list[dict]:
-        with catch_unexpected(SkillValidationError, "Unexpected error listing skills"):
-            try:
-                return BUILTIN_SKILLS + self._custom_skills
-            except TypeError as e:
-                raise SkillValidationError("Invalid skill data provided") from e
+        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+            return BUILTIN_SKILLS + self._custom_skills
 
     def list_marketplace(self) -> list[dict]:
         return MARKETPLACE_SKILLS
 
     def get_skill(self, skill_id: str) -> dict | None:
-        with catch_unexpected(SkillValidationError, "Unexpected error getting skill"):
-            try:
-                if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
-                    return s
-            except (TypeError, KeyError) as e:
-                raise SkillValidationError("Invalid skill data provided") from e
+        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+            if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
+                return s
 
         raise SkillNotFoundError("Skill not found")
 
     def _write_skill_file(self, skill_id: str, code: str) -> str:
         filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-        with catch_unexpected(SkillInstallError, "Unexpected error writing skill file"):
-            try:
-                filepath.write_text(code, encoding="utf-8")
-            except OSError as e:
-                raise SkillInstallError(f"Failed to write skill file: {e}") from e
+        with catch_unexpected(SkillInstallError, "Failed to write skill file"):
+            filepath.write_text(code, encoding="utf-8")
         return f"{skill_id}.py"
 
     def _validate_string_field(self, data: dict, field: str, default: str = "", required: bool = False) -> str:
@@ -183,17 +168,14 @@ class SkillsManager:
         return value
 
     def _add_custom_skill(self, prefix: str, data: dict, default_category: str, source: str) -> dict:
-        with catch_unexpected(SkillValidationError, "Unexpected error validating skill"):
-            try:
-                name = self._validate_string_field(data, "name", required=True)
-                icon = self._validate_string_field(data, "icon", default="🔧" if prefix == "custom" else "📦")
-                description = self._validate_string_field(data, "description", default="")
-                category = self._validate_string_field(data, "category", default=default_category)
-                skill_code = self._validate_string_field(data, "code", default="")
-            except AttributeError as e:
-                raise SkillValidationError("Invalid skill data provided") from e
+        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+            name = self._validate_string_field(data, "name", required=True)
+            icon = self._validate_string_field(data, "icon", default="🔧" if prefix == "custom" else "📦")
+            description = self._validate_string_field(data, "description", default="")
+            category = self._validate_string_field(data, "category", default=default_category)
+            skill_code = self._validate_string_field(data, "code", default="")
 
-        with catch_unexpected(SkillInstallError, "Unexpected error creating skill"):
+        with catch_unexpected(SkillInstallError, "Failed to create skill"):
             skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
             skill = {
                 "id": skill_id,
@@ -217,21 +199,16 @@ class SkillsManager:
         return self._add_custom_skill("custom", data, "custom", "custom")
 
     def delete_skill(self, skill_id: str) -> bool:
-        with catch_unexpected(SkillInstallError, "Unexpected error deleting skill"):
-            try:
-                if skill := next((s for s in self._custom_skills if s["id"] == skill_id), None):
-                    # Remove file if exists
-                    filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-                    if filepath.exists():
-                        try:
-                            filepath.unlink()
-                        except OSError as e:
-                            raise SkillInstallError(f"Failed to delete skill file: {e}") from e
-                    self._custom_skills.remove(skill)
-                    self._save()
-                    return True
-            except (TypeError, KeyError) as e:
-                raise SkillValidationError("Invalid skill data provided") from e
+        with catch_unexpected(SkillInstallError, "Failed to delete skill"):
+            if skill := next((s for s in self._custom_skills if s["id"] == skill_id), None):
+                # Remove file if exists
+                filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
+                if filepath.exists():
+                    with catch_unexpected(SkillInstallError, "Failed to delete skill file"):
+                        filepath.unlink()
+                self._custom_skills.remove(skill)
+                self._save()
+                return True
 
         raise SkillNotFoundError("Skill not found")
 
@@ -241,27 +218,19 @@ class SkillsManager:
         if not isinstance(url, str):
             raise SkillValidationError("Invalid URL format: URL must be a string")
 
-        with catch_unexpected(SkillValidationError, "Unexpected error parsing URL"):
-            try:
-                parsed_url = urlparse(url)
-            except (ValueError, AttributeError, TypeError) as e:
-                raise SkillValidationError(f"Invalid URL format: {e}") from e
+        with catch_unexpected(SkillValidationError, "Invalid URL format"):
+            parsed_url = urlparse(url)
 
         if parsed_url.scheme not in ("http", "https"):
             raise SkillValidationError("Invalid URL scheme. Only http and https are allowed.")
         if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
             raise SkillValidationError("Invalid URL hostname. Localhost is not allowed.")
 
-        with catch_unexpected(SkillInstallError, "Unexpected error downloading skill"):
-            try:
-                async with httpx.AsyncClient() as client:
-                    resp = await client.get(url)
-                    resp.raise_for_status()
-                    code = resp.text
-            except httpx.HTTPStatusError as e:
-                raise SkillInstallError(f"HTTP error occurred: {e.response.status_code} {e.response.reason_phrase}") from e
-            except httpx.RequestError as e:
-                raise SkillInstallError(f"Request error occurred: {str(e)}") from e
+        with catch_unexpected(SkillInstallError, "Failed to download skill"):
+            async with httpx.AsyncClient() as client:
+                resp = await client.get(url)
+                resp.raise_for_status()
+                code = resp.text
 
         data = {
             "name": name or "Imported Skill",
