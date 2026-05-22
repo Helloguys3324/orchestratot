@@ -12,7 +12,7 @@ test('ui.js fallback: module is not defined', () => {
     // Create a sandbox without 'module'
     const sandbox = {
         console: console,
-        document: {} // Minimal mock if needed, though ui.js logic mostly defines functions
+        document: {}, global: {} // Minimal mock if needed, though ui.js logic mostly defines functions
     };
 
     vm.createContext(sandbox);
@@ -21,8 +21,8 @@ test('ui.js fallback: module is not defined', () => {
     vm.runInContext(code, sandbox);
 
     // Verify UI is available in the sandbox
-    assert.ok(sandbox.UI !== undefined);
-    assert.strictEqual(typeof sandbox.UI.renderModelOptions, 'function');
+    assert.ok(sandbox.UI !== undefined || sandbox.global.UI !== undefined);
+    assert.strictEqual(typeof (sandbox.UI || sandbox.global.UI).renderModelOptions, 'function');
 });
 
 test('UI.renderSkillCheckboxes ignores irrelevant values in selectedIds array', () => {

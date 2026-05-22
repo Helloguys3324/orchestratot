@@ -66,3 +66,8 @@ const UI = {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = UI;
 }
+if (typeof window !== 'undefined') {
+  window.UI = UI;
+} else if (typeof global !== 'undefined') {
+  global.UI = UI;
+}

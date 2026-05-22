@@ -30,6 +30,14 @@ def _get_path_env(key: str, default_subpath: str) -> Path:
         return p if p.is_absolute() else (BASE_DIR / p).resolve()
     return BASE_DIR / default_subpath
 
+def _get_field_default(field_info):
+    if field_info.default_factory is not None:
+        return field_info.default_factory()
+    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
+        return field_info.get_default()
+    return None
+
+
 # Since we can't initialize ConfigModel here without causing cyclical/missing dependency
 # at import time when tests run (as ConfigModel relies on ENV_FILE which is not fully
 # defined in scope sometimes during tests execution), we'll parse paths manually but
@@ -75,10 +83,9 @@ class ConfigModel(BaseSettings):
     def validate_paths(cls, v, info):
         if v is None or str(v).strip() == "" or str(v) == ".":
             field_info = cls.model_fields[info.field_name]
-            if field_info.default_factory is not None:
-                return field_info.default_factory()
-            elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
-                return field_info.get_default()
+            default_val = _get_field_default(field_info)
+            if default_val is not None:
+                return default_val
 
         p = Path(str(v).strip())
         return p if p.is_absolute() else (BASE_DIR / p).resolve()
@@ -123,10 +130,9 @@ class ConfigModel(BaseSettings):
     def validate_empty_strings(cls, v, info):
         if v == "" or (isinstance(v, str) and not v.strip()):
             field_info = cls.model_fields[info.field_name]
-            if field_info.default_factory is not None:
-                return field_info.default_factory()
-            elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
-                return field_info.get_default()
+            default_val = _get_field_default(field_info)
+            if default_val is not None:
+                return default_val
         return v
 
     @field_validator('api_key', mode='before')
@@ -182,10 +188,9 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
                 else:
                     field_info = ConfigModel.model_fields[k]
                     # Handle both default values and default factories
-                    if field_info.default_factory is not None:
-                        defaults[k] = field_info.default_factory()
-                    elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
-                        defaults[k] = field_info.get_default()
+                    default_val = _get_field_default(field_info)
+                    if default_val is not None:
+                        defaults[k] = default_val
 
         # Explicit settings take precedence
         merged = {**defaults, **input_kwargs}
