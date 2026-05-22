@@ -622,3 +622,17 @@ def test_validate_empty_strings_default_factory():
     # uses default and not default_factory, it won't hit line 118, but it tests the logic.
     model = ConfigModel(default_model="")
     assert model.default_model == "gemini-2.5-flash"
+
+def test_autogen_env_file_whitespace_fallback():
+    import subprocess
+    import sys
+    import os
+    env = os.environ.copy()
+    env["AUTOGEN_ENV_FILE"] = "   "
+    env["PYTHONPATH"] = "."
+    code = (
+        "from backend.config import ENV_FILE, BASE_DIR\n"
+        "print(str(ENV_FILE) == str(BASE_DIR / '.env'))\n"
+    )
+    result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
+    assert "True" in result.stdout
