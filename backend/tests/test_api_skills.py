@@ -68,12 +68,12 @@ def test_install_skill_validation_error(mock_install):
 
 @patch("backend.api.skills.skills_manager.install_from_url")
 def test_install_skill_install_error(mock_install):
-    mock_install.side_effect = SkillInstallError("HTTP Error")
+    mock_install.side_effect = SkillInstallError("Failed to download skill")
 
     response = client.post("/api/skills/install", json={"url": "https://example.com"})
 
     assert response.status_code == 500
-    assert response.json()["detail"] == "HTTP Error"
+    assert response.json()["detail"] == "Failed to download skill"
 
 def test_install_skill_missing_url():
     response = client.post("/api/skills/install", json={})
