@@ -636,3 +636,41 @@ def test_autogen_env_file_whitespace_fallback():
     )
     result = subprocess.run([sys.executable, "-c", code], env=env, capture_output=True, text=True)
     assert "True" in result.stdout
+
+def test_validate_config_concurrent_safety(monkeypatch):
+    """Verify that configuration parsing does not mutate global os.environ."""
+    import threading
+    from backend.config import _validate_config
+    import os
+
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "invalid")
+
+    errors = []
+
+    def validate_loop():
+        try:
+            for _ in range(50):
+                _validate_config()
+        except Exception as e:
+            errors.append(e)
+
+    def read_loop():
+        try:
+            for _ in range(50):
+                val = os.environ.get("AUTOGEN_TEMPERATURE")
+                if val is None:
+                    errors.append("Race condition triggered! os.environ modified temporarily.")
+        except Exception as e:
+            errors.append(e)
+
+    t1 = threading.Thread(target=validate_loop)
+    t2 = threading.Thread(target=read_loop)
+
+    t1.start()
+    t2.start()
+
+    t1.join()
+    t2.join()
+
+    assert not errors, f"Errors found during concurrent execution: {errors}"
+    assert os.environ.get("AUTOGEN_TEMPERATURE") == "invalid"

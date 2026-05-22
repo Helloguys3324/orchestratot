@@ -171,11 +171,6 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
         model = ConfigModel(**input_kwargs)
     except ValidationError as e:
         invalid_keys = [err.get('loc')[0] for err in e.errors() if err.get('loc')]
-        # Temporarily remove invalid keys from os.environ to prevent re-reading invalid env vars
-        old_envs = {
-            f"AUTOGEN_{k.upper()}": os.environ.pop(f"AUTOGEN_{k.upper()}", None)
-            for k in invalid_keys if isinstance(k, str)
-        }
 
         UPDATABLE_FIELDS = set(ConfigModel.model_fields.keys())
 
@@ -192,7 +187,10 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
                     if default_val is not None:
                         defaults[k] = default_val
 
-        # Explicit settings take precedence
+        # Explicit settings take precedence.
+        # Since init_kwargs take priority over environment variables in settings_customise_sources,
+        # explicitly passing the default overrides will safely bypass the invalid environment variables
+        # without mutating os.environ.
         merged = {**defaults, **input_kwargs}
         kwargs = {k: merged[k] for k in UPDATABLE_FIELDS if k in merged}
 
@@ -202,11 +200,6 @@ def _validate_config(input_kwargs: dict = None) -> ConfigModel:
         except ValidationError as final_e:
             # Re-raise if explicitly provided values are themselves invalid
             raise final_e
-        finally:
-            # Restore the environment variables
-            for env_key, val in old_envs.items():
-                if val is not None:
-                    os.environ[env_key] = val
 
     return model
 
