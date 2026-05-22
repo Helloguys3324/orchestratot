@@ -52,10 +52,11 @@ rm -f .coverage
 # Note: When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
-# Validate JSON syntax (required if JSON files are modified)
+# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
-# Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.
 ```
+
+# Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.
 
 If validation cannot be run, the PR body must clearly explain why.
 
