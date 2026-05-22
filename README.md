@@ -68,7 +68,7 @@ stateDiagram-v2
     ValidationChecks --> SecretsScan: scan_secrets.py
     ValidationChecks --> PythonCompile: compileall
     ValidationChecks --> BackendTests: pytest
-    ValidationChecks --> FrontendTests: node --test
+    ValidationChecks --> FrontendTests: node --experimental-test-coverage --test
     SecretsScan --> PR_Passed: All Pass
     PythonCompile --> PR_Passed: All Pass
     BackendTests --> PR_Passed: All Pass
