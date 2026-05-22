@@ -157,16 +157,9 @@ venv\Scripts\activate
 
 *Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. The sandbox environment will block the execution. Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).*
 
-Once activated, install the necessary packages for the backend and testing tools:
-```bash
-# Core backend dependencies
-pip install -q -r backend/requirements.txt
+Once activated, install the necessary packages for the backend and testing tools. See the [Validation Commands](#validation-commands) section for the full suite of dependency installation and validation commands.
 
-# Local backend testing dependencies
-pip install -q pytest pytest-cov
-
-*Note: For async tests, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
-```
+*(Note for testing: For async tests, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.)*
 
 ### 3. Secrets & Configuration
 Never commit secrets, API keys, or credentials. Follow these steps to configure your local runtime:
@@ -283,11 +276,9 @@ rm -f .coverage
 ### Frontend Validation
 ```bash
 # Run frontend tests using native node runner (no extra npm packages required)
-# (Note: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite.)
-# Note: Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage.
-# When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 ```
+*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 ### File-Specific Validation
 ```bash
