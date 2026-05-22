@@ -14,10 +14,6 @@ def handle_skill_exceptions():
         raise HTTPException(status_code=400, detail=str(e))
     except SkillNotFoundError as e:
         raise HTTPException(status_code=404, detail=str(e))
-    except SkillInstallError as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    except SkillError as e:
-        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
