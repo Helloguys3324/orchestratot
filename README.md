@@ -153,6 +153,10 @@ source venv/bin/activate
 
 # Activate the virtual environment (Windows)
 venv\Scripts\activate
+
+# Install dependencies
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-cov
 ```
 
 *Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. The sandbox environment will block the execution. Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).*
