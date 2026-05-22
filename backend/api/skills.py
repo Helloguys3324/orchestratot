@@ -1,21 +1,10 @@
-from contextlib import contextmanager, asynccontextmanager
+from contextlib import asynccontextmanager
 from fastapi import APIRouter, HTTPException
 from backend.state import skills_manager
 from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
 from backend.api.schemas import SkillCreateRequest, SkillInstallRequest
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
-
-@contextmanager
-def handle_skill_exceptions():
-    try:
-        yield
-    except SkillValidationError as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    except SkillNotFoundError as e:
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 @asynccontextmanager
 async def async_handle_skill_exceptions():
@@ -30,23 +19,23 @@ async def async_handle_skill_exceptions():
 
 @router.get("")
 async def api_list_skills():
-    with handle_skill_exceptions():
+    async with async_handle_skill_exceptions():
         return skills_manager.list_skills()
 
 @router.get("/marketplace")
 async def api_list_marketplace():
-    with handle_skill_exceptions():
+    async with async_handle_skill_exceptions():
         return skills_manager.list_marketplace()
 
 @router.post("")
 async def api_create_skill(request: SkillCreateRequest):
     data = request.model_dump(exclude_unset=True)
-    with handle_skill_exceptions():
+    async with async_handle_skill_exceptions():
         return skills_manager.create_skill(data)
 
 @router.delete("/{skill_id}")
 async def api_delete_skill(skill_id: str):
-    with handle_skill_exceptions():
+    async with async_handle_skill_exceptions():
         skills_manager.delete_skill(skill_id)
         return {"status": "ok"}
 

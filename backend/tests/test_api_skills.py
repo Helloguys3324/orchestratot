@@ -131,8 +131,9 @@ def test_create_skill_success(mock_create):
     assert response.json() == {"id": "custom_123"}
     mock_create.assert_called_once_with({"name": "test_skill"})
 
-def test_handle_skill_exceptions_unhandled():
-    from backend.api.skills import handle_skill_exceptions
+@pytest.mark.anyio
+async def test_handle_skill_exceptions_unhandled():
+    from backend.api.skills import async_handle_skill_exceptions
     with pytest.raises(Exception, match="unhandled"):
-        with handle_skill_exceptions():
+        async with async_handle_skill_exceptions():
             raise Exception("unhandled")
