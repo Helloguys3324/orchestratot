@@ -502,6 +502,16 @@ def test_load_skill_error_not_wrapped(mock_load_json) -> None:
         SkillsManager()
     assert type(exc.value) is SkillError
 
+@patch("backend.skills.manager.httpx.AsyncClient")
+def test_install_from_url_skill_error_not_wrapped(mock_client_class, manager) -> None:
+    mock_client = MagicMock()
+    mock_client.get = AsyncMock(side_effect=SkillInstallError("Base custom install error"))
+    mock_client_class.return_value.__aenter__.return_value = mock_client
+
+    with pytest.raises(SkillInstallError, match="Base custom install error") as exc:
+        asyncio.run(manager.install_from_url("http://example.com/skill.py"))
+    assert type(exc.value) is SkillInstallError
+
 @patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
 def test_list_skills_skill_error_not_wrapped(mock_builtin, manager) -> None:
     mock_builtin.__add__.side_effect = SkillError("List skill error")

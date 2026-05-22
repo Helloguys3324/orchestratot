@@ -4,7 +4,8 @@ Skills Manager — handles skill CRUD, loading, and marketplace.
 import uuid
 import importlib.util
 import httpx
-from contextlib import contextmanager
+from contextlib import contextmanager, asynccontextmanager
+from collections.abc import Iterator, AsyncIterator
 import json
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
@@ -116,7 +117,16 @@ MARKETPLACE_SKILLS = [
 
 
 @contextmanager
-def catch_unexpected(error_cls: type[SkillError], msg_prefix: str):
+def catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> Iterator[None]:
+    try:
+        yield
+    except SkillError:
+        raise
+    except Exception as e:
+        raise error_cls(f"{msg_prefix}: {e}") from e
+
+@asynccontextmanager
+async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> AsyncIterator[None]:
     try:
         yield
     except SkillError:
@@ -228,7 +238,7 @@ class SkillsManager:
         if parsed_url.hostname in ("localhost", "127.0.0.1", "0.0.0.0", "::1"):
             raise SkillValidationError("Invalid URL hostname. Localhost is not allowed.")
 
-        with catch_unexpected(SkillInstallError, "Failed to download skill"):
+        async with async_catch_unexpected(SkillInstallError, "Failed to download skill"):
             async with httpx.AsyncClient() as client:
                 resp = await client.get(url)
                 resp.raise_for_status()
