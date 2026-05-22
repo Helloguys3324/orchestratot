@@ -74,7 +74,7 @@ python -m json.tool <filepath>
    touch AUTOPILOT_STOP
    ```
 2. Manually inspect the recent GitHub Actions logs to identify the root cause.
-3. Once resolved, you can resume the process by deleting or renaming the `AUTOPILOT_STOP` file.
+3. Once resolved, you can resume the process by deleting the `AUTOPILOT_STOP` file.
 
 ### Issue: Safe Automerge is not triggering
 **Symptom:** A PR created by the AI Factory has passed validation but is not automatically merging.

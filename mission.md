@@ -25,6 +25,6 @@ Operating rules:
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
 - Do not rewrite project history.
-- Treat `AUTOPILOT_STOP` as a hard stop for autonomous work.
+- Treat `AUTOPILOT_STOP` as a hard stop for autonomous work. To resume, delete the `AUTOPILOT_STOP` file.
 - Ensure local setup and operations documentation is always accurate, clear, and reflects the current repository state.
 - Visually inspect and validate frontend UI changes locally before opening a PR.
