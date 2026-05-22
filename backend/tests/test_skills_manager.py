@@ -17,17 +17,17 @@ def manager(mock_load_json):
 
 def test_list_skills_malformed(manager):
     manager._custom_skills = {"not": "list"}
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+    with pytest.raises(SkillError, match="Unexpected error listing skills"):
         manager.list_skills()
 
 def test_get_skill_malformed(manager):
     manager._custom_skills = ["not a dict"]
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+    with pytest.raises(SkillError, match="Unexpected error retrieving skill"):
         manager.get_skill("123")
 
 def test_delete_skill_malformed(manager):
     manager._custom_skills = [{"no_id": "value"}]
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided"):
+    with pytest.raises(SkillError, match="Unexpected error deleting skill"):
         manager.delete_skill("123")
 
 
@@ -455,13 +455,13 @@ def test_save_generic_exception(mock_save_json):
 @patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
 def test_list_skills_generic_exception(mock_builtin, manager):
     mock_builtin.__add__.side_effect = RuntimeError("List error")
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided: List error"):
+    with pytest.raises(SkillError, match="Unexpected error listing skills: List error"):
         manager.list_skills()
 
 @patch("backend.skills.manager.BUILTIN_SKILLS", new_callable=MagicMock)
 def test_get_skill_generic_exception(mock_builtin, manager):
     mock_builtin.__add__.side_effect = RuntimeError("Get error")
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided: Get error"):
+    with pytest.raises(SkillError, match="Unexpected error retrieving skill: Get error"):
         manager.get_skill("some_id")
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")

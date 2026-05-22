@@ -148,14 +148,14 @@ class SkillsManager:
             save_json(SKILLS_FILE, self._custom_skills)
 
     def list_skills(self) -> list[dict]:
-        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+        with catch_unexpected(SkillError, "Unexpected error listing skills"):
             return BUILTIN_SKILLS + self._custom_skills
 
     def list_marketplace(self) -> list[dict]:
         return MARKETPLACE_SKILLS
 
     def get_skill(self, skill_id: str) -> dict | None:
-        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+        with catch_unexpected(SkillError, "Unexpected error retrieving skill"):
             if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
                 return s
 
@@ -209,7 +209,7 @@ class SkillsManager:
         return self._add_custom_skill("custom", data, "custom", "custom")
 
     def delete_skill(self, skill_id: str) -> bool:
-        with catch_unexpected(SkillValidationError, "Invalid skill data provided"):
+        with catch_unexpected(SkillError, "Unexpected error deleting skill"):
             skill = next((s for s in self._custom_skills if s["id"] == skill_id), None)
 
         if skill:
