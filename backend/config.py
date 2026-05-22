@@ -21,7 +21,10 @@ load_dotenv(dotenv_path=ENV_FILE)
 
 def _get_path_env(key: str, default_subpath: str) -> Path:
     val = os.environ.get(key)
-    return Path(val) if val and val.strip() else BASE_DIR / default_subpath
+    if val and val.strip():
+        p = Path(val.strip())
+        return p if p.is_absolute() else (BASE_DIR / p).resolve()
+    return BASE_DIR / default_subpath
 
 # Since we can't initialize ConfigModel here without causing cyclical/missing dependency
 # at import time when tests run (as ConfigModel relies on ENV_FILE which is not fully
@@ -66,13 +69,15 @@ class ConfigModel(BaseSettings):
 
     @field_validator('data_dir', 'skills_dir', 'custom_skills_dir', 'workspace_dir', mode='before')
     def validate_paths(cls, v, info):
-        if not v or str(v).strip() == "" or str(v) == ".":
+        if v is None or str(v).strip() == "" or str(v) == ".":
             field_info = cls.model_fields[info.field_name]
             if field_info.default_factory is not None:
                 return field_info.default_factory()
             elif getattr(field_info, 'get_default', None) and field_info.get_default() is not None and field_info.get_default() is not PydanticUndefined:
                 return field_info.get_default()
-        return v
+
+        p = Path(str(v).strip())
+        return p if p.is_absolute() else (BASE_DIR / p).resolve()
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
