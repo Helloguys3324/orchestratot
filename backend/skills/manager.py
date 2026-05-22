@@ -152,7 +152,8 @@ class SkillsManager:
             return BUILTIN_SKILLS + self._custom_skills
 
     def list_marketplace(self) -> list[dict]:
-        return MARKETPLACE_SKILLS
+        with catch_unexpected(SkillError, "Unexpected error listing marketplace"):
+            return MARKETPLACE_SKILLS
 
     def get_skill(self, skill_id: str) -> dict | None:
         with catch_unexpected(SkillError, "Unexpected error retrieving skill"):
@@ -215,10 +216,13 @@ class SkillsManager:
         if skill:
             # Remove file if exists
             filepath = CUSTOM_SKILLS_DIR / f"{skill_id}.py"
-            if filepath.exists():
-                with catch_unexpected(SkillInstallError, "Failed to delete skill file"):
+            with catch_unexpected(SkillInstallError, "Failed to delete skill file"):
+                if filepath.exists():
                     filepath.unlink()
-            self._custom_skills.remove(skill)
+
+            with catch_unexpected(SkillError, "Unexpected error deleting skill"):
+                self._custom_skills.remove(skill)
+
             self._save()
             return True
 
