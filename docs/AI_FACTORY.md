@@ -11,8 +11,9 @@ This repository is configured to run Jules as an autonomous GitHub development f
    - Value: your Jules API key
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
    - Value: your LLM provider API key
-4. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
-5. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root.
+4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
+5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
+6. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root.
 
 **Warning: Infrastructure Lock**
 *Infrastructure files including `.github/workflows/`, `.github/scripts/`, and `.github/CODEOWNERS` are securely locked for AI agents. These files must only be modified via human PRs outside of the automated AI Factory framework.*
@@ -125,7 +126,7 @@ rm -f .coverage
 # When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
-# Validate JSON syntax (if JSON files are modified)
+# Validate JSON syntax (required if any JSON files are modified)
 python -m json.tool <filepath>
 ```
 

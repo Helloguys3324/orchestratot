@@ -33,6 +33,9 @@ Run these before proposing a code PR when practical:
 # Verify Python syntax and compilation
 python -m compileall backend skills_library run.py
 
+# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+# Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).
+
 # Ensure no API keys, credentials, or secrets are accidentally committed
 python .github/scripts/scan_secrets.py
 
@@ -46,6 +49,7 @@ rm -f .coverage
 
 # Run frontend tests using native node runner
 # (Note: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite.)
+# Note: When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output.
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
 # Validate JSON syntax (required if JSON files are modified)
@@ -1762,6 +1766,9 @@ Recommended validation examples:
 
 ```text
 python -m compileall backend skills_library run.py
+
+# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+# Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).
 python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
