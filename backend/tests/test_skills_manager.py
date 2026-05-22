@@ -523,3 +523,22 @@ def test_add_custom_skill_unexpected_error(manager):
     manager._custom_skills = None  # Force an AttributeError on .append
     with pytest.raises(SkillInstallError, match="Unexpected error creating skill"):
         manager._add_custom_skill("custom", {"name": "test"}, "custom", "custom")
+
+@patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
+@patch("backend.skills.manager.SkillsManager._save")
+def test_delete_skill_exists_error(mock_save, mock_dir, manager) -> None:
+    manager._custom_skills = [{"id": "custom_1"}]
+    mock_file = MagicMock()
+    mock_file.exists.side_effect = OSError("Exists error")
+    mock_dir.__truediv__.return_value = mock_file
+
+    with pytest.raises(SkillInstallError, match="Failed to delete skill file: Exists error"):
+        manager.delete_skill("custom_1")
+
+def test_delete_skill_remove_error(manager) -> None:
+    manager._custom_skills = MagicMock()
+    manager._custom_skills.__iter__.return_value = [{"id": "custom_1"}]
+    manager._custom_skills.remove.side_effect = ValueError("Remove error")
+
+    with pytest.raises(SkillError, match="Unexpected error deleting skill: Remove error"):
+        manager.delete_skill("custom_1")
