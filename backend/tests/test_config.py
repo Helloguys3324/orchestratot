@@ -739,3 +739,21 @@ def test_reload_config_env_file_absolute(monkeypatch):
     importlib.reload(backend.config)
 
     assert str(backend.config.ENV_FILE) == "/tmp/absolute2.env"
+
+def test_api_key_placeholder_ignored(monkeypatch):
+    from backend.config import ConfigModel
+    monkeypatch.setenv("AUTOGEN_API_KEY", "your_api_key_here")
+    model = ConfigModel()
+    assert model.api_key.get_secret_value() == ""
+    monkeypatch.delenv("AUTOGEN_API_KEY", raising=False)
+
+def test_configuration_parsing_ergonomics_from_env(monkeypatch):
+    from backend.config import ConfigModel
+    # Test valid configuration overrides
+    monkeypatch.setenv("AUTOGEN_TEMPERATURE", "0.85")
+    monkeypatch.setenv("AUTOGEN_MAX_ROUNDS", "42")
+    model = ConfigModel()
+    assert model.temperature == 0.85
+    assert model.max_rounds == 42
+    monkeypatch.delenv("AUTOGEN_TEMPERATURE", raising=False)
+    monkeypatch.delenv("AUTOGEN_MAX_ROUNDS", raising=False)
