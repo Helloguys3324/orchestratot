@@ -14,7 +14,7 @@ def test_create_skill_base_error(mock_create):
     response = client.post("/api/skills", json={"name": ""})
 
     assert response.status_code == 500
-    assert response.json()["detail"] == "Generic skill error"
+    assert response.json()["detail"] == {"error": "SkillError", "message": "Generic skill error"}
     mock_create.assert_called_once_with({"name": ""})
 
 @patch("backend.api.skills.skills_manager.create_skill")
@@ -24,7 +24,7 @@ def test_create_skill_validation_error(mock_create):
     response = client.post("/api/skills", json={"name": ""})
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "Invalid skill name"
+    assert response.json()["detail"] == {"error": "SkillValidationError", "message": "Invalid skill name"}
     mock_create.assert_called_once_with({"name": ""})
 
 @patch("backend.api.skills.skills_manager.create_skill")
@@ -34,7 +34,7 @@ def test_create_skill_install_error(mock_create):
     response = client.post("/api/skills", json={"name": "test"})
 
     assert response.status_code == 500
-    assert response.json()["detail"] == "Disk is full"
+    assert response.json()["detail"] == {"error": "SkillInstallError", "message": "Disk is full"}
     mock_create.assert_called_once_with({"name": "test"})
 
 @patch("backend.api.skills.skills_manager.delete_skill")
@@ -44,7 +44,7 @@ def test_delete_skill_not_found(mock_delete):
     response = client.delete("/api/skills/missing_id")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == "Skill not found"
+    assert response.json()["detail"] == {"error": "SkillNotFoundError", "message": "Skill not found"}
     mock_delete.assert_called_once_with("missing_id")
 
 @patch("backend.api.skills.skills_manager.delete_skill")
@@ -54,7 +54,7 @@ def test_delete_skill_install_error(mock_delete):
     response = client.delete("/api/skills/123")
 
     assert response.status_code == 500
-    assert response.json()["detail"] == "Permission denied"
+    assert response.json()["detail"] == {"error": "SkillInstallError", "message": "Permission denied"}
     mock_delete.assert_called_once_with("123")
 
 @patch("backend.api.skills.skills_manager.install_from_url")
@@ -64,7 +64,7 @@ def test_install_skill_validation_error(mock_install):
     response = client.post("/api/skills/install", json={"url": "ftp://example.com"})
 
     assert response.status_code == 400
-    assert response.json()["detail"] == "Invalid URL scheme"
+    assert response.json()["detail"] == {"error": "SkillValidationError", "message": "Invalid URL scheme"}
 
 @patch("backend.api.skills.skills_manager.install_from_url")
 def test_install_skill_install_error(mock_install):
@@ -73,7 +73,7 @@ def test_install_skill_install_error(mock_install):
     response = client.post("/api/skills/install", json={"url": "https://example.com"})
 
     assert response.status_code == 500
-    assert response.json()["detail"] == "Failed to download skill"
+    assert response.json()["detail"] == {"error": "SkillInstallError", "message": "Failed to download skill"}
 
 def test_install_skill_missing_url():
     response = client.post("/api/skills/install", json={})
@@ -84,14 +84,14 @@ def test_list_skills_validation_error(mock_list):
     mock_list.side_effect = SkillValidationError("test error")
     response = client.get("/api/skills")
     assert response.status_code == 400
-    assert response.json()["detail"] == "test error"
+    assert response.json()["detail"] == {"error": "SkillValidationError", "message": "test error"}
 
 @patch("backend.api.skills.skills_manager.list_marketplace")
 def test_list_marketplace_validation_error(mock_list):
     mock_list.side_effect = SkillValidationError("test error")
     response = client.get("/api/skills/marketplace")
     assert response.status_code == 400
-    assert response.json()["detail"] == "test error"
+    assert response.json()["detail"] == {"error": "SkillValidationError", "message": "test error"}
 
 @patch("backend.api.skills.skills_manager.delete_skill")
 def test_delete_skill_success(mock_delete):
@@ -134,6 +134,11 @@ def test_create_skill_success(mock_create):
 @pytest.mark.anyio
 async def test_handle_skill_exceptions_unhandled():
     from backend.api.skills import async_handle_skill_exceptions
-    with pytest.raises(Exception, match="unhandled"):
+    from fastapi import HTTPException
+
+    with pytest.raises(HTTPException) as exc:
         async with async_handle_skill_exceptions():
-            raise Exception("unhandled")
+            raise Exception("unhandled error")
+
+    assert exc.value.status_code == 500
+    assert exc.value.detail == {"error": "InternalServerError", "message": "unhandled error"}
