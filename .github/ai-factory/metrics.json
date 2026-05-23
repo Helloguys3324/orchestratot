@@ -33,10 +33,10 @@
     "architect": 0,
     "implementer": 2,
     "tester": 1,
+    "reviewer": 1,
     "refactorer": 1,
     "documenter": 1,
-    "security": 1,
-    "reviewer": 1
+    "security": 1
   },
   "lane_distribution": {
     "backend": 3,
