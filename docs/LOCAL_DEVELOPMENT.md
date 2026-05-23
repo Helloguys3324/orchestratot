@@ -78,7 +78,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `JULES_API_KEY`
      Value: your Jules API key
    - Name: `GH_PAT`
-     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step
+     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: This is no longer strictly required for basic CI, as GITHUB_TOKEN is now used as a fallback, but a PAT is still needed if you want workflows to trigger other workflows upon merge).
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
    *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function.)*
@@ -125,6 +125,7 @@ pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 rm -f .coverage
 node --experimental-test-coverage --test frontend/tests/*.test.js
+rm -rf coverage/
 # python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
