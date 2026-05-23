@@ -142,6 +142,9 @@ class ConfigModel(BaseSettings):
             return v
 
         v_str = v.get_secret_value() if isinstance(v, SecretStr) else str(v)
+        if v_str == "your_api_key_here":
+            return ""
+
         if v_str and (len(v_str) < 10 or re.search(r'\s', v_str)):
             raise ValueError("API key must be at least 10 characters and contain no whitespace.")
         return v
