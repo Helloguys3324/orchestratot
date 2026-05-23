@@ -9,8 +9,7 @@ This repository is configured to run Jules as an autonomous GitHub development f
 3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
-   - Name: `AUTOGEN_API_KEY` (if your models require authentication)
-   - Value: your LLM provider API key
+   *(Note: `AUTOGEN_API_KEY` is not required as a GitHub Actions secret, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
 6. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root. To resume, delete the `AUTOPILOT_STOP` file.
@@ -112,9 +111,8 @@ python .github/scripts/scan_secrets.py
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
-rm -f .coverage
 node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/
+rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*

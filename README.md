@@ -121,9 +121,8 @@ cp .env.example .env
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
-rm -f .coverage
 node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/
+rm -rf coverage/ frontend/coverage/ .coverage
 
 # 4. Start the application
 python run.py

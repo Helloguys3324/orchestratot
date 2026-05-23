@@ -19,9 +19,8 @@ Operating rules:
   - `python .github/scripts/scan_secrets.py`
   - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov`
   - `PYTHONPATH=. python -m pytest -q`
-  - `rm -f .coverage`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
-  - `rm -rf coverage/`
+  - `rm -rf coverage/ frontend/coverage/ .coverage`
   - `python -m json.tool <filepath>` (run individually on changed JSON files)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
