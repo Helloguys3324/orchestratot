@@ -77,6 +77,8 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
 3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). Do not use Environment Secrets or Repository Variables. The AI Factory workflows explicitly look for these Repository Secrets.
    - Name: `JULES_API_KEY`
      Value: your Jules API key
+   - Name: `GH_PAT`
+     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
    *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function.)*

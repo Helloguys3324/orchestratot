@@ -145,6 +145,7 @@ Never commit real API keys, credentials, or `.env` files to source control.
 **CI/CD Environments:**
 Use GitHub Actions **Repository Secrets** (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**) to securely store production and testing keys. Do not use Environment Secrets or Repository Variables, as workflows expect Repository Secrets. Required secrets include:
 - `JULES_API_KEY`: Your Jules API key for the AI Factory.
+- `GH_PAT`: A GitHub Personal Access Token with repository permissions for validation auto-merge.
 - `AUTOGEN_API_KEY`: Your LLM provider API key (if your models require authentication).
 
 **Local Development:**
