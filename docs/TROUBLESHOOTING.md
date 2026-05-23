@@ -60,7 +60,7 @@ python -m json.tool <filepath>
 
 ### Issue: Missing Repository Secrets in GitHub Actions
 **Symptom:** The AI Factory workflow fails early or tasks are abandoned because it cannot authenticate with the LLM or orchestration service.
-**Solution:** Ensure you have configured the required **Repository Secrets** in GitHub (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). You must define at least `JULES_API_KEY`, `GH_PAT` (optional, for validation auto-merge, GITHUB_TOKEN is used as fallback), and, if applicable, `AUTOGEN_API_KEY`. Do not use Environment Secrets or Repository Variables.
+**Solution:** Ensure you have configured the required **Repository Secrets** in GitHub (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). You must define at least `JULES_API_KEY` and `GH_PAT` (optional, for validation auto-merge, GITHUB_TOKEN is used as fallback). Do not use Environment Secrets or Repository Variables. (Note: `AUTOGEN_API_KEY` is strictly a local runtime requirement and should not be added to GitHub Actions secrets.)
 
 ### Issue: "Infrastructure Lock" PR rejection
 **Symptom:** The AI Factory bots or GitHub Actions are rejecting a pull request because it modifies `.github/workflows/`, `.github/scripts/`, or `.github/CODEOWNERS`.
