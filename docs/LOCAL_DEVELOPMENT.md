@@ -78,7 +78,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `JULES_API_KEY`
      Value: your Jules API key
    - Name: `GH_PAT`
-     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: This is no longer strictly required for basic CI, as GITHUB_TOKEN is now used as a fallback, but a PAT is still needed if you want workflows to trigger other workflows upon merge).
+     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: While GITHUB_TOKEN is used as a fallback in scheduled ticks, a PAT is strictly required in the validation workflow for auto-merge to trigger subsequent workflows).
    *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function. `AUTOGEN_API_KEY` is not required for CI/CD workflows, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs, otherwise PR creation will fail with permission errors.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
