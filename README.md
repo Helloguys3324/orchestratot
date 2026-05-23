@@ -184,7 +184,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    ```bash
    cp .env.example .env
    ```
-2. **Configure Credentials**: Your local `.env` file is meant for development. Key environment variables include:
+2. **Configure Credentials**: Your local `.env` file is meant for development. Open `.env` and replace placeholders with your actual keys. Key environment variables include:
    - `AUTOGEN_API_KEY`: Your language model API key.
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
    - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
@@ -212,20 +212,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
 
 ### 4. Running Tests
-To ensure code reliability, run both backend and frontend validation locally before submitting changes.
-
-**Backend Validation:**
-```bash
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov
-PYTHONPATH=. python -m pytest -q
-```
-*Note: If using `pytest --cov` locally, ensure the auto-generated `.coverage` binary artifact is deleted (e.g., `rm .coverage`) before final submission to prevent accidentally committing it.*
-
-**Frontend Validation:**
-```bash
-node --experimental-test-coverage --test frontend/tests/*.test.js
-```
+To ensure code reliability, run both backend and frontend validation locally before submitting changes. See the [Validation Commands](#validation-commands) section for the full suite of mandatory commands.
 
 ### 5. Continuous Integration & AI Factory
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
@@ -238,7 +225,8 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
      Value: your Jules API key
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
-4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs.
+   *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function.)*
+4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs, otherwise PR creation will fail with permission errors.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
 6. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root. To resume, delete the `AUTOPILOT_STOP` file.
 
