@@ -140,7 +140,7 @@ def test_create_skill_write_error(mock_save, mock_path, mock_uuid, manager):
         "code": "print('fail')"
     }
 
-    with pytest.raises(SkillError, match="Failed to write skill file: Disk full") as exc:
+    with pytest.raises(SkillError, match=r"Failed to write skill file: \w+ - Disk full") as exc:
         manager.create_skill(data)
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -172,7 +172,7 @@ def test_delete_skill_unlink_error(mock_save, mock_path, manager):
     mock_file_path.unlink.side_effect = OSError("Permission denied")
     mock_path.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillError, match="Failed to delete skill file: Permission denied") as exc:
+    with pytest.raises(SkillError, match=r"Failed to delete skill file: \w+ - Permission denied") as exc:
         manager.delete_skill("custom_1")
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -257,7 +257,7 @@ def test_install_from_url_write_error(mock_client_class, mock_dir, mock_uuid, ma
     mock_file_path.write_text.side_effect = OSError("Read only file system")
     mock_dir.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillError, match="Failed to write skill file: Read only file system") as exc:
+    with pytest.raises(SkillError, match=r"Failed to write skill file: \w+ - Read only file system") as exc:
         asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -325,27 +325,27 @@ def test_install_from_url_invalid_hostname(manager):
 
 def test_load_oserror():
     with patch("backend.skills.manager.load_json", side_effect=OSError("Read error")):
-        with pytest.raises(SkillError, match="Failed to load skills file: Read error"):
+        with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Read error"):
             SkillsManager()
 
 def test_save_oserror():
     with patch("backend.skills.manager.load_json", return_value=[]):
         manager = SkillsManager()
         with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
-            with pytest.raises(SkillError, match="Failed to save skills file: Write error"):
+            with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Write error"):
                 manager._save()
 
 def test_load_jsondecodeerror() -> None:
     import json
     with patch("backend.skills.manager.load_json", side_effect=json.JSONDecodeError("Corrupted JSON", "", 0)):
-        with pytest.raises(SkillError, match="Failed to load skills file: Corrupted JSON"):
+        with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Corrupted JSON"):
             SkillsManager()
 
 def test_save_typeerror() -> None:
     with patch("backend.skills.manager.load_json", return_value=[]):
         manager = SkillsManager()
         with patch("backend.skills.manager.save_json", side_effect=TypeError("Serialization error")):
-            with pytest.raises(SkillError, match="Failed to save skills file: Serialization error"):
+            with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Serialization error"):
                 manager._save()
 
 @patch("backend.skills.manager.uuid.uuid4")
@@ -365,7 +365,7 @@ def test_create_skill_write_oserror(mock_save, mock_path, mock_uuid, manager) ->
         "code": "print('fail')"
     }
 
-    with pytest.raises(SkillError, match="Failed to write skill file: Generic write error") as exc:
+    with pytest.raises(SkillError, match=r"Failed to write skill file: \w+ - Generic write error") as exc:
         manager.create_skill(data)
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -379,7 +379,7 @@ def test_delete_skill_unlink_oserror(mock_save, mock_path, manager) -> None:
     mock_file_path.unlink.side_effect = OSError("Generic unlink error")
     mock_path.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillError, match="Failed to delete skill file: Generic unlink error") as exc:
+    with pytest.raises(SkillError, match=r"Failed to delete skill file: \w+ - Generic unlink error") as exc:
         manager.delete_skill("custom_1")
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -403,7 +403,7 @@ def test_install_from_url_write_oserror(mock_client_class, mock_dir, mock_uuid, 
     mock_file_path.write_text.side_effect = OSError("Generic write error")
     mock_dir.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillError, match="Failed to write skill file: Generic write error") as exc:
+    with pytest.raises(SkillError, match=r"Failed to write skill file: \w+ - Generic write error") as exc:
         asyncio.run(manager.install_from_url("http://example.com/skill.py", name="Downloaded Skill"))
     assert isinstance(exc.value.__cause__, OSError)
 
@@ -421,20 +421,20 @@ def test_install_from_url_bytes_handling(manager):
 @patch("backend.skills.manager.SkillsManager._validate_string_field")
 def test_create_skill_attribute_error(mock_validate, manager):
     mock_validate.side_effect = AttributeError("Mocked attribute error")
-    with pytest.raises(SkillValidationError, match="Invalid skill data provided") as exc:
+    with pytest.raises(SkillValidationError, match="Invalid skill data provided: AttributeError - Mocked attribute error") as exc:
         manager.create_skill({"name": "test"})
     assert isinstance(exc.value.__cause__, AttributeError)
 
 @patch("backend.skills.manager.load_json", side_effect=RuntimeError("Generic load error"))
 def test_load_generic_exception(mock_load_json):
-    with pytest.raises(SkillError, match="Failed to load skills file: Generic load error"):
+    with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Generic load error"):
         SkillsManager()
 
 @patch("backend.skills.manager.save_json", side_effect=RuntimeError("Generic save error"))
 def test_save_generic_exception(mock_save_json):
     with patch("backend.skills.manager.load_json", return_value=[]):
         manager = SkillsManager()
-        with pytest.raises(SkillError, match="Failed to save skills file: Generic save error"):
+        with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Generic save error"):
             manager._save()
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -443,7 +443,7 @@ def test_write_skill_file_generic_exception(mock_dir, manager):
     mock_file_path.write_text.side_effect = RuntimeError("Write error")
     mock_dir.__truediv__.return_value = mock_file_path
 
-    with pytest.raises(SkillError, match="Failed to write skill file: Write error"):
+    with pytest.raises(SkillError, match=r"Failed to write skill file: \w+ - Write error"):
         manager._write_skill_file("test_id", "code")
 
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
@@ -452,7 +452,7 @@ def test_delete_skill_generic_exception(mock_dir, manager):
     mock_file = MagicMock()
     mock_file.unlink.side_effect = RuntimeError("Delete error")
     mock_dir.__truediv__.return_value = mock_file
-    with pytest.raises(SkillError, match="Failed to delete skill file: Delete error"):
+    with pytest.raises(SkillError, match=r"Failed to delete skill file: \w+ - Delete error"):
         manager.delete_skill("custom_1")
 
 @patch("backend.skills.manager.httpx.AsyncClient")
@@ -461,7 +461,7 @@ def test_install_from_url_generic_exception(mock_client_class, manager):
     mock_client.get = AsyncMock(side_effect=RuntimeError("Download error"))
     mock_client_class.return_value.__aenter__.return_value = mock_client
 
-    with pytest.raises(SkillInstallError, match="Failed to download skill: Download error"):
+    with pytest.raises(SkillInstallError, match=r"Failed to download skill: \w+ - Download error"):
         asyncio.run(manager.install_from_url("http://example.com/skill.py"))
 
 @patch("backend.skills.manager.load_json", side_effect=SkillError("Base custom error"))
@@ -495,6 +495,6 @@ def test_delete_skill_exists_error(mock_save, mock_dir, manager) -> None:
     mock_file.exists.side_effect = OSError("Exists error")
     mock_dir.__truediv__.return_value = mock_file
 
-    with pytest.raises(SkillError, match="Failed to delete skill file: Exists error"):
+    with pytest.raises(SkillError, match=r"Failed to delete skill file: \w+ - Exists error"):
         manager.delete_skill("custom_1")
 
