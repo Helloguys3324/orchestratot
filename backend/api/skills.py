@@ -10,15 +10,16 @@ router = APIRouter(prefix="/api/skills", tags=["skills"])
 async def async_handle_skill_exceptions():
     try:
         yield
-    except SkillValidationError as e:
-        raise HTTPException(status_code=400, detail={"error": "SkillValidationError", "message": str(e)})
-    except SkillNotFoundError as e:
-        raise HTTPException(status_code=404, detail={"error": "SkillNotFoundError", "message": str(e)})
     except HTTPException:
         raise
     except Exception as e:
+        status_codes = {
+            SkillValidationError: 400,
+            SkillNotFoundError: 404,
+        }
+        status_code = next((code for exc_type, code in status_codes.items() if isinstance(e, exc_type)), 500)
         error_type = type(e).__name__ if isinstance(e, SkillError) else "InternalServerError"
-        raise HTTPException(status_code=500, detail={"error": error_type, "message": str(e)})
+        raise HTTPException(status_code=status_code, detail={"error": error_type, "message": str(e)})
 
 @router.get("")
 async def api_list_skills():
