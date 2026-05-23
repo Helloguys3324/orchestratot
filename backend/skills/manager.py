@@ -148,17 +148,14 @@ class SkillsManager:
             save_json(SKILLS_FILE, self._custom_skills)
 
     def list_skills(self) -> list[dict]:
-        with catch_unexpected(SkillError, "Unexpected error listing skills"):
-            return BUILTIN_SKILLS + self._custom_skills
+        return BUILTIN_SKILLS + self._custom_skills
 
     def list_marketplace(self) -> list[dict]:
-        with catch_unexpected(SkillError, "Unexpected error listing marketplace"):
-            return MARKETPLACE_SKILLS
+        return MARKETPLACE_SKILLS
 
     def get_skill(self, skill_id: str) -> dict | None:
-        with catch_unexpected(SkillError, "Unexpected error retrieving skill"):
-            if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
-                return s
+        if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
+            return s
 
         raise SkillNotFoundError("Skill not found")
 
@@ -186,32 +183,30 @@ class SkillsManager:
             category = self._validate_string_field(data, "category", default=default_category)
             skill_code = self._validate_string_field(data, "code", default="")
 
-        with catch_unexpected(SkillError, "Unexpected error creating skill"):
-            skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
-            skill = {
-                "id": skill_id,
-                "name": name,
-                "icon": icon,
-                "description": description,
-                "category": category,
-                "builtin": False,
-                "enabled": True,
-                "source": source,
-                "code": skill_code,
-            }
-            if skill["code"]:
-                skill["file"] = self._write_skill_file(skill_id, skill["code"])
+        skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
+        skill = {
+            "id": skill_id,
+            "name": name,
+            "icon": icon,
+            "description": description,
+            "category": category,
+            "builtin": False,
+            "enabled": True,
+            "source": source,
+            "code": skill_code,
+        }
+        if skill["code"]:
+            skill["file"] = self._write_skill_file(skill_id, skill["code"])
 
-            self._custom_skills.append(skill)
-            self._save()
-            return skill
+        self._custom_skills.append(skill)
+        self._save()
+        return skill
 
     def create_skill(self, data: dict) -> dict:
         return self._add_custom_skill("custom", data, "custom", "custom")
 
     def delete_skill(self, skill_id: str) -> bool:
-        with catch_unexpected(SkillError, "Unexpected error deleting skill"):
-            skill = next((s for s in self._custom_skills if s["id"] == skill_id), None)
+        skill = next((s for s in self._custom_skills if s["id"] == skill_id), None)
 
         if skill:
             # Remove file if exists
@@ -220,9 +215,7 @@ class SkillsManager:
                 if filepath.exists():
                     filepath.unlink()
 
-            with catch_unexpected(SkillError, "Unexpected error deleting skill"):
-                self._custom_skills.remove(skill)
-
+            self._custom_skills.remove(skill)
             self._save()
             return True
 

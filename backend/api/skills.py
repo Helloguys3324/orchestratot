@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import APIRouter, HTTPException
 from backend.state import skills_manager
-from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.skills.errors import SkillError, SkillValidationError, SkillNotFoundError
 from backend.api.schemas import SkillCreateRequest, SkillInstallRequest
 
 router = APIRouter(prefix="/api/skills", tags=["skills"])
@@ -14,14 +14,11 @@ async def async_handle_skill_exceptions():
         raise HTTPException(status_code=400, detail={"error": "SkillValidationError", "message": str(e)})
     except SkillNotFoundError as e:
         raise HTTPException(status_code=404, detail={"error": "SkillNotFoundError", "message": str(e)})
-    except SkillInstallError as e:
-        raise HTTPException(status_code=500, detail={"error": "SkillInstallError", "message": str(e)})
-    except SkillError as e:
-        raise HTTPException(status_code=500, detail={"error": "SkillError", "message": str(e)})
     except HTTPException:
         raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail={"error": "InternalServerError", "message": str(e)})
+        error_type = type(e).__name__ if isinstance(e, SkillError) else "InternalServerError"
+        raise HTTPException(status_code=500, detail={"error": error_type, "message": str(e)})
 
 @router.get("")
 async def api_list_skills():
