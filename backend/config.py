@@ -16,20 +16,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ─── Load .env ──────────────────────────────────────────
 from dotenv import load_dotenv
 
+def _resolve_path(val: str | None, default_path: Path | None = None) -> Path | None:
+    """Helper to resolve a string path to an absolute Path, using BASE_DIR as root."""
+    if val and str(val).strip():
+        p = Path(str(val).strip())
+        return p if p.is_absolute() else (BASE_DIR / p).resolve()
+    return default_path
+
 _env_file_val = os.environ.get("AUTOGEN_ENV_FILE")
-if _env_file_val and _env_file_val.strip():
-    _env_p = Path(_env_file_val.strip())
-    ENV_FILE = _env_p if _env_p.is_absolute() else (BASE_DIR / _env_p).resolve()
-else:
-    ENV_FILE = BASE_DIR / ".env"
+ENV_FILE = _resolve_path(_env_file_val, BASE_DIR / ".env")
 load_dotenv(dotenv_path=ENV_FILE)
 
 def _get_path_env(key: str, default_subpath: str) -> Path:
-    val = os.environ.get(key)
-    if val and val.strip():
-        p = Path(val.strip())
-        return p if p.is_absolute() else (BASE_DIR / p).resolve()
-    return BASE_DIR / default_subpath
+    return _resolve_path(os.environ.get(key), BASE_DIR / default_subpath)
 
 def _get_field_default(field_info):
     if field_info.default_factory is not None:
@@ -88,8 +87,7 @@ class ConfigModel(BaseSettings):
             if default_val is not None:
                 return default_val
 
-        p = Path(str(v).strip())
-        return p if p.is_absolute() else (BASE_DIR / p).resolve()
+        return _resolve_path(str(v))
 
     model_config = SettingsConfigDict(
         env_file=str(ENV_FILE),
