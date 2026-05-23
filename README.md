@@ -108,14 +108,26 @@ flowchart TD
 ## Quickstart
 
 ```bash
+# 1. Set up virtual environment
 python3 -m venv venv
 source venv/bin/activate
+
+# 2. Install dependencies
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov  # testing dependencies
 cp .env.example .env
+
+# 3. Run validation commands (Node.js v20+ required for frontend tests)
+python -m compileall backend skills_library run.py
+python .github/scripts/scan_secrets.py
+PYTHONPATH=. python -m pytest -q
+rm -f .coverage
+node --experimental-test-coverage --test frontend/tests/*.test.js
+
+# 4. Start the application
 python run.py
 ```
-*(Note: Ensure Node.js (v20+) is installed for frontend testing. See [Local Development Setup](#local-development-setup) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
+*(Note: See [Local Development Setup](#local-development-setup) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
 
 ## Documentation
 
@@ -196,7 +208,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    ```bash
    python .github/scripts/scan_secrets.py
    ```
-   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`.
+   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
 
 ### 4. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes.
@@ -220,12 +232,12 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
 **Required GitHub Setup:**
 1. **App Installation:** Install/connect the repository in the Jules web app.
 2. **API Key Creation:** Create a Jules API key.
-3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). Do not use Environment Secrets or Repository Variables.
+3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). Do not use Environment Secrets or Repository Variables. The AI Factory workflows explicitly look for these Repository Secrets.
    - Name: `JULES_API_KEY`
      Value: your Jules API key
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
      Value: your LLM provider API key
-4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
+4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
 6. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root. To resume, delete the `AUTOPILOT_STOP` file.
 
