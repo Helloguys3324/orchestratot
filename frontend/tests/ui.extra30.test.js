@@ -18,3 +18,25 @@ test('UI.renderSkillCheckboxes defaults to unchecked when selectedIds is not pas
     assert.ok(html.includes('value="s1"'));
     assert.ok(!html.includes('checked'));
 });
+
+test('UI fallback: typeof window !== "undefined"', () => {
+    const origWindow = global.window;
+    delete require.cache[require.resolve('../js/ui.js')];
+    global.window = {};
+    const uiModule = require('../js/ui.js');
+    assert.strictEqual(global.window.UI, uiModule);
+    global.window = origWindow;
+    delete require.cache[require.resolve('../js/ui.js')];
+});
+
+test('UI fallback: typeof global !== "undefined"', () => {
+    const origWindow = global.window;
+    const origGlobalUI = global.UI;
+    delete require.cache[require.resolve('../js/ui.js')];
+    global.window = undefined;
+    const uiModule = require('../js/ui.js');
+    assert.strictEqual(global.UI, uiModule);
+    global.window = origWindow;
+    global.UI = origGlobalUI;
+    delete require.cache[require.resolve('../js/ui.js')];
+});
