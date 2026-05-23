@@ -41,7 +41,7 @@ pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 rm -f .coverage
 node --experimental-test-coverage --test frontend/tests/*.test.js
-python -m json.tool <filepath>
+# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
@@ -1762,7 +1762,7 @@ python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
-python -m json.tool <filepath>
+# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
 
 If validation commands exist in:

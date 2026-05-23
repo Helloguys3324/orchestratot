@@ -199,6 +199,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
 
    **Configuration Handling Details:**
+
    - **Environment Variables**: The backend utilizes `pydantic-settings` to safely load configuration, strictly prioritizing environment variables over `.env` variables and JSON defaults. By default, `env_ignore_empty=True` is used to ignore empty environment variables. However, this setting only applies to the environment. If empty strings (`""`) or whitespace-only strings are passed directly via `**kwargs` (e.g., from UI updates) to fields, they bypass this setting and can inadvertently overwrite valid defaults. To ensure robust fallbacks for kwarg-provided empty strings or whitespace-only strings (or for path fields that explicitly support them), a `@field_validator(mode='before')` must be used to intercept falsy or whitespace-only strings and retrieve the fallback. Additionally, fields relying on this pre-validator should set `json_schema_extra={"env_ignore_empty": False}` to ensure the validator also catches empty values originating from `.env`.
    - **Legacy Migration**: Legacy JSON configurations (`data/settings.json`) are automatically migrated to the `.env` file upon startup, securing credentials by immediately clearing the legacy JSON file after migration.
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults. **The web UI is the primary and recommended way to manage these settings post-setup**, whereas `.env` editing is best for initial bootstrapping.
@@ -280,7 +281,7 @@ pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 rm -f .coverage
 node --experimental-test-coverage --test frontend/tests/*.test.js
-python -m json.tool <filepath>
+# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
