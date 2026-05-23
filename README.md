@@ -115,7 +115,7 @@ pip install -q pytest pytest-cov  # testing dependencies
 cp .env.example .env
 python run.py
 ```
-*(Note: See [Local Development Setup](#local-development-setup) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
+*(Note: Ensure Node.js (v20+) is installed for frontend testing. See [Local Development Setup](#local-development-setup) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
 
 ## Documentation
 
@@ -196,6 +196,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    ```bash
    python .github/scripts/scan_secrets.py
    ```
+   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`.
 
 ### 4. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes.
@@ -219,7 +220,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
 **Required GitHub Setup:**
 1. **App Installation:** Install/connect the repository in the Jules web app.
 2. **API Key Creation:** Create a Jules API key.
-3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**):
+3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). Do not use Environment Secrets or Repository Variables.
    - Name: `JULES_API_KEY`
      Value: your Jules API key
    - Name: `AUTOGEN_API_KEY` (if your models require authentication)
@@ -257,9 +258,7 @@ This starts the application at `http://localhost:8000`.
 
 Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
-### Core Validation
-
-Verify Python syntax, scan for secrets, and run backend tests. Test dependencies are not in `backend/requirements.txt` and must be installed manually first. Using `PYTHONPATH=.` is required to resolve internal `backend/` module imports during local development. Clean up any generated `.coverage` files or temporary artifacts to avoid accidentally committing them.
+Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
 
 ```bash
 python -m compileall backend skills_library run.py
@@ -268,24 +267,10 @@ pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov
 PYTHONPATH=. python -m pytest -q
 rm -f .coverage
-```
-
-### Frontend Validation
-
-Run frontend tests using the native node runner (no extra npm packages required).
-
-```bash
 node --experimental-test-coverage --test frontend/tests/*.test.js
-```
-*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
-
-### File-Specific Validation
-
-Validate JSON syntax (required if any JSON files are modified).
-
-```bash
 python -m json.tool <filepath>
 ```
+*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 ### Vulnerability Scanning
 
