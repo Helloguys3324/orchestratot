@@ -123,7 +123,8 @@ def catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> Iterator[N
     except SkillError:
         raise
     except Exception as e:
-        raise error_cls(f"{msg_prefix}: {e}") from e
+        error_name = type(e).__name__
+        raise error_cls(f"{msg_prefix}: {error_name} - {e}") from e
 
 @asynccontextmanager
 async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> AsyncIterator[None]:
@@ -132,7 +133,8 @@ async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -
     except SkillError:
         raise
     except Exception as e:
-        raise error_cls(f"{msg_prefix}: {e}") from e
+        error_name = type(e).__name__
+        raise error_cls(f"{msg_prefix}: {error_name} - {e}") from e
 
 class SkillsManager:
     def __init__(self):
