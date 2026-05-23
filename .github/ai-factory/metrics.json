@@ -6,10 +6,10 @@
     "running": 1,
     "completed": 69,
     "failed": 0,
-    "blocked": 0,
-    "abandoned": 0,
     "obsolete": 0,
-    "duplicate": 0
+    "duplicate": 0,
+    "blocked": 0,
+    "abandoned": 0
   },
   "pr_lifecycle": {
     "task_started": 0,
