@@ -12,15 +12,15 @@
     "abandoned": 0
   },
   "pr_lifecycle": {
-    "task_started": 0,
-    "task_claimed": 0,
-    "task_running": 0,
+    "task_started": 143,
+    "task_claimed": 73,
+    "task_running": 1,
     "pr_created": 69,
     "validation_passed": 69,
     "validation_failed": 0,
     "pr_merged": 66,
     "pr_rejected": 0,
-    "task_completed": 0,
+    "task_completed": 69,
     "task_failed": 0,
     "task_abandoned": 0
   },
