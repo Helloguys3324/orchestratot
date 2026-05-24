@@ -116,25 +116,25 @@ MARKETPLACE_SKILLS = [
 
 
 
+def _handle_unexpected_error(e: Exception, error_cls: type[SkillError], msg_prefix: str) -> None:
+    if isinstance(e, SkillError):
+        raise e
+    error_name = type(e).__name__
+    raise error_cls(f"{msg_prefix}: {error_name} - {e}") from e
+
 @contextmanager
 def catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> Iterator[None]:
     try:
         yield
-    except SkillError:
-        raise
     except Exception as e:
-        error_name = type(e).__name__
-        raise error_cls(f"{msg_prefix}: {error_name} - {e}") from e
+        _handle_unexpected_error(e, error_cls, msg_prefix)
 
 @asynccontextmanager
 async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -> AsyncIterator[None]:
     try:
         yield
-    except SkillError:
-        raise
     except Exception as e:
-        error_name = type(e).__name__
-        raise error_cls(f"{msg_prefix}: {error_name} - {e}") from e
+        _handle_unexpected_error(e, error_cls, msg_prefix)
 
 class SkillsManager:
     def __init__(self):
