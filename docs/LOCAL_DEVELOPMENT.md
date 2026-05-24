@@ -62,6 +62,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
 3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
    ```bash
    python .github/scripts/scan_secrets.py
+   python .github/scripts/guard_ai_workflows.py
    ```
    If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
 
@@ -118,6 +119,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 ```bash
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
+python .github/scripts/guard_ai_workflows.py
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q

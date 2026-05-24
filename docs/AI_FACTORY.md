@@ -110,6 +110,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 ```bash
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
+python .github/scripts/guard_ai_workflows.py
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
@@ -178,6 +179,7 @@ The application relies on several mechanisms to handle secrets safely and ergono
 You can verify that no secrets are accidentally committed by running:
 ```bash
 python .github/scripts/scan_secrets.py
+python .github/scripts/guard_ai_workflows.py
 ```
 
 If a key was committed previously, rotate it immediately at your provider level, and close/delete the compromised branch or PR.
@@ -219,14 +221,17 @@ stateDiagram-v2
     ValidationChecks --> PythonCompile: compileall
     ValidationChecks --> BackendTests: pytest
     ValidationChecks --> FrontendTests: node --experimental-test-coverage --test
+    ValidationChecks --> WorkflowGuard: guard_ai_workflows.py
     SecretsScan --> PR_Passed: All Pass
     PythonCompile --> PR_Passed: All Pass
     BackendTests --> PR_Passed: All Pass
     FrontendTests --> PR_Passed: All Pass
+    WorkflowGuard --> PR_Passed: All Pass
     SecretsScan --> PR_Failed: Any Fail
     PythonCompile --> PR_Failed: Any Fail
     BackendTests --> PR_Failed: Any Fail
     FrontendTests --> PR_Failed: Any Fail
+    WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
     PR_Passed --> WaitReview: Requires review
     PR_Passed --> AutoMerge: Has safe-automerge label
