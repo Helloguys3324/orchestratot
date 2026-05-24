@@ -43,7 +43,7 @@ node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
-*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
+*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive local validation, even if no frontend files were modified. These Node.js tests are strictly a local verification step and are NOT executed by the GitHub Actions pipeline. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 # Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.
 
@@ -1700,51 +1700,15 @@ The planner should compact completed task history when it becomes too large.
 
 ***
 
-# 20. Automerge Policy
+# 20. YOLO Auto-Merge Policy
 
-Automerge is allowed only for low-risk work.
+The repository utilizes a YOLO Auto-Merge strategy to maximize continuous integration efficiency.
 
-Usually safe for automerge:
+Any PR that successfully passes all automated tests and validation checks in the `AI Factory Validate` GitHub Actions workflow will be automatically merged into the `main` branch. The `ai-factory-validate.yml` workflow uses administrative privileges (`GH_PAT`) to forcefully merge green PRs and delete the branch.
 
-```text
-docs-only tasks
-tests-only tasks
-small deterministic test additions
-minor documentation updates
-small non-runtime metadata updates
-```
+Because of this YOLO Auto-Merge strategy, agents must be extremely diligent about the completeness of their local validation before submitting PRs, ensuring no regressions are introduced.
 
-Usually not safe for automerge:
-
-```text
-security changes
-runtime config changes
-backend behavior changes
-frontend behavior changes
-workflow changes
-architecture changes
-large refactors
-dependency changes
-settings changes
-```
-
-A PR may be automerged only if all conditions are true:
-
-```text
-validation passes
-changed files are within write_scope
-no avoid_scope paths are touched
-no secrets are added
-risk_level is low
-automerge_allowed is true
-PR is small and focused
-```
-
-If unsure, set:
-
-```json
-"automerge_allowed": false
-```
+The `automerge_allowed` field in the task queue is no longer strictly used as a barrier for automerge. If the PR is submitted and validation passes, it will merge.
 
 ***
 

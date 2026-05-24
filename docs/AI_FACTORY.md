@@ -10,7 +10,7 @@ This repository is configured to run Jules as an autonomous GitHub development f
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
    - Name: `GH_PAT`
-   - Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step.
+   - Value: A GitHub Personal Access Token (PAT) with repository permissions for the YOLO Auto-Merge step. It must have administrative rights to forcefully merge PRs and bypass branch protections.
    *(Note: `AUTOGEN_API_KEY` is not required as a GitHub Actions secret, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
@@ -90,16 +90,9 @@ AUTOPILOT_STOP
 
 When the file exists, scheduled and normal dispatch runs produce no Jules tasks. Manual dispatch can still run with `emergency_override=true`.
 
-## Safe Automerge
+## YOLO Auto-Merge
 
-Automerge is intentionally conservative. A PR can be merged automatically only when:
-
-- `AI Factory Validate` passed.
-- The PR is not a draft.
-- The PR title starts with `ai-factory(documenter):` or `ai-factory(tester):`.
-- The PR has label `ai-factory:safe-automerge`.
-
-All implementation, refactor, security, and architecture PRs require human review.
+The repository utilizes a YOLO Auto-Merge strategy. Any PR that successfully passes all automated tests and validation checks in the `AI Factory Validate` GitHub Actions workflow will be automatically merged into the `main` branch. The workflow uses administrative privileges (`GH_PAT`) to forcefully merge green PRs and delete the branch.
 
 ## Validation
 
@@ -118,7 +111,7 @@ node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
-*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
+*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive local validation, even if no frontend files were modified. These Node.js tests are strictly a local verification step and are NOT executed by the GitHub Actions pipeline. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 The pytest step runs when tests exist outside ignored runtime workspace directories.
 
@@ -230,10 +223,8 @@ stateDiagram-v2
     BackendTests --> PR_Failed: Any Fail
     WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
-    PR_Passed --> WaitReview: Requires review
-    PR_Passed --> AutoMerge: Has safe-automerge label
-    WaitReview --> [*]: Human merges
-    AutoMerge --> [*]: Workflow merges
+    PR_Passed --> YOLO_AutoMerge: Tests green
+    YOLO_AutoMerge --> [*]: Workflow merges with admin PAT
 ```
 
 ### GitHub Actions Workflow
@@ -249,7 +240,6 @@ flowchart TD
     G --> H{Changes made?}
     H -- Yes --> I[Create PR & Run Validation]
     H -- No --> J[Mark as Completed Empty]
-    I --> K[Check Safe Automerge]
-    K -- Yes --> L[Merge PR]
-    K -- No --> M[Wait for Review]
+    I --> K[YOLO Auto-Merge]
+    K --> L[Merge PR via GH_PAT]
 ```

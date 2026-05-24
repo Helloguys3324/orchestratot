@@ -79,7 +79,7 @@ The repository leverages GitHub Actions to orchestrate the continuous autonomous
    - Name: `JULES_API_KEY`
      Value: your Jules API key
    - Name: `GH_PAT`
-     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: While GITHUB_TOKEN is used as a fallback in scheduled ticks, a PAT is strictly required in the validation workflow for auto-merge to trigger subsequent workflows).
+     Value: A GitHub Personal Access Token (PAT) with repository permissions for the YOLO Auto-Merge step (Note: While GITHUB_TOKEN is used as a fallback in scheduled ticks, a PAT with administrative rights is strictly required in the validation workflow for forcefully merging PRs and bypassing branch protections).
    *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function. `AUTOGEN_API_KEY` is not required for CI/CD workflows, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs, otherwise PR creation will fail with permission errors.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
@@ -127,7 +127,7 @@ node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 ```
-*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
+*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive local validation, even if no frontend files were modified. These Node.js tests are strictly a local verification step and are NOT executed by the GitHub Actions pipeline. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 ### Vulnerability Scanning
 

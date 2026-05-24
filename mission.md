@@ -20,7 +20,7 @@ Operating rules:
   - `python .github/scripts/guard_ai_workflows.py`
   - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-asyncio pytest-cov anyio`
   - `PYTHONPATH=. python -m pytest -q`
-  - `node --experimental-test-coverage --test frontend/tests/*.test.js`
+  - `node --experimental-test-coverage --test frontend/tests/*.test.js` (Note: frontend tests are strictly local and are not run by the GitHub Actions pipeline)
   - `rm -rf coverage/ frontend/coverage/ .coverage`
   - `python -m json.tool <filepath>` (run individually on changed JSON files)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.

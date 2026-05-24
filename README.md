@@ -32,10 +32,10 @@ The factory operates using specialized roles, each with defined capabilities and
 - **Architect:** Updates high-level architecture decisions and state.
 - **Refactorer:** Improves code readability and reduces duplication.
 
-## Lifecycle & Automerge Policy
-Automerge is intentionally conservative to prevent autonomous regressions:
-- A PR can be merged automatically **only** when `AI Factory Validate` passes, it is not a draft, the title starts with `ai-factory(documenter):` or `ai-factory(tester):`, and it has the label `ai-factory:safe-automerge`.
-- All implementation, refactor, security, and architecture PRs require human review.
+## Lifecycle & YOLO Auto-Merge Policy
+The repository utilizes a YOLO Auto-Merge strategy to maximize continuous integration efficiency:
+- Any PR that successfully passes all automated tests and validation checks in the `AI Factory Validate` GitHub Actions workflow will be automatically merged into the `main` branch.
+- The `ai-factory-validate.yml` workflow uses administrative privileges (`GH_PAT`) to forcefully merge green PRs and delete the branch.
 
 
 ## Task Lifecycle
@@ -78,10 +78,8 @@ stateDiagram-v2
     BackendTests --> PR_Failed: Any Fail
     WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
-    PR_Passed --> WaitReview: Requires review
-    PR_Passed --> AutoMerge: Has safe-automerge label
-    WaitReview --> [*]: Human merges
-    AutoMerge --> [*]: Workflow merges
+    PR_Passed --> YOLO_AutoMerge: Tests green
+    YOLO_AutoMerge --> [*]: Workflow merges with admin PAT
 ```
 
 ## GitHub Actions Workflow
@@ -97,9 +95,8 @@ flowchart TD
     G --> H{Changes made?}
     H -- Yes --> I[Create PR & Run Validation]
     H -- No --> J[Mark as Completed Empty]
-    I --> K[Check Safe Automerge]
-    K -- Yes --> L[Merge PR]
-    K -- No --> M[Wait for Review]
+    I --> K[YOLO Auto-Merge]
+    K --> L[Merge PR via GH_PAT]
 ```
 
 ## Screenshots / UI Preview
