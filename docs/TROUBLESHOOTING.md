@@ -23,6 +23,10 @@ pip install -q pytest pytest-asyncio pytest-cov anyio
 ```
 *Note: For async tests in pytest, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 
+### Issue: `pytest` fails with "unrecognized arguments: --cov" or similar plugin errors
+**Symptom:** You installed pytest plugins (like `pytest-cov` or `pytest-asyncio`) via `pip`, but running `pytest` results in an error about unrecognized arguments.
+**Solution:** Always invoke tests using `python -m pytest` rather than the bare `pytest` command locally. The bare command may resolve to a global installation (e.g., via pipx) that lacks access to your environment's installed plugins.
+
 ### Issue: Validation commands fail due to missing `node` or test runner issues
 **Symptom:** Frontend validation fails when running `node --experimental-test-coverage --test frontend/tests/*.test.js`.
 **Solution:** Ensure you have Node.js version 20 or higher installed, as it natively includes the `node:test` module. You do not need to `npm install` anything for standard test runs. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.
