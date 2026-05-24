@@ -10,7 +10,7 @@ This repository is configured to run Jules as an autonomous GitHub development f
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
    - Name: `GH_PAT`
-   - Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step.
+   - Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: A PAT is strictly required to ensure administrative rights for merging and overriding protections).
    *(Note: `AUTOGEN_API_KEY` is not required as a GitHub Actions secret, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
