@@ -12,7 +12,7 @@ The AI Factory demonstrates how a team of specialized AI agents can autonomously
 - **DAG-Based Task Routing:** Dynamic task generation and assignment based on explicit dependencies and capabilities.
 - **Model Context Protocol (MCP):** Safe, standardized tool execution and skill integration for agents.
 - **Strict Validation Protocol:** Zero-trust verification requiring comprehensive testing, secret scanning, and syntax checks before any change is merged.
-- **FastAPI & Asyncio Backend:** A scalable, non-blocking orchestration server built with Python 3.12.
+- **FastAPI & Asyncio Backend:** A scalable, non-blocking orchestration server built with Python 3.11.
 - **Vanilla JS Frontend:** A lightweight, dependency-free frontend with native Node.js testing.
 
 ## AI Factory Architecture Summary
@@ -68,17 +68,14 @@ stateDiagram-v2
     ValidationChecks --> SecretsScan: scan_secrets.py
     ValidationChecks --> PythonCompile: compileall
     ValidationChecks --> BackendTests: pytest
-    ValidationChecks --> FrontendTests: node --experimental-test-coverage --test
     ValidationChecks --> WorkflowGuard: guard_ai_workflows.py
     SecretsScan --> PR_Passed: All Pass
     PythonCompile --> PR_Passed: All Pass
     BackendTests --> PR_Passed: All Pass
-    FrontendTests --> PR_Passed: All Pass
     WorkflowGuard --> PR_Passed: All Pass
     SecretsScan --> PR_Failed: Any Fail
     PythonCompile --> PR_Failed: Any Fail
     BackendTests --> PR_Failed: Any Fail
-    FrontendTests --> PR_Failed: Any Fail
     WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
     PR_Passed --> WaitReview: Requires review
