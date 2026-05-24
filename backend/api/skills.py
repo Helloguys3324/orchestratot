@@ -33,9 +33,8 @@ async def api_list_marketplace():
 
 @router.post("")
 async def api_create_skill(request: SkillCreateRequest):
-    data = request.model_dump(exclude_unset=True)
     async with async_handle_skill_exceptions():
-        return skills_manager.create_skill(data)
+        return skills_manager.create_skill(request.model_dump(exclude_unset=True))
 
 @router.delete("/{skill_id}")
 async def api_delete_skill(skill_id: str):

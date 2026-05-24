@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from backend.state import agent_manager
 from backend.api.dependencies import get_agent_or_404
 from backend.api.schemas import AgentCreateRequest, AgentUpdateRequest
@@ -15,13 +15,11 @@ async def api_get_agent(agent: dict = Depends(get_agent_or_404)):
 
 @router.post("")
 async def api_create_agent(request: AgentCreateRequest):
-    data = request.model_dump(exclude_unset=True)
-    return agent_manager.create_agent(data)
+    return agent_manager.create_agent(request.model_dump(exclude_unset=True))
 
 @router.put("/{agent_id}")
 async def api_update_agent(agent_id: str, request: AgentUpdateRequest, agent: dict = Depends(get_agent_or_404)):
-    data = request.model_dump(exclude_unset=True)
-    return agent_manager.update_agent(agent_id, data)
+    return agent_manager.update_agent(agent_id, request.model_dump(exclude_unset=True))
 
 @router.delete("/{agent_id}")
 async def api_delete_agent(agent_id: str, agent: dict = Depends(get_agent_or_404)):
