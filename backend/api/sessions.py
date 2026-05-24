@@ -1,5 +1,5 @@
 import asyncio
-from fastapi import APIRouter, HTTPException, Depends
+from fastapi import APIRouter, Depends
 from backend.state import session_manager
 from backend.api.dependencies import get_session_or_404
 from backend.api.schemas import SessionCreateRequest, ChatMessageRequest
