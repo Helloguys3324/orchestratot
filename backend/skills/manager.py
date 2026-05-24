@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 from backend.config import SKILLS_FILE, SKILLS_DIR, CUSTOM_SKILLS_DIR, load_json, save_json
 from backend.skills.errors import SkillError, SkillValidationError, SkillInstallError, SkillNotFoundError
+from backend.base_manager import BaseManager
 
 
 # Built-in skills metadata
@@ -136,18 +137,20 @@ async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -
     except Exception as e:
         _handle_unexpected_error(e, error_cls, msg_prefix)
 
-class SkillsManager:
+
+class SkillsManager(BaseManager):
     def __init__(self):
         self._custom_skills: list[dict] = []
+        super().__init__(SKILLS_FILE)
         self._load()
 
     def _load(self) -> None:
         with catch_unexpected(SkillError, "Failed to load skills file"):
-            self._custom_skills = load_json(SKILLS_FILE, [])
+            self._custom_skills = load_json(self._file_path, [])
 
     def _save(self) -> None:
         with catch_unexpected(SkillError, "Failed to save skills file"):
-            save_json(SKILLS_FILE, self._custom_skills)
+            save_json(self._file_path, self._custom_skills)
 
     def list_skills(self) -> list[dict]:
         return BUILTIN_SKILLS + self._custom_skills
