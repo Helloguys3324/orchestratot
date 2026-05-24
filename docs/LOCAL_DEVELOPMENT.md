@@ -22,7 +22,7 @@ venv\Scripts\activate
 
 # Install dependencies
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov
+pip install -q pytest pytest-asyncio pytest-cov anyio
 ```
 
 *Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. The sandbox environment will block the execution. Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).*
@@ -119,7 +119,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov
+pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage

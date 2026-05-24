@@ -37,7 +37,7 @@ Note for AI Agents: Do not attempt to use `python -m venv` or source virtual env
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov
+pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage

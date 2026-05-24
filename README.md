@@ -114,7 +114,7 @@ source venv/bin/activate
 
 # 2. Install dependencies
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov  # testing dependencies
+pip install -q pytest pytest-asyncio pytest-cov anyio  # testing dependencies
 cp .env.example .env
 
 # 3. Run validation commands (Node.js v20+ required for frontend tests)
