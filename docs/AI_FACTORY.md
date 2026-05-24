@@ -9,6 +9,8 @@ This repository is configured to run Jules as an autonomous GitHub development f
 3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions** in your repository):
    - Name: `JULES_API_KEY`
    - Value: your Jules API key
+   - Name: `GH_PAT`
+   - Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step.
    *(Note: `AUTOGEN_API_KEY` is not required as a GitHub Actions secret, as it is strictly a local runtime requirement.)*
 4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**.
 5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
@@ -109,7 +111,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov
+pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
