@@ -4,7 +4,7 @@ This guide covers local development setup, secrets, validation, and operations.
 
 
 ### 1. Prerequisites
-- **Python 3.12:** The backend is built specifically for Python 3.12. Ensure it is installed and active in your environment.
+- **Python 3.11:** The backend is built specifically for Python 3.11. Ensure it is installed and active in your environment.
 - **Node.js (v20+):** Ensure Node.js (v20+) is installed to run frontend vanilla JS unit tests using the native test runner.
 
 ### 2. Virtual Environment & Dependency Installation
