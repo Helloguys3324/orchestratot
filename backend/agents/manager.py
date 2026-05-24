@@ -5,9 +5,11 @@ import uuid
 from typing import Optional
 from backend.config import AGENTS_FILE, load_json, save_json
 from backend.agents.templates import get_template, AGENT_TEMPLATES
+from backend.base_manager import BaseManager
 
 
-class AgentManager:
+
+class AgentManager(BaseManager):
     """Manages agent configurations and lifecycle."""
 
     UPDATABLE_FIELDS = [
@@ -17,16 +19,17 @@ class AgentManager:
 
     def __init__(self):
         self._agents: dict[str, dict] = {}
+        super().__init__(AGENTS_FILE)
         self._load()
 
     def _load(self):
         """Load agents from disk."""
-        agents_list = load_json(AGENTS_FILE, [])
+        agents_list = load_json(self._file_path, [])
         self._agents = {a["id"]: a for a in agents_list}
 
     def _save(self):
         """Persist agents to disk."""
-        save_json(AGENTS_FILE, list(self._agents.values()))
+        save_json(self._file_path, list(self._agents.values()))
 
     def list_agents(self) -> list[dict]:
         """List all configured agents."""

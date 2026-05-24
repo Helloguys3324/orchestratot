@@ -13,6 +13,7 @@ from backend.config import SESSIONS_FILE, BASE_DIR, WORKSPACE_DIR, load_json, sa
 from backend.agents.manager import AgentManager
 from backend.models.registry import get_config_list
 from backend.llm.provider import call_llm
+from backend.base_manager import BaseManager
 
 try:
     import autogen
@@ -21,19 +22,21 @@ except ImportError:
     AUTOGEN_AVAILABLE = False
 
 
-class SessionManager:
+
+class SessionManager(BaseManager):
     def __init__(self, agent_manager: AgentManager):
         self.agent_manager = agent_manager
         self._sessions: dict[str, dict] = {}
         self._message_callback: Optional[Callable] = None
+        super().__init__(SESSIONS_FILE)
         self._load()
 
     def _load(self):
-        sessions_list = load_json(SESSIONS_FILE, [])
+        sessions_list = load_json(self._file_path, [])
         self._sessions = {s["id"]: s for s in sessions_list}
 
     def _save(self):
-        save_json(SESSIONS_FILE, list(self._sessions.values()))
+        save_json(self._file_path, list(self._sessions.values()))
 
     def set_message_callback(self, callback: Callable):
         self._message_callback = callback
