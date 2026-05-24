@@ -7,7 +7,13 @@ This guide covers local development setup, secrets, validation, and operations.
 - **Python 3.11:** The backend is built specifically for Python 3.11. Ensure it is installed and active in your environment.
 - **Node.js (v20+):** Ensure Node.js (v20+) is installed to run frontend vanilla JS unit tests using the native test runner.
 
-### 2. Virtual Environment & Dependency Installation
+### 2. Clone the Repository
+```bash
+git clone <repository-url>
+cd <repository-directory>
+```
+
+### 3. Virtual Environment & Dependency Installation
 It is highly recommended to use a Python virtual environment to isolate project dependencies.
 
 ```bash
@@ -31,7 +37,7 @@ Once activated, install the necessary packages for the backend and testing tools
 
 *(Note for testing: For async tests, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.)*
 
-### 3. Secrets & Configuration
+### 4. Secrets & Configuration
 Never commit secrets, API keys, or credentials. Follow these steps to configure your local runtime:
 
 1. **Create Environment File**: Copy the example environment file:
@@ -66,10 +72,10 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    ```
    If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
 
-### 4. Running Tests
+### 5. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes. See the [Validation Commands](#validation-commands) section for the full suite of mandatory commands.
 
-### 5. Continuous Integration & AI Factory
+### 6. Continuous Integration & AI Factory
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
 
 **Required GitHub Setup:**
@@ -92,7 +98,7 @@ Make sure these setup steps are fully completed to ensure that continuous integr
 For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
-### 6. Emergency Stop Protocol
+### 7. Emergency Stop Protocol
 If you need to stop autonomous background tasks, create an empty file named `AUTOPILOT_STOP` in the repository root directory:
 ```bash
 touch AUTOPILOT_STOP

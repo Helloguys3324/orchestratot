@@ -108,16 +108,20 @@ flowchart TD
 ## Quickstart
 
 ```bash
-# 1. Set up virtual environment
+# 1. Clone the repository
+git clone <repository-url>
+cd <repository-directory>
+
+# 2. Set up virtual environment
 python3 -m venv venv
 source venv/bin/activate
 
-# 2. Install dependencies
+# 3. Install dependencies
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio  # testing dependencies
 cp .env.example .env
 
-# 3. Run validation commands (Node.js v20+ required for frontend tests)
+# 4. Run validation commands (Node.js v20+ required for frontend tests)
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
@@ -125,7 +129,7 @@ PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
 
-# 4. Start the application
+# 5. Start the application
 python run.py
 ```
 *(Note: See [Local Development Setup Guide](docs/LOCAL_DEVELOPMENT.md) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*

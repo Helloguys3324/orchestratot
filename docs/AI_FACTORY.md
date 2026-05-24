@@ -101,46 +101,15 @@ Automerge is intentionally conservative. A PR can be merged automatically only w
 
 All implementation, refactor, security, and architecture PRs require human review.
 
-## Validation
+## Validation, Secrets & Local Operations
 
-The validation workflow runs the following full suite. When running locally, ensure you execute these commands from the **repository root**:
+Detailed instructions for running comprehensive validation commands, evaluating vulnerability scanning, executing frontend visual validation, and safely managing local runtime secrets (including environment variables, UI updates, and configuration testing) have been consolidated into the dedicated setup guide.
 
-Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
+**Important for AI Agents**: When you need to execute validation steps or vulnerability scanning, you must strictly follow the commands and rules listed in the guide below. For example, native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified.
 
-```bash
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-asyncio pytest-cov anyio
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
-# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
-```
-*(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
+👉 **[Read the Local Development Setup Guide](LOCAL_DEVELOPMENT.md)**
 
-The pytest step runs when tests exist outside ignored runtime workspace directories.
-
-### Vulnerability Scanning
-
-To evaluate dependencies for known security vulnerabilities, use `pip-audit`. Because `pip-audit` needs to accurately evaluate transitive dependencies, ensure the project core requirements are installed in your local environment first:
-
-Ensure core requirements are installed, then run the security audit.
-
-```bash
-pip install -q -r backend/requirements.txt
-pip install -q pip-audit
-pip-audit -r backend/requirements.txt
-```
-
-*Note: To evaluate specific minimum package versions (e.g., those defined with `>=` constraints), you must explicitly install those exact older versions in the local environment (e.g., `pip install -q "websockets==13.0.0"`) before running `pip-audit`, rather than installing from the requirements file which resolves to the latest compatible versions.*
-
-### Frontend Visual Validation
-
-When frontend files are changed, visual inspection is mandatory. Start the app locally (`python run.py`), open the UI in a browser, and manually walk through the changed flows to ensure no layout breakages or console errors exist.
-
-## Secrets
+## Production Secrets & CI/CD
 
 Never commit real API keys, credentials, or `.env` files to source control.
 
@@ -148,39 +117,6 @@ Never commit real API keys, credentials, or `.env` files to source control.
 Use GitHub Actions **Repository Secrets** (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**) to securely store production and testing keys. Do not use Environment Secrets or Repository Variables, as workflows expect Repository Secrets. Required secrets include:
 - `JULES_API_KEY`: Your Jules API key for the AI Factory.
 - `GH_PAT`: A GitHub Personal Access Token with repository permissions for validation auto-merge (Note: Required for auto-merge in validation workflows to trigger subsequent events; GITHUB_TOKEN is only used as a fallback in tick operations).
-
-**Local Development:**
-Local runtime credentials should use environment variables (e.g., by placing them in a `.env` file at the root of the project, which is automatically parsed by `pydantic-settings`). You can copy the provided `.env.example` file to create your local `.env` configuration:
-
-```bash
-cp .env.example .env
-```
-
-```bash
-AUTOGEN_API_KEY=...
-AUTOGEN_DEFAULT_MODEL=gemini-2.5-flash
-AUTOGEN_ROUTER_MODEL=gemini-3-flash-live
-AUTOGEN_BASE_URL=https://generativelanguage.googleapis.com/v1beta/openai/
-AUTOGEN_MAX_ROUNDS=15
-AUTOGEN_TEMPERATURE=0.7
-AUTOGEN_MAX_TOKENS=4096
-AUTOGEN_DATA_DIR=data
-AUTOGEN_SKILLS_DIR=skills_library
-AUTOGEN_CUSTOM_SKILLS_DIR=custom_skills
-AUTOGEN_WORKSPACE_DIR=workspace
-```
-
-The application relies on several mechanisms to handle secrets safely and ergonomically:
-- **Masking**: Pydantic `SecretStr` is used to prevent accidental logging or JSON serialization of secrets loaded from `.env`.
-- **Legacy Migration**: Legacy configurations from `data/settings.json` are automatically migrated to `.env` upon startup and securely deleted.
-- **UI/API Updates**: Runtime configuration updates via the API directly preserve the ergonomics of the `.env` file by only persisting explicitly updated fields.
-- **Clearing Credentials**: Empty strings and whitespace-only strings in environment variables are filtered out on load to prevent overwriting valid defaults. However, empty or whitespace strings explicitly trigger fallbacks to default values in path variables (e.g., `AUTOGEN_DATA_DIR`) or fields using `@field_validator(mode='before')` combined with `json_schema_extra={"env_ignore_empty": False}`. Empty strings are also allowed during API updates to intentionally clear credentials, which programmatically removes the key from the `.env` file and the runtime environment.
-
-You can verify that no secrets are accidentally committed by running:
-```bash
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-```
 
 If a key was committed previously, rotate it immediately at your provider level, and close/delete the compromised branch or PR.
 
