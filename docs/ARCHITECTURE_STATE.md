@@ -59,6 +59,8 @@ The repository is structured into the following directories:
 - **Emergency Stop:** The `AUTOPILOT_STOP` file acts as an emergency stop signal; automation must immediately halt and the file must not be removed.
 
 ### 7. Recent Architectural Changes
+- **Refactoring:** Extracted duplicate 8-character UUID generation logic from domain managers (`AgentManager`, `SessionManager`, `SkillsManager`) into a central `_generate_id()` method on `BaseManager`.
+- **Documentation:** Unified setup instructions, dependency installation, and validation commands across `AGENTS.md`, `README.md`, and `mission.md` to ensure consistency, and added Git error troubleshooting steps.
 - **Refactoring:** Extracted router decision and agent response logic from the large `_run_orchestrated_chat` loop in `backend/sessions/manager.py` into dedicated helper methods to improve readability and maintainability.
 - **Testing:** Node.js native tests achieved 100% test coverage for frontend utility functions (e.g., `frontend/js/ui.js`).
 - **Error Handling:** Backend skills manager (`backend/skills/manager.py`) utilizes `catch_unexpected` and `async_catch_unexpected` context managers to robustly map generic exceptions to typed domain errors.
