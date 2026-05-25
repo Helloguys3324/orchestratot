@@ -7,7 +7,7 @@ import asyncio
 import subprocess
 from typing import Optional, Callable
 from pathlib import Path
-from backend.config import SESSIONS_FILE, BASE_DIR, WORKSPACE_DIR, load_json, save_json, get_settings
+from backend.config import SESSIONS_FILE, BASE_DIR, WORKSPACE_DIR, get_settings
 from backend.agents.manager import AgentManager
 from backend.models.registry import get_config_list
 from backend.llm.provider import call_llm
@@ -30,11 +30,10 @@ class SessionManager(BaseManager):
         self._load()
 
     def _load(self):
-        sessions_list = load_json(self._file_path, [])
-        self._sessions = {s["id"]: s for s in sessions_list}
+        self._sessions = self._load_dict()
 
     def _save(self):
-        save_json(self._file_path, list(self._sessions.values()))
+        self._save_dict(self._sessions)
 
     def set_message_callback(self, callback: Callable):
         self._message_callback = callback
@@ -65,10 +64,7 @@ class SessionManager(BaseManager):
         return session
 
     def delete_session(self, session_id: str) -> bool:
-        if self._sessions.pop(session_id, None):
-            self._save()
-            return True
-        return False
+        return self._delete_item(self._sessions, session_id)
 
     async def _emit(self, session_id: str, msg: dict):
         """Send message via WebSocket callback."""

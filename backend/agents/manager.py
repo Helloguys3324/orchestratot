@@ -2,7 +2,7 @@
 Agent Manager — handles agent CRUD and AutoGen agent creation.
 """
 from typing import Optional
-from backend.config import AGENTS_FILE, load_json, save_json
+from backend.config import AGENTS_FILE
 from backend.agents.templates import get_template, AGENT_TEMPLATES
 from backend.base_manager import BaseManager
 
@@ -23,12 +23,11 @@ class AgentManager(BaseManager):
 
     def _load(self):
         """Load agents from disk."""
-        agents_list = load_json(self._file_path, [])
-        self._agents = {a["id"]: a for a in agents_list}
+        self._agents = self._load_dict()
 
     def _save(self):
         """Persist agents to disk."""
-        save_json(self._file_path, list(self._agents.values()))
+        self._save_dict(self._agents)
 
     def list_agents(self) -> list[dict]:
         """List all configured agents."""
@@ -97,10 +96,7 @@ class AgentManager(BaseManager):
 
     def delete_agent(self, agent_id: str) -> bool:
         """Delete an agent."""
-        if self._agents.pop(agent_id, None):
-            self._save()
-            return True
-        return False
+        return self._delete_item(self._agents, agent_id)
 
     def duplicate_agent(self, agent_id: str) -> Optional[dict]:
         """Duplicate an existing agent with a new ID."""
