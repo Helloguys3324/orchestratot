@@ -1,4 +1,5 @@
 import abc
+import uuid
 from pathlib import Path
 
 class BaseManager(abc.ABC):
@@ -14,3 +15,7 @@ class BaseManager(abc.ABC):
     @abc.abstractmethod
     def _save(self) -> None:
         pass
+
+    def _generate_id(self) -> str:
+        """Generate an 8-character unique ID."""
+        return uuid.uuid4().hex[:8]
