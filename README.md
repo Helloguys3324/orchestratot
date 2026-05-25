@@ -131,6 +131,7 @@ pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
+# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
 
 # 5. Start the application
 python run.py
