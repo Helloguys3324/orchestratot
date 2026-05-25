@@ -161,29 +161,10 @@ class SessionManager(BaseManager):
 
         for round_num in range(max_rounds):
             # ── Step 1: Router decides who speaks next ──
-            router_prompt = (
-                "You are a team orchestrator. Based on the conversation so far, "
-                "decide which team member should respond NEXT.\n\n"
-                f"Team members: {', '.join(agent_names)}\n\n"
-                "Rules:\n"
-                "- Pick the MOST relevant agent for the current stage of work\n"
-                "- If the task is done, respond with exactly: DONE\n"
-                "- Respond with ONLY the agent name (exactly as listed) or DONE\n"
-                "- No explanation, just the name\n"
+            next_agent_name = await self._get_router_decision(
+                session, agent_names, conv_history, api_key, base_url, router_model
             )
-            router_messages = [
-                {"role": "system", "content": router_prompt},
-            ] + conv_history[-12:]
-
-            try:
-                next_agent_name = await call_llm(
-                    api_key, base_url, router_model, router_messages,
-                    temperature=0.1, max_tokens=50,
-                )
-                next_agent_name = next_agent_name.strip().strip('"').strip("'")
-            except Exception as e:
-                await self._error_msg(session,
-                    f"\u274c Router error: {type(e).__name__}: {str(e)}")
+            if next_agent_name is None:
                 break
 
             # Check if done
@@ -207,35 +188,9 @@ class SessionManager(BaseManager):
                 "\U0001f4e2", "#6366F1")
 
             # ── Step 2: Agent responds ──
-            agent_model = ac.get("model") or settings.get("default_model", "gemini-2.5-flash")
-            file_instructions = (
-                "\n\n--- FILE WRITING ---\n"
-                "You can write files to the project workspace.\n"
-                f"Workspace path: {workspace}\n"
-                "To create/write a file, use this exact format:\n"
-                "<<<FILE: relative/path/to/file.ext>>>\n"
-                "file content here\n"
-                "<<<END_FILE>>>\n"
-                "You can write multiple files in one response.\n"
-                "--- END FILE WRITING ---\n"
+            content = await self._get_agent_response(
+                ac, agent_configs, conv_history, workspace, settings, api_key, base_url
             )
-            agent_system = ac["system_prompt"] + file_instructions
-            other_agents = [a["name"] for a in agent_configs if a["id"] != ac["id"]]
-            if other_agents:
-                agent_system += f"\nTeam members: {', '.join(other_agents)}. Collaborate with them."
-
-            agent_messages = [
-                {"role": "system", "content": agent_system},
-            ] + conv_history[-12:]
-
-            try:
-                content = await call_llm(
-                    api_key, base_url, agent_model, agent_messages,
-                    temperature=ac.get("temperature", 0.7),
-                    max_tokens=ac.get("max_tokens", 4096),
-                )
-            except Exception as e:
-                content = f"\u274c Error: {type(e).__name__}: {str(e)}"
 
             # ── Step 3: Extract and write files ──
             files_written = await self._extract_and_write_files(session, workspace, content)
@@ -313,3 +268,62 @@ class SessionManager(BaseManager):
             for f in workspace.rglob("*")
             if f.is_file()
         ]
+
+    async def _get_router_decision(self, session, agent_names, conv_history, api_key, base_url, router_model):
+        """Helper to get the router's decision on the next agent."""
+        router_prompt = (
+            "You are a team orchestrator. Based on the conversation so far, "
+            "decide which team member should respond NEXT.\n\n"
+            f"Team members: {', '.join(agent_names)}\n\n"
+            "Rules:\n"
+            "- Pick the MOST relevant agent for the current stage of work\n"
+            "- If the task is done, respond with exactly: DONE\n"
+            "- Respond with ONLY the agent name (exactly as listed) or DONE\n"
+            "- No explanation, just the name\n"
+        )
+        router_messages = [
+            {"role": "system", "content": router_prompt},
+        ] + conv_history[-12:]
+
+        try:
+            next_agent_name = await call_llm(
+                api_key, base_url, router_model, router_messages,
+                temperature=0.1, max_tokens=50,
+            )
+            return next_agent_name.strip().strip('"').strip("'")
+        except Exception as e:
+            await self._error_msg(session,
+                f"\u274c Router error: {type(e).__name__}: {str(e)}")
+            return None
+
+    async def _get_agent_response(self, ac, agent_configs, conv_history, workspace, settings, api_key, base_url):
+        """Helper to get the response from the selected agent."""
+        agent_model = ac.get("model") or settings.get("default_model", "gemini-2.5-flash")
+        file_instructions = (
+            "\n\n--- FILE WRITING ---\n"
+            "You can write files to the project workspace.\n"
+            f"Workspace path: {workspace}\n"
+            "To create/write a file, use this exact format:\n"
+            "<<<FILE: relative/path/to/file.ext>>>\n"
+            "file content here\n"
+            "<<<END_FILE>>>\n"
+            "You can write multiple files in one response.\n"
+            "--- END FILE WRITING ---\n"
+        )
+        agent_system = ac["system_prompt"] + file_instructions
+        other_agents = [a["name"] for a in agent_configs if a["id"] != ac["id"]]
+        if other_agents:
+            agent_system += f"\nTeam members: {', '.join(other_agents)}. Collaborate with them."
+
+        agent_messages = [
+            {"role": "system", "content": agent_system},
+        ] + conv_history[-12:]
+
+        try:
+            return await call_llm(
+                api_key, base_url, agent_model, agent_messages,
+                temperature=ac.get("temperature", 0.7),
+                max_tokens=ac.get("max_tokens", 4096),
+            )
+        except Exception as e:
+            return f"\u274c Error: {type(e).__name__}: {str(e)}"
