@@ -102,3 +102,7 @@ python -m json.tool <filepath>
 3. Visually inspect the changes across different viewport sizes (e.g., 1440x900, 1024x768, 390x844).
 4. Check the browser console for any runtime errors and fix them before opening a PR.
 
+
+### Issue: `guard_ai_workflows.py` fails with an ambiguous argument Git error
+**Symptom:** Running `python .github/scripts/guard_ai_workflows.py` fails with a fatal error: `ambiguous argument 'HEAD~1..HEAD': unknown revision or path not in the working tree`.
+**Solution:** The script uses `HEAD~1..HEAD` to compare changes. If your current branch has no previous commits, Git cannot find `HEAD~1`. To resolve this locally, temporarily create a commit (e.g., `git commit -m 'temp' --allow-empty`), run the script, and then undo the commit (`git reset HEAD~1 --soft`).

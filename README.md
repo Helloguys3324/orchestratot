@@ -124,6 +124,7 @@ cp .env.example .env
 # 4. Run validation commands (Node.js v20+ required for frontend tests)
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide
 python .github/scripts/guard_ai_workflows.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
