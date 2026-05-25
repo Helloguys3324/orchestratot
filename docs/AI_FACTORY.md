@@ -156,15 +156,12 @@ stateDiagram-v2
     ValidationChecks --> SecretsScan: scan_secrets.py
     ValidationChecks --> PythonCompile: compileall
     ValidationChecks --> BackendTests: pytest
-    ValidationChecks --> WorkflowGuard: guard_ai_workflows.py
     SecretsScan --> PR_Passed: All Pass
     PythonCompile --> PR_Passed: All Pass
     BackendTests --> PR_Passed: All Pass
-    WorkflowGuard --> PR_Passed: All Pass
     SecretsScan --> PR_Failed: Any Fail
     PythonCompile --> PR_Failed: Any Fail
     BackendTests --> PR_Failed: Any Fail
-    WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
     PR_Passed --> WaitReview: Requires review
     PR_Passed --> AutoMerge: Has safe-automerge label

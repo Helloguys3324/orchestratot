@@ -68,15 +68,12 @@ stateDiagram-v2
     ValidationChecks --> SecretsScan: scan_secrets.py
     ValidationChecks --> PythonCompile: compileall
     ValidationChecks --> BackendTests: pytest
-    ValidationChecks --> WorkflowGuard: guard_ai_workflows.py
     SecretsScan --> PR_Passed: All Pass
     PythonCompile --> PR_Passed: All Pass
     BackendTests --> PR_Passed: All Pass
-    WorkflowGuard --> PR_Passed: All Pass
     SecretsScan --> PR_Failed: Any Fail
     PythonCompile --> PR_Failed: Any Fail
     BackendTests --> PR_Failed: Any Fail
-    WorkflowGuard --> PR_Failed: Any Fail
     PR_Failed --> [*]: Agent notified to fix
     PR_Passed --> WaitReview: Requires review
     PR_Passed --> AutoMerge: Has safe-automerge label
@@ -122,7 +119,6 @@ pip install -q pytest pytest-asyncio pytest-cov anyio  # testing dependencies
 cp .env.example .env
 
 # 4. Run validation commands (Node.js v20+ required for frontend tests)
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py

@@ -70,7 +70,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    python .github/scripts/scan_secrets.py
    python .github/scripts/guard_ai_workflows.py
    ```
-   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files. If `guard_ai_workflows.py` fails with an ambiguous argument Git error (e.g. `HEAD~1` not found on a new branch), temporarily create an empty commit (`git commit -m 'temp' --allow-empty`), run the script, and then undo it (`git reset HEAD~1 --soft`).
+   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files. If `guard_ai_workflows.py` fails with an ambiguous argument Git error (e.g. `HEAD~1` not found on a new branch), temporarily create an empty commit (`git -c user.name="Test" -c user.email="test@example.com" commit -m 'temp' --allow-empty`), run the script, and then undo it (`git reset HEAD~1 --soft`).
 
 ### 5. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes. See the [Validation Commands](#validation-commands) section for the full suite of mandatory commands.
@@ -111,7 +111,6 @@ Running the full validation suite from the **repository root** is **mandatory** 
 Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
 
 ```bash
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
