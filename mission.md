@@ -18,7 +18,8 @@ Operating rules:
   - `python -m compileall backend skills_library run.py`
   - `python .github/scripts/scan_secrets.py`
   - `python .github/scripts/guard_ai_workflows.py`
-  - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-asyncio pytest-cov anyio`
+  - `pip install -q -r backend/requirements.txt`
+  - `pip install -q pytest pytest-asyncio pytest-cov anyio`
   - `PYTHONPATH=. python -m pytest -q`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
   - `rm -rf coverage/ frontend/coverage/ .coverage`
