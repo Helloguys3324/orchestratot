@@ -79,7 +79,7 @@ To ensure code reliability, run both backend and frontend validation locally bef
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
 
 **Required GitHub Setup:**
-To configure GitHub Actions (including App Installation, API keys, Repository Secrets, and Action Permissions), see the **[Required GitHub Setup in AI Factory Operations](AI_FACTORY.md#required-github-setup)**.
+To configure GitHub Actions (including App Installation, API keys, Repository Secrets, and Action Permissions), see the **[Required GitHub Setup in AI Factory Operations](AI_FACTORY.md#required-github-setup)**. At a minimum, ensure `JULES_API_KEY` and `GH_PAT` are added as **Repository Secrets**.
 
 **Authoritative Validation:** GitHub Actions validation is the single source of truth for repository checks. The remote validation pipeline strictly runs on Python 3.11 and does not execute the Node.js frontend tests. Local validation commands mirror the remote pipeline but also include Node.js frontend test execution.
 
@@ -111,7 +111,7 @@ Running the full validation suite from the **repository root** is **mandatory** 
 Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
 
 ```bash
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide for the temporary empty commit workaround.
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
@@ -144,3 +144,4 @@ If any files in `frontend/` are modified, you must visually inspect the UI local
 3. Walk through the changed UI area and affected user flows.
 4. Check browser console for errors.
 5. Check for layout issues (overlapping text, hidden content, etc.) across different viewport sizes (e.g., 1440x900 desktop, 1024x768 tablet, 390x844 mobile).
+6. Provide a walkthrough log, screenshot, or video in the PR body. Include the `## Validation Results` and `## Frontend Walkthrough` templates.
