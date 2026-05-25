@@ -1,7 +1,6 @@
 """
 Skills Manager — handles skill CRUD, loading, and marketplace.
 """
-import uuid
 import importlib.util
 import httpx
 from contextlib import contextmanager, asynccontextmanager
@@ -188,7 +187,7 @@ class SkillsManager(BaseManager):
             category = self._validate_string_field(data, "category", default=default_category)
             skill_code = self._validate_string_field(data, "code", default="")
 
-        skill_id = f"{prefix}_{uuid.uuid4().hex[:8]}"
+        skill_id = f"{prefix}_{self._generate_id()}"
         skill = {
             "id": skill_id,
             "name": name,

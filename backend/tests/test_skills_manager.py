@@ -49,7 +49,7 @@ def test_get_skill_not_found(manager):
     with pytest.raises(SkillNotFoundError, match="Skill not found"):
         manager.get_skill("non_existent_id")
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 def test_create_skill(mock_save, mock_path, mock_uuid, manager):
@@ -123,7 +123,7 @@ def test_create_skill_invalid_types(manager):
     with pytest.raises(SkillValidationError, match="Skill category must be a string"):
         manager.create_skill({"name": "test", "category": 1.5, "code": "print('hello')"})
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 def test_create_skill_write_error(mock_save, mock_path, mock_uuid, manager):
@@ -201,7 +201,7 @@ def test_delete_skill_not_found(manager):
 
     assert len(manager._custom_skills) == 1
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 @patch("backend.skills.manager.httpx.AsyncClient")
@@ -237,7 +237,7 @@ def test_install_from_url_success(mock_client_class, mock_save, mock_dir, mock_u
     mock_save.assert_called_once()
     assert len(manager._custom_skills) == 1
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.httpx.AsyncClient")
 def test_install_from_url_write_error(mock_client_class, mock_dir, mock_uuid, manager):
@@ -348,7 +348,7 @@ def test_save_typeerror() -> None:
             with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Serialization error"):
                 manager._save()
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.SkillsManager._save")
 def test_create_skill_write_oserror(mock_save, mock_path, mock_uuid, manager) -> None:
@@ -383,7 +383,7 @@ def test_delete_skill_unlink_oserror(mock_save, mock_path, manager) -> None:
         manager.delete_skill("custom_1")
     assert isinstance(exc.value.__cause__, OSError)
 
-@patch("backend.skills.manager.uuid.uuid4")
+@patch("backend.base_manager.uuid.uuid4")
 @patch("backend.skills.manager.CUSTOM_SKILLS_DIR")
 @patch("backend.skills.manager.httpx.AsyncClient")
 def test_install_from_url_write_oserror(mock_client_class, mock_dir, mock_uuid, manager) -> None:

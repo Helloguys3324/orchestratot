@@ -1,7 +1,6 @@
 """
 Agent Manager — handles agent CRUD and AutoGen agent creation.
 """
-import uuid
 from typing import Optional
 from backend.config import AGENTS_FILE, load_json, save_json
 from backend.agents.templates import get_template, AGENT_TEMPLATES
@@ -41,7 +40,7 @@ class AgentManager(BaseManager):
 
     def create_agent(self, data: dict) -> dict:
         """Create a new agent from provided data."""
-        agent_id = str(uuid.uuid4())[:8]
+        agent_id = self._generate_id()
 
         # If a template is specified, use it as base
         template_id = data.get("template")

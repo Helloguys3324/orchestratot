@@ -2,7 +2,6 @@
 Session Manager — orchestrates multi-agent chat with smart routing,
 file writing workspace, and code execution.
 """
-import uuid
 import re
 import asyncio
 import subprocess
@@ -51,7 +50,7 @@ class SessionManager(BaseManager):
         return datetime.now(timezone.utc).isoformat()
 
     def create_session(self, data: dict) -> dict:
-        session_id = str(uuid.uuid4())[:8]
+        session_id = self._generate_id()
         session = {
             "id": session_id,
             "name": data.get("name", f"Session {session_id}"),
