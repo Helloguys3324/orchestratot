@@ -5,7 +5,6 @@ file writing workspace, and code execution.
 import re
 import asyncio
 import subprocess
-from datetime import datetime, timezone
 from typing import Optional, Callable
 from pathlib import Path
 from backend.config import SESSIONS_FILE, BASE_DIR, WORKSPACE_DIR, load_json, save_json, get_settings
@@ -46,9 +45,6 @@ class SessionManager(BaseManager):
     def get_session(self, session_id: str) -> Optional[dict]:
         return self._sessions.get(session_id)
 
-    def _now_iso(self) -> str:
-        return datetime.now(timezone.utc).isoformat()
-
     def create_session(self, data: dict) -> dict:
         session_id = self._generate_id()
         session = {
@@ -57,7 +53,7 @@ class SessionManager(BaseManager):
             "agent_ids": data.get("agent_ids", []),
             "strategy": data.get("strategy", "auto"),
             "max_rounds": data.get("max_rounds", 15),
-            "created_at": self._now_iso(),
+            "created_at": self._get_now_iso(),
             "messages": [],
             "status": "idle",
             "workspace": str(WORKSPACE_DIR / session_id),
@@ -85,7 +81,7 @@ class SessionManager(BaseManager):
             "role": role,
             "sender": sender,
             "content": content,
-            "timestamp": self._now_iso(),
+            "timestamp": self._get_now_iso(),
             "icon": icon,
             "color": color,
         }
