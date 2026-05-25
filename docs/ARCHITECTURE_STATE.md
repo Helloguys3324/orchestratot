@@ -59,6 +59,7 @@ The repository is structured into the following directories:
 - **Emergency Stop:** The `AUTOPILOT_STOP` file acts as an emergency stop signal; automation must immediately halt and the file must not be removed.
 
 ### 7. Recent Architectural Changes
+- **Documentation:** Added `python .github/scripts/guard_ai_workflows.py` to the validation instruction block in `AGENTS.md` to ensure consistency with `README.md` and `docs/LOCAL_DEVELOPMENT.md`.
 - **Refactoring:** Extracted duplicate 8-character UUID generation logic from domain managers (`AgentManager`, `SessionManager`, `SkillsManager`) into a central `_generate_id()` method on `BaseManager`.
 - **Documentation:** Unified setup instructions, dependency installation, and validation commands across `AGENTS.md`, `README.md`, and `mission.md` to ensure consistency, and added Git error troubleshooting steps.
 - **Refactoring:** Extracted router decision and agent response logic from the large `_run_orchestrated_chat` loop in `backend/sessions/manager.py` into dedicated helper methods to improve readability and maintainability.
