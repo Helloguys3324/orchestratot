@@ -83,7 +83,7 @@ To configure GitHub Actions (including App Installation, API keys, Repository Se
 
 **Authoritative Validation:** GitHub Actions validation is the single source of truth for repository checks. The remote validation pipeline strictly runs on Python 3.11 and does not execute the Node.js frontend tests. Local validation commands mirror the remote pipeline but also include Node.js frontend test execution.
 
-For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](docs/AI_FACTORY.md).
+For detailed workflows and auto-merge requirements, refer to [AI Factory Operations](AI_FACTORY.md).
 *Important: Never modify `.github/workflows`, `.github/scripts`, or `.github/CODEOWNERS` directly, as infrastructure changes require a human PR outside of the AI Factory.*
 
 ### 7. Emergency Stop Protocol
@@ -111,6 +111,7 @@ Running the full validation suite from the **repository root** is **mandatory** 
 Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
 
 ```bash
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py

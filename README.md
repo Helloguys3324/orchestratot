@@ -122,9 +122,9 @@ pip install -q pytest pytest-asyncio pytest-cov anyio  # testing dependencies
 cp .env.example .env
 
 # 4. Run validation commands (Node.js v20+ required for frontend tests)
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide
 python .github/scripts/guard_ai_workflows.py
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio
