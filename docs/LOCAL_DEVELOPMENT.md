@@ -65,12 +65,12 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults. **The web UI is the primary and recommended way to manage these settings post-setup**, whereas `.env` editing is best for initial bootstrapping.
    - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
    - **Testing .env Isolation**: When testing configuration logic that interacts with `.env` files, tests must not mutate the root `.env` file. Instead, override `AUTOGEN_ENV_FILE` and `backend.config.ENV_FILE` to point to a temporary file path to maintain test determinism.
-3. **Verify Secrets**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's secret scanner:
+3. **Verify Secrets & Infrastructure Integrity**: You must verify that no secrets are accidentally committed and no infrastructure workflows are modified before submitting PRs by running the repository's validation scripts:
    ```bash
    python .github/scripts/scan_secrets.py
    python .github/scripts/guard_ai_workflows.py
    ```
-   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
+   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files. If `guard_ai_workflows.py` fails with an ambiguous argument Git error, refer to the [Troubleshooting Guide](TROUBLESHOOTING.md).
 
 ### 5. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes. See the [Validation Commands](#validation-commands) section for the full suite of mandatory commands.
@@ -79,19 +79,7 @@ To ensure code reliability, run both backend and frontend validation locally bef
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
 
 **Required GitHub Setup:**
-1. **App Installation:** Install/connect the repository in the Jules web app.
-2. **API Key Creation:** Create a Jules API key.
-3. **Secret Configuration:** Add repository secrets (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**). Do not use Environment Secrets or Repository Variables. The AI Factory workflows explicitly look for these Repository Secrets.
-   - Name: `JULES_API_KEY`
-     Value: your Jules API key
-   - Name: `GH_PAT`
-     Value: A GitHub Personal Access Token (PAT) with repository permissions for the validation auto-merge step (Note: While GITHUB_TOKEN is used as a fallback in scheduled ticks, a PAT is strictly required in the validation workflow for auto-merge to ensure administrative rights for merging and overriding protections to trigger subsequent workflows).
-   *(Note: Ensure you create these strictly as Repository Secrets. The autonomous workflows require them to function. `AUTOGEN_API_KEY` is not required for CI/CD workflows, as it is strictly a local runtime requirement.)*
-4. **Action Permissions:** Ensure workflows can modify the repository. Navigate to **Settings -> Actions -> General -> Workflow permissions** and select **Read and write permissions** and check **Allow GitHub Actions to create and approve pull requests**. This is crucial for the autonomous agents to propose changes via PRs, otherwise PR creation will fail with permission errors.
-5. **Action Verification:** Confirm GitHub Actions are enabled for the repository.
-6. **Autopilot Activation:** The GitHub Actions workflow `AI Factory Tick` runs automatically on a schedule. By default, it will not process tasks if an `AUTOPILOT_STOP` file is present in the repository root. Ensure no `AUTOPILOT_STOP` file exists to allow the autonomous workflows to execute. To safely halt autonomous execution at any time, simply create an empty file named `AUTOPILOT_STOP` in the repository root. To resume, delete the `AUTOPILOT_STOP` file.
-
-Make sure these setup steps are fully completed to ensure that continuous integration checks and scheduled tasks run properly.
+To configure GitHub Actions (including App Installation, API keys, Repository Secrets, and Action Permissions), see the **[Required GitHub Setup in AI Factory Operations](AI_FACTORY.md#required-github-setup)**.
 
 **Authoritative Validation:** GitHub Actions validation is the single source of truth for repository checks. The remote validation pipeline strictly runs on Python 3.11 and does not execute the Node.js frontend tests. Local validation commands mirror the remote pipeline but also include Node.js frontend test execution.
 
