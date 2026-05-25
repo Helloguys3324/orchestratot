@@ -34,7 +34,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. Install required dependencies directly into the existing environment instead.
 
 ```bash
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide for the temporary empty commit workaround.
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
@@ -1757,7 +1757,7 @@ Agents should run relevant validation when practical.
 Recommended validation examples:
 
 ```text
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error, see Troubleshooting Guide for the temporary empty commit workaround.
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
