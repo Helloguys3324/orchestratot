@@ -22,6 +22,8 @@ except ImportError:
 
 
 class SessionManager(BaseManager):
+    MAX_HISTORY_MESSAGES = 12
+
     def __init__(self, agent_manager: AgentManager):
         self.agent_manager = agent_manager
         self._sessions: dict[str, dict] = {}
@@ -121,6 +123,20 @@ class SessionManager(BaseManager):
             session["status"] = "idle"
             self._save()
 
+    def _find_agent_by_name(self, name: str, agent_configs: list[dict]) -> Optional[dict]:
+        """Find an agent by exact or fuzzy name match."""
+        for ac in agent_configs:
+            if ac["name"] == name:
+                return ac
+
+        name_lower = name.lower()
+        for ac in agent_configs:
+            ac_name_lower = ac["name"].lower()
+            if ac_name_lower in name_lower or name_lower in ac_name_lower:
+                return ac
+
+        return None
+
     async def _run_orchestrated_chat(self, session, user_message, api_key, settings):
         """Smart orchestrated chat: router picks agents, agents write files."""
         agent_configs = [
@@ -139,8 +155,7 @@ class SessionManager(BaseManager):
         workspace.mkdir(parents=True, exist_ok=True)
 
         # Build agent name list for the router
-        agent_map = {ac["name"]: ac for ac in agent_configs}
-        agent_names = list(agent_map.keys())
+        agent_names = [ac["name"] for ac in agent_configs]
 
         # Conversation history for context
         conv_history = [{"role": "user", "content": user_message}]
@@ -166,12 +181,9 @@ class SessionManager(BaseManager):
                 break
 
             # Find the agent
-            ac = agent_map.get(next_agent_name)
+            ac = self._find_agent_by_name(next_agent_name, agent_configs)
             if not ac:
-                # Fuzzy match
-                ac = next((agent_map[name] for name in agent_names if name.lower() in next_agent_name.lower() or next_agent_name.lower() in name.lower()), None)
-                if not ac:
-                    ac = agent_configs[round_num % len(agent_configs)]
+                ac = agent_configs[round_num % len(agent_configs)]
 
             # Show routing decision
             await self._sys_msg(session,
@@ -274,7 +286,7 @@ class SessionManager(BaseManager):
         )
         router_messages = [
             {"role": "system", "content": router_prompt},
-        ] + conv_history[-12:]
+        ] + conv_history[-self.MAX_HISTORY_MESSAGES:]
 
         try:
             next_agent_name = await call_llm(
@@ -308,7 +320,7 @@ class SessionManager(BaseManager):
 
         agent_messages = [
             {"role": "system", "content": agent_system},
-        ] + conv_history[-12:]
+        ] + conv_history[-self.MAX_HISTORY_MESSAGES:]
 
         try:
             return await call_llm(
