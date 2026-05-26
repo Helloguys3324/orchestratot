@@ -147,3 +147,4 @@ When a user sends a message via `POST /api/sessions/{session_id}/chat`, the Sess
 - `pyautogen` is constrained to `>= 0.2.36,<0.4.0` due to massive breaking API changes in AutoGen 0.4.x+. Because 0.2.x and 0.3.x still rely on the `diskcache` dependency, `CVE-2025-69872` remains unmitigated. A complete application rewrite is required before we can upgrade to `pyautogen>=0.4.0` and safely remove `diskcache`.
 - `uvicorn[standard]` is upgraded to `>= 0.47.0` to fix security vulnerabilities in older versions.
 - `aiofiles` is upgraded to `>= 25.1.0` to fix security vulnerabilities in older versions.
+- `websockets` is upgraded to `>= 14.1` to fix security vulnerabilities in older versions.
