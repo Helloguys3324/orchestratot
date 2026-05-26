@@ -34,19 +34,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. Install required dependencies directly into the existing environment instead.
 
 ```bash
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-
-# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
-# Install required dependencies directly into the existing environment instead:
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-asyncio pytest-cov anyio
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
-# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
+# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and troubleshooting guide.
 ```
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
@@ -1760,19 +1748,7 @@ Agents should run relevant validation when practical.
 Recommended validation examples:
 
 ```bash
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-
-# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
-# Install required dependencies directly into the existing environment instead:
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-asyncio pytest-cov anyio
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
-# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
+# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and troubleshooting guide.
 ```
 
 If validation commands exist in:
