@@ -6,18 +6,18 @@ from backend.skills.errors import SkillError
 from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
 @pytest.fixture
-def mock_load_json():
-    with patch("backend.skills.manager.load_json") as mock:
+def mock_load_list():
+    with patch("backend.skills.manager.SkillsManager._load_list") as mock:
         mock.return_value = []
         yield mock
 
 @pytest.fixture
-def manager(mock_load_json):
+def manager(mock_load_list):
     return SkillsManager()
 
 
-def test_manager_init(manager, mock_load_json):
-    mock_load_json.assert_called_once()
+def test_manager_init(manager, mock_load_list):
+    mock_load_list.assert_called_once()
     assert manager._custom_skills == []
 
 def test_list_skills(manager):
@@ -324,27 +324,27 @@ def test_install_from_url_invalid_hostname(manager):
         asyncio.run(manager.install_from_url("http://0.0.0.0:5000/skill.py"))
 
 def test_load_oserror():
-    with patch("backend.skills.manager.load_json", side_effect=OSError("Read error")):
+    with patch("backend.skills.manager.SkillsManager._load_list", side_effect=OSError("Read error")):
         with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Read error"):
             SkillsManager()
 
 def test_save_oserror():
-    with patch("backend.skills.manager.load_json", return_value=[]):
+    with patch("backend.skills.manager.SkillsManager._load_list", return_value=[]):
         manager = SkillsManager()
-        with patch("backend.skills.manager.save_json", side_effect=OSError("Write error")):
+        with patch("backend.skills.manager.SkillsManager._save_list", side_effect=OSError("Write error")):
             with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Write error"):
                 manager._save()
 
 def test_load_jsondecodeerror() -> None:
     import json
-    with patch("backend.skills.manager.load_json", side_effect=json.JSONDecodeError("Corrupted JSON", "", 0)):
+    with patch("backend.skills.manager.SkillsManager._load_list", side_effect=json.JSONDecodeError("Corrupted JSON", "", 0)):
         with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Corrupted JSON"):
             SkillsManager()
 
 def test_save_typeerror() -> None:
-    with patch("backend.skills.manager.load_json", return_value=[]):
+    with patch("backend.skills.manager.SkillsManager._load_list", return_value=[]):
         manager = SkillsManager()
-        with patch("backend.skills.manager.save_json", side_effect=TypeError("Serialization error")):
+        with patch("backend.skills.manager.SkillsManager._save_list", side_effect=TypeError("Serialization error")):
             with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Serialization error"):
                 manager._save()
 
@@ -425,14 +425,14 @@ def test_create_skill_attribute_error(mock_validate, manager):
         manager.create_skill({"name": "test"})
     assert isinstance(exc.value.__cause__, AttributeError)
 
-@patch("backend.skills.manager.load_json", side_effect=RuntimeError("Generic load error"))
-def test_load_generic_exception(mock_load_json):
+@patch("backend.skills.manager.SkillsManager._load_list", side_effect=RuntimeError("Generic load error"))
+def test_load_generic_exception(mock_load_list):
     with pytest.raises(SkillError, match=r"Failed to load skills file: \w+ - Generic load error"):
         SkillsManager()
 
-@patch("backend.skills.manager.save_json", side_effect=RuntimeError("Generic save error"))
-def test_save_generic_exception(mock_save_json):
-    with patch("backend.skills.manager.load_json", return_value=[]):
+@patch("backend.skills.manager.SkillsManager._save_list", side_effect=RuntimeError("Generic save error"))
+def test_save_generic_exception(mock_save_list):
+    with patch("backend.skills.manager.SkillsManager._load_list", return_value=[]):
         manager = SkillsManager()
         with pytest.raises(SkillError, match=r"Failed to save skills file: \w+ - Generic save error"):
             manager._save()
@@ -464,8 +464,8 @@ def test_install_from_url_generic_exception(mock_client_class, manager):
     with pytest.raises(SkillInstallError, match=r"Failed to download skill: \w+ - Download error"):
         asyncio.run(manager.install_from_url("http://example.com/skill.py"))
 
-@patch("backend.skills.manager.load_json", side_effect=SkillError("Base custom error"))
-def test_load_skill_error_not_wrapped(mock_load_json) -> None:
+@patch("backend.skills.manager.SkillsManager._load_list", side_effect=SkillError("Base custom error"))
+def test_load_skill_error_not_wrapped(mock_load_list) -> None:
     with pytest.raises(SkillError, match="Base custom error") as exc:
         SkillsManager()
     assert type(exc.value) is SkillError
