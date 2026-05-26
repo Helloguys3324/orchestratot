@@ -45,7 +45,7 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    cp .env.example .env
    ```
 2. **Configure Credentials**: Your local `.env` file is meant for development. Open `.env` and replace placeholders with your actual keys. Key environment variables include:
-   - `AUTOGEN_API_KEY`: Your language model API key.
+   - `AUTOGEN_API_KEY`: Your language model API key (required unless using a local, unauthenticated model).
    - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
    - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
    - `AUTOGEN_BASE_URL`: The base URL for the API endpoint (defaults to Google's Gemini API).

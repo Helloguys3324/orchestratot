@@ -108,20 +108,27 @@ flowchart TD
 ## Quickstart
 
 ```bash
-# 1. Clone the repository
+# 1. Prerequisites
+# - Python 3.11
+# - Node.js v20+
+
+# 2. Clone the repository
 git clone <repository-url>
 cd <repository-directory>
 
-# 2. Set up virtual environment
+# 3. Set up virtual environment
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate # (Mac/Linux)
+# venv\Scripts\activate # (Windows)
 
-# 3. Install dependencies
+# 4. Install dependencies
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov anyio  # testing dependencies
+
+# 5. Configure environment
 cp .env.example .env
 
-# 4. Run validation commands
+# 6. Run validation commands
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
@@ -131,7 +138,7 @@ rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and Troubleshooting Guide for Git errors.
 
-# 5. Start the application
+# 7. Start the application
 python run.py
 ```
 *(Note: See [Local Development Setup Guide](docs/LOCAL_DEVELOPMENT.md) for detailed configurations, `PYTHONPATH` instructions for testing, and Windows activation commands.)*
