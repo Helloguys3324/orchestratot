@@ -108,18 +108,19 @@ This starts the application at `http://localhost:8000`.
 
 Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
-Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test dependencies must be installed manually first. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
+Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
 
 ```bash
+# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+# Install required dependencies directly into the existing environment instead:
+pip install -q -r backend/requirements.txt
+pip install -q pytest pytest-asyncio pytest-cov anyio
+
 # Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
 
-# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
-# Install required dependencies directly into the existing environment instead:
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage

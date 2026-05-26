@@ -15,11 +15,11 @@ Operating rules:
 
 - Prefer small pull requests with one clear purpose.
 - Run the repository validation commands (including mandatory JSON syntax validation if JSON files were changed) before opening a PR.
+  - `pip install -q -r backend/requirements.txt`
+  - `pip install -q pytest pytest-asyncio pytest-cov anyio`
   - `python -m compileall backend skills_library run.py`
   - `python .github/scripts/scan_secrets.py`
   - `python .github/scripts/guard_ai_workflows.py`
-  - `pip install -q -r backend/requirements.txt`
-  - `pip install -q pytest pytest-asyncio pytest-cov anyio`
   - `PYTHONPATH=. python -m pytest -q`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
   - `rm -rf coverage/ frontend/coverage/ .coverage`
