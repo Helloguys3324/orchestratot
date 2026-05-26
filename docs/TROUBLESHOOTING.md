@@ -57,7 +57,7 @@ pip install -q pytest pytest-asyncio pytest-cov anyio
 **Symptom:** You encounter JSONDecodeError or the AI Factory reports JSON validation failures.
 **Solution:** The AI Factory orchestrator enforces strict JSON syntax for its state and planning files. Run the built-in JSON tool to identify the exact line containing the syntax error:
 ```bash
-python -m json.tool <filepath>
+python -m json.tool <filepath> > /dev/null
 ```
 
 ## GitHub Actions & Autonomous Workflows

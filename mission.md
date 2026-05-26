@@ -23,7 +23,7 @@ Operating rules:
   - `PYTHONPATH=. python -m pytest -q`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
   - `rm -rf coverage/ frontend/coverage/ .coverage`
-  - `python -m json.tool <filepath>` (run individually on changed JSON files)
+  - `python -m json.tool <filepath> > /dev/null` (run individually on changed JSON files)
   - (See docs/LOCAL_DEVELOPMENT.md for the complete validation suite and Troubleshooting Guide for Git errors)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
