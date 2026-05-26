@@ -32,7 +32,6 @@ Run these before proposing a code PR when practical:
 Verify Python syntax, scan for secrets, run tests, and check JSON syntax.
 
 For the full suite of mandatory commands and instructions on running them correctly in your environment, refer to **`docs/LOCAL_DEVELOPMENT.md#validation-commands`**.
-
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 # Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.

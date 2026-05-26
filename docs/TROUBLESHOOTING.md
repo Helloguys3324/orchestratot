@@ -105,4 +105,4 @@ python -m json.tool <filepath>
 
 ### Issue: `guard_ai_workflows.py` fails with an ambiguous argument Git error
 **Symptom:** Running `python .github/scripts/guard_ai_workflows.py` fails with a fatal error: `ambiguous argument 'HEAD~1..HEAD': unknown revision or path not in the working tree`.
-**Solution:** The script uses `HEAD~1..HEAD` to compare changes. If your current branch has no previous commits, Git cannot find `HEAD~1`. To resolve this locally, temporarily create a commit (e.g., `git commit -m 'temp' --allow-empty`), run the script, and then undo the commit (`git reset HEAD~1 --soft`).
+**Solution:** The script uses `HEAD~1..HEAD` to compare changes. If your current branch has no previous commits, Git cannot find `HEAD~1`. To resolve this locally, temporarily create a commit (e.g., `git -c user.name="Test" -c user.email="test@example.com" commit -m 'temp' --allow-empty`), run the script, and then undo the commit (`git reset HEAD~1 --soft`).
