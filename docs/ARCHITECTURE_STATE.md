@@ -74,3 +74,4 @@ The repository is structured into the following directories:
 - **Security & Dependencies:** `pyautogen` remains intentionally constrained to `>= 0.2.36,<0.4.0` due to AutoGen 0.4.x API breaking changes; consequently, CVE-2025-69872 in `diskcache` is unmitigated by design until a complete rewrite.
 - **Documentation:** Explicitly documented across core documentation files (`AGENTS.md`, `README.md`, `LOCAL_DEVELOPMENT.md`, `mission.md`) that AI agents must not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`, and should instead install required dependencies directly into the existing environment.
 - **Security & Dependencies:** Upgraded `websockets` dependency to `>=14.1` to mitigate known security vulnerabilities.
+- **Refactoring:** Refactored agent matching logic in `SessionManager` to use a dedicated `_find_agent_by_name` helper method, improving readability and code reuse.
