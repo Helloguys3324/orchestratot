@@ -123,7 +123,7 @@ source venv/bin/activate # (Mac/Linux)
 
 # 4. Install dependencies
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio  # testing dependencies
+pip install -q pytest pytest-cov anyio httpx  # testing dependencies
 
 # 5. Configure environment
 cp .env.example .env
