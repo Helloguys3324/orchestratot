@@ -14,16 +14,7 @@ Primary goals:
 Operating rules:
 
 - Prefer small pull requests with one clear purpose.
-- Run the repository validation commands (including mandatory JSON syntax validation if JSON files were changed) before opening a PR.
-  - `python -m compileall backend skills_library run.py`
-  - `python .github/scripts/scan_secrets.py`
-  - `python .github/scripts/guard_ai_workflows.py` (see Troubleshooting Guide for the temporary empty commit workaround if this fails with an ambiguous Git error, e.g., HEAD~1 not found)
-  - `pip install -q -r backend/requirements.txt` (Note for AI Agents: Do not use `python -m venv` or source virtual environments within `run_in_bash_session`)
-  - `pip install -q pytest pytest-asyncio pytest-cov anyio`
-  - `PYTHONPATH=. python -m pytest -q`
-  - `node --experimental-test-coverage --test frontend/tests/*.test.js`
-  - `rm -rf coverage/ frontend/coverage/ .coverage`
-  - `python -m json.tool <filepath>` (run individually on changed JSON files)
+- Run the comprehensive repository validation commands before opening a PR (see `docs/LOCAL_DEVELOPMENT.md#validation-commands`).
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
 - Do not rewrite project history.
