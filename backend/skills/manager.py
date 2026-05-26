@@ -2,6 +2,9 @@
 Skills Manager — handles skill CRUD, loading, and marketplace.
 """
 import importlib.util
+import inspect
+from functools import wraps
+from typing import Callable, Any, TypeVar, ParamSpec
 import httpx
 from contextlib import contextmanager, asynccontextmanager
 from collections.abc import Iterator, AsyncIterator
@@ -137,6 +140,25 @@ async def async_catch_unexpected(error_cls: type[SkillError], msg_prefix: str) -
         _handle_unexpected_error(e, error_cls, msg_prefix)
 
 
+P = ParamSpec("P")
+T = TypeVar("T")
+
+def handle_skill_errors(error_cls: type[SkillError], msg_prefix: str) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    def decorator(func: Callable[P, T]) -> Callable[P, T]:
+        if inspect.iscoroutinefunction(func):
+            @wraps(func)
+            async def async_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+                async with async_catch_unexpected(error_cls, msg_prefix):
+                    return await func(*args, **kwargs)
+            return async_wrapper # type: ignore
+        else:
+            @wraps(func)
+            def sync_wrapper(*args: P.args, **kwargs: P.kwargs) -> Any:
+                with catch_unexpected(error_cls, msg_prefix):
+                    return func(*args, **kwargs)
+            return sync_wrapper # type: ignore
+    return decorator
+
 class SkillsManager(BaseManager):
     def __init__(self):
         self._custom_skills: list[dict] = []
@@ -151,12 +173,15 @@ class SkillsManager(BaseManager):
         with catch_unexpected(SkillError, "Failed to save skills file"):
             self._save_list(self._custom_skills)
 
+    @handle_skill_errors(SkillError, "Failed to list skills")
     def list_skills(self) -> list[dict]:
         return BUILTIN_SKILLS + self._custom_skills
 
+    @handle_skill_errors(SkillError, "Failed to list marketplace skills")
     def list_marketplace(self) -> list[dict]:
         return MARKETPLACE_SKILLS
 
+    @handle_skill_errors(SkillError, "Failed to get skill")
     def get_skill(self, skill_id: str) -> dict | None:
         if s := next((s for s in BUILTIN_SKILLS + self._custom_skills if s["id"] == skill_id), None):
             return s
@@ -206,9 +231,11 @@ class SkillsManager(BaseManager):
         self._save()
         return skill
 
+    @handle_skill_errors(SkillError, "Failed to create skill")
     def create_skill(self, data: dict) -> dict:
         return self._add_custom_skill("custom", data, "custom", "custom")
 
+    @handle_skill_errors(SkillError, "Failed to delete skill")
     def delete_skill(self, skill_id: str) -> bool:
         skill = next((s for s in self._custom_skills if s["id"] == skill_id), None)
 
@@ -224,6 +251,7 @@ class SkillsManager(BaseManager):
 
         raise SkillNotFoundError("Skill not found")
 
+    @handle_skill_errors(SkillInstallError, "Failed to install skill")
     async def install_from_url(self, url: str, name: str = None) -> dict:
         """Download and install a skill from a URL."""
         from urllib.parse import urlparse
