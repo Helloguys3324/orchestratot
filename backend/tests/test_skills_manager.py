@@ -1,7 +1,8 @@
 import asyncio
 import pytest
 from unittest.mock import patch, MagicMock, AsyncMock, PropertyMock
-from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS
+from backend.skills.manager import SkillsManager, BUILTIN_SKILLS, MARKETPLACE_SKILLS, handle_skill_errors
+
 from backend.skills.errors import SkillError
 from backend.skills.errors import SkillValidationError, SkillInstallError, SkillNotFoundError
 
@@ -498,3 +499,23 @@ def test_delete_skill_exists_error(mock_save, mock_dir, manager) -> None:
     with pytest.raises(SkillError, match=r"Failed to delete skill file: \w+ - Exists error"):
         manager.delete_skill("custom_1")
 
+
+class MockManager:
+    @handle_skill_errors(SkillError, "Test error")
+    def sync_fail(self):
+        raise ValueError("inner sync fail")
+
+    @handle_skill_errors(SkillError, "Test error")
+    async def async_fail(self):
+        raise ValueError("inner async fail")
+
+def test_sync_handle_skill_errors():
+    m = MockManager()
+    with pytest.raises(SkillError, match=r"Test error: ValueError - inner sync fail"):
+        m.sync_fail()
+
+@pytest.mark.anyio
+async def test_async_handle_skill_errors():
+    m = MockManager()
+    with pytest.raises(SkillError, match=r"Test error: ValueError - inner async fail"):
+        await m.async_fail()
