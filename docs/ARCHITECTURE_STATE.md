@@ -79,3 +79,5 @@ The repository is structured into the following directories:
 - **Security & Dependencies:** Constrained `fastapi` to `<0.136.3` in `backend/requirements.txt` to mitigate MAL-2026-4750 and documented the security reasoning in `docs/API_NOTES.md`.
 - **Refactoring:** Replaced duplicated `async_handle_skill_exceptions` context managers across `backend/api/skills.py` with a central global FastAPI `@app.exception_handler` in `backend/main.py`.
 - **Refactoring:** Added list-based JSON management helpers (`_load_list`, `_save_list`, `_delete_list_item`) to `BaseManager` to unify array file handling and replaced duplicated logic in `SkillsManager`.
+- **Testing Dependencies:** Removed `pytest-asyncio` from local development and troubleshooting instructions to reflect correct test dependencies, favoring the natively available `anyio` plugin for async testing.
+- **Documentation:** Updated documentation to ensure dependency installation commands strictly precede validation scripts, and explicitly listed comprehensive validation commands in `README.md` and `AGENTS.md` for clarity and immediate actionability.
