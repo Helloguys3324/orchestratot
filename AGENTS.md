@@ -38,6 +38,9 @@ Note for AI Agents: Do not attempt to use `python -m venv` or source virtual env
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
+
+# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+# Install required dependencies directly into the existing environment instead:
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
@@ -1756,7 +1759,7 @@ Agents should run relevant validation when practical.
 
 Recommended validation examples:
 
-```text
+```bash
 # Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
