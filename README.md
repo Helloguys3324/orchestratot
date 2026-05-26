@@ -118,7 +118,7 @@ source venv/bin/activate
 
 # 3. Install dependencies
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-asyncio pytest-cov anyio  # testing dependencies
+pip install -q pytest pytest-cov anyio  # testing dependencies
 cp .env.example .env
 
 # 4. Run validation commands

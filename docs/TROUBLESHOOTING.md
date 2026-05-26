@@ -19,12 +19,12 @@ PYTHONPATH=. python -m pytest -q
 ```
 Also, ensure the testing dependencies are installed:
 ```bash
-pip install -q pytest pytest-asyncio pytest-cov anyio
+pip install -q pytest pytest-cov anyio
 ```
 *Note: For async tests in pytest, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 
 ### Issue: `pytest` fails with "unrecognized arguments: --cov" or similar plugin errors
-**Symptom:** You installed pytest plugins (like `pytest-cov` or `pytest-asyncio`) via `pip`, but running `pytest` results in an error about unrecognized arguments.
+**Symptom:** You installed pytest plugins (like `pytest-cov` or `anyio`) via `pip`, but running `pytest` results in an error about unrecognized arguments.
 **Solution:** Always invoke tests using `python -m pytest` rather than the bare `pytest` command locally. The bare command may resolve to a global installation (e.g., via pipx) that lacks access to your environment's installed plugins.
 
 ### Issue: Validation commands fail due to missing `node` or test runner issues
