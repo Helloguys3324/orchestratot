@@ -145,11 +145,11 @@ class SkillsManager(BaseManager):
 
     def _load(self) -> None:
         with catch_unexpected(SkillError, "Failed to load skills file"):
-            self._custom_skills = load_json(self._file_path, [])
+            self._custom_skills = self._load_list()
 
     def _save(self) -> None:
         with catch_unexpected(SkillError, "Failed to save skills file"):
-            save_json(self._file_path, self._custom_skills)
+            self._save_list(self._custom_skills)
 
     def list_skills(self) -> list[dict]:
         return BUILTIN_SKILLS + self._custom_skills
@@ -219,8 +219,7 @@ class SkillsManager(BaseManager):
                 if filepath.exists():
                     filepath.unlink()
 
-            self._custom_skills.remove(skill)
-            self._save()
+            self._delete_list_item(self._custom_skills, skill_id)
             return True
 
         raise SkillNotFoundError("Skill not found")
