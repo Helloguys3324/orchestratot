@@ -124,7 +124,7 @@ python .github/scripts/guard_ai_workflows.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
-# python -m json.tool <filepath>  # Run on specific JSON files to check syntax
+# python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
