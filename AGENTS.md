@@ -35,7 +35,7 @@ Note for AI Agents: Do not attempt to use `python -m venv` or source virtual env
 
 ```bash
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio
+pip install -q pytest pytest-cov anyio httpx
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
@@ -1758,7 +1758,7 @@ Recommended validation examples:
 
 ```bash
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio
+pip install -q pytest pytest-cov anyio httpx
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py

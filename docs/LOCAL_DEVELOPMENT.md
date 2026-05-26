@@ -28,7 +28,7 @@ venv\Scripts\activate
 
 # Install dependencies
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio
+pip install -q pytest pytest-cov anyio httpx
 ```
 
 *Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. The sandbox environment will block the execution. Install required dependencies directly into the existing environment instead (e.g., `pip install -q -r backend/requirements.txt`).*
@@ -114,7 +114,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 # Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
 # Install required dependencies directly into the existing environment instead:
 pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio
+pip install -q pytest pytest-cov anyio httpx
 
 # Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py

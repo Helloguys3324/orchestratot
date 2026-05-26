@@ -19,7 +19,7 @@ PYTHONPATH=. python -m pytest -q
 ```
 Also, ensure the testing dependencies are installed:
 ```bash
-pip install -q pytest pytest-cov anyio
+pip install -q pytest pytest-cov anyio httpx
 ```
 *Note: For async tests in pytest, prefer using `@pytest.mark.anyio` instead of `@pytest.mark.asyncio`. The `anyio` plugin is natively available via the project's FastAPI/HTTPX dependencies, ensuring tests run successfully in CI environments where `pytest-asyncio` might not be installed.*
 
