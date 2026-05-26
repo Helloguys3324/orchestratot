@@ -125,17 +125,16 @@ class SessionManager(BaseManager):
 
     def _find_agent_by_name(self, name: str, agent_configs: list[dict]) -> Optional[dict]:
         """Find an agent by exact or fuzzy name match."""
-        for ac in agent_configs:
-            if ac["name"] == name:
-                return ac
+        # Exact match
+        if exact_match := next((ac for ac in agent_configs if ac["name"] == name), None):
+            return exact_match
 
+        # Fuzzy match
         name_lower = name.lower()
-        for ac in agent_configs:
-            ac_name_lower = ac["name"].lower()
-            if ac_name_lower in name_lower or name_lower in ac_name_lower:
-                return ac
-
-        return None
+        return next(
+            (ac for ac in agent_configs if ac["name"].lower() in name_lower or name_lower in ac["name"].lower()),
+            None
+        )
 
     async def _run_orchestrated_chat(self, session, user_message, api_key, settings):
         """Smart orchestrated chat: router picks agents, agents write files."""
