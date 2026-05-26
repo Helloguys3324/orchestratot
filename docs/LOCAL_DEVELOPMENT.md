@@ -115,6 +115,9 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
+
+# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+# Install required dependencies directly into the existing environment instead:
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-asyncio pytest-cov anyio
 PYTHONPATH=. python -m pytest -q
