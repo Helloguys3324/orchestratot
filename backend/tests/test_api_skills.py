@@ -131,14 +131,15 @@ def test_create_skill_success(mock_create):
     assert response.json() == {"id": "custom_123"}
     mock_create.assert_called_once_with({"name": "test_skill"})
 
-@pytest.mark.anyio
-async def test_handle_skill_exceptions_unhandled():
-    from backend.api.skills import async_handle_skill_exceptions
-    from fastapi import HTTPException
 
-    with pytest.raises(HTTPException) as exc:
-        async with async_handle_skill_exceptions():
-            raise Exception("unhandled error")
+@patch("backend.api.skills.skills_manager.list_skills")
+def test_global_exception_handler_unhandled(mock_list):
+    from backend.skills.errors import SkillError
+    class UnhandledError(SkillError):
+        pass
 
-    assert exc.value.status_code == 500
-    assert exc.value.detail == {"error": "InternalServerError", "message": "unhandled error"}
+    mock_list.side_effect = UnhandledError("Unexpected error")
+
+    response = client.get("/api/skills")
+    assert response.status_code == 500
+    assert response.json()["detail"] == {"error": "UnhandledError", "message": "Unexpected error"}

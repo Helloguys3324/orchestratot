@@ -6,9 +6,12 @@ import asyncio
 from pathlib import Path
 from contextlib import asynccontextmanager
 
+from fastapi import Request
+from fastapi.responses import JSONResponse
+from backend.skills.errors import SkillError, SkillValidationError, SkillNotFoundError
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 # Add parent dir to path so backend package is importable
@@ -31,6 +34,19 @@ async def lifespan(app: FastAPI):
     yield
 
 app = FastAPI(title="AutoGen AI Orchestrator", version="1.0.0", lifespan=lifespan)
+
+@app.exception_handler(SkillError)
+async def skill_error_handler(request: Request, exc: SkillError):
+    status_codes = {
+        SkillValidationError: 400,
+        SkillNotFoundError: 404,
+    }
+    status_code = next((code for exc_type, code in status_codes.items() if isinstance(exc, exc_type)), 500)
+    error_type = type(exc).__name__
+    return JSONResponse(
+        status_code=status_code,
+        content={"detail": {"error": error_type, "message": str(exc)}},
+    )
 
 app.add_middleware(
     CORSMiddleware,
