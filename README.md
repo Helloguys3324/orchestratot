@@ -20,6 +20,7 @@ The AI Factory runs locally for interactive development and in GitHub Actions fo
 - **The Queue (`task_queue.json`):** Tasks are pulled from a central backlog, defining strict scopes and constraints.
 - **The Orchestrator:** The Python backend, driven by Pydantic models and asynchronous session management, manages agent lifecycles, skill execution, and workspace I/O.
 - **The Pipeline (`ai-factory-jules.yml`):** The CI/CD workflow dispatches agents sequentially, validates their pull requests, and automerges safe changes.
+- **Validation:** Pull requests must pass comprehensive validation (including dependency installation, compilation checks, secret scans, workflow guards, backend tests, and frontend tests) before being considered safe for auto-merge.
 
 ## Agent Roles
 The factory operates using specialized roles, each with defined capabilities and boundaries:
@@ -34,8 +35,9 @@ The factory operates using specialized roles, each with defined capabilities and
 
 ## Lifecycle & Automerge Policy
 Automerge is intentionally conservative to prevent autonomous regressions:
-- A PR can be merged automatically **only** when `AI Factory Validate` passes, it is not a draft, the title starts with `ai-factory(documenter):` or `ai-factory(tester):`, and it has the label `ai-factory:safe-automerge`.
+- A PR can be merged automatically **only** when `AI Factory Validate` passes (including all core and test validation checks), it is not a draft, the title starts with `ai-factory(documenter):` or `ai-factory(tester):`, and it has the label `ai-factory:safe-automerge`.
 - All implementation, refactor, security, and architecture PRs require human review.
+- The validation pipeline utilizes `guard_ai_workflows.py` to ensure infrastructure files (`.github/workflows/`, `.github/scripts/`, `.github/CODEOWNERS`) remain locked and are not modified by autonomous agents.
 
 
 ## Task Lifecycle
@@ -129,6 +131,7 @@ pip install -q pytest pytest-cov anyio httpx  # testing dependencies
 cp .env.example .env
 # Open .env and set AUTOGEN_API_KEY (required), adjust system paths, or tweak model settings.
 # IMPORTANT: Never commit the .env file to version control.
+# IMPORTANT: The backend utilizes pydantic-settings to safely load configuration, prioritizing environment variables over .env variables.
 
 # 6. Run validation commands
 python -m compileall backend skills_library run.py

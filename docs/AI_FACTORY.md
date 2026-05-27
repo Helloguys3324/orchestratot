@@ -81,14 +81,13 @@ The task planner reads `.github/ai-factory/task_queue.json`. Each task can defin
 Jules receives these fields directly in the prompt, so each task has a role, a purpose, and path boundaries.
 
 ## Emergency Stop
-
 Create or keep this file in the repository root:
 
 ```text
 AUTOPILOT_STOP
 ```
 
-When the file exists, scheduled and normal dispatch runs produce no Jules tasks. Manual dispatch can still run with `emergency_override=true`.
+When the file exists, scheduled and normal dispatch runs produce no Jules tasks. Manual dispatch can still run with `emergency_override=true`. To resume normal autonomous operations, simply delete the `AUTOPILOT_STOP` file.
 
 ## Safe Automerge
 

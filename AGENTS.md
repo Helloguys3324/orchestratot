@@ -1815,7 +1815,7 @@ EXAMPLE_TOKEN
 REPLACE_ME
 ```
 
-Do not use realistic-looking secret values.
+Do not use realistic-looking secret values. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
 
 Do not modify secret-handling logic unless assigned.
 
