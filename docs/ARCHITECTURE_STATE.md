@@ -84,3 +84,5 @@ The repository is structured into the following directories:
 - **Error Handling:** Enhanced `backend/skills/manager.py` with `@handle_skill_errors` decorator to seamlessly catch and map unhandled exceptions into precise, typed `SkillError` variants across core endpoints.
 - **Refactoring:** Refactored `_find_agent_by_name` in `backend/sessions/manager.py` to leverage pythonic `next()` instead of loops.
 - **Documentation:** Updated dependency installation instructions across project documentation to include `httpx` to eliminate `ModuleNotFoundError` during `pytest` execution with `TestClient`.
+- **Documentation:** Replaced vague references to "Troubleshooting Guide" with precise paths to "docs/TROUBLESHOOTING.md" across local setup documentation, improving accuracy and developer experience.
+- **Error Handling:** Improved skills error handling by applying the `@handle_skill_errors` decorator over core management endpoints and expanding the exception management test suite in `backend/tests/test_skills_manager.py`.
