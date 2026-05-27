@@ -45,18 +45,21 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    cp .env.example .env
    ```
 2. **Configure Credentials**: Your local `.env` file is meant for development. Open `.env` and replace placeholders with your actual keys. Key environment variables include:
-   - `AUTOGEN_API_KEY`: Your language model API key (required unless using a local, unauthenticated model).
-   - `AUTOGEN_DEFAULT_MODEL`: The default model (e.g., `gemini-2.5-flash`).
-   - `AUTOGEN_ROUTER_MODEL`: The model to use for the orchestrator router.
-   - `AUTOGEN_BASE_URL`: The base URL for the API endpoint (defaults to Google's Gemini API).
-   - `AUTOGEN_ENV_FILE`: The path to the custom .env configuration file (defaults to .env in project root).
-   - `AUTOGEN_MAX_ROUNDS`: The maximum number of conversational rounds allowed (defaults to 15).
-   - `AUTOGEN_TEMPERATURE`: The temperature parameter for model generation (defaults to 0.7).
-   - `AUTOGEN_MAX_TOKENS`: The maximum tokens parameter for model generation (defaults to 4096).
-   - `AUTOGEN_DATA_DIR`: The directory where runtime JSON data is stored.
-   - `AUTOGEN_SKILLS_DIR`: The directory for built-in skills.
-   - `AUTOGEN_CUSTOM_SKILLS_DIR`: The directory for custom skills.
-   - `AUTOGEN_WORKSPACE_DIR`: The directory for session workspace files.
+
+   | Variable | Description | Default |
+   |---|---|---|
+   | `AUTOGEN_API_KEY` | Your language model API key | (required unless local) |
+   | `AUTOGEN_DEFAULT_MODEL` | The default model | `gemini-2.5-flash` |
+   | `AUTOGEN_ROUTER_MODEL` | The model to use for the orchestrator router | |
+   | `AUTOGEN_BASE_URL` | The base URL for the API endpoint | Google's Gemini API |
+   | `AUTOGEN_ENV_FILE` | The path to the custom .env configuration file | `.env` in project root |
+   | `AUTOGEN_MAX_ROUNDS` | The maximum number of conversational rounds allowed | `15` |
+   | `AUTOGEN_TEMPERATURE` | The temperature parameter for model generation | `0.7` |
+   | `AUTOGEN_MAX_TOKENS` | The maximum tokens parameter for model generation | `4096` |
+   | `AUTOGEN_DATA_DIR` | The directory where runtime JSON data is stored | |
+   | `AUTOGEN_SKILLS_DIR` | The directory for built-in skills | |
+   | `AUTOGEN_CUSTOM_SKILLS_DIR` | The directory for custom skills | |
+   | `AUTOGEN_WORKSPACE_DIR` | The directory for session workspace files | |
 
    **Configuration Handling Details:**
 
@@ -109,6 +112,16 @@ This starts the application at `http://localhost:8000`.
 Running the full validation suite from the **repository root** is **mandatory** before opening a PR or pushing any code changes. This ensures code quality, architectural constraint adherence, and prevents secret leakage. If you make frontend changes, you must also complete the **Frontend Visual Validation** workflow described below.
 
 Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHONPATH=.` is required to resolve internal modules during local development. Clean up `.coverage` files to avoid accidentally committing them. Frontend tests use the native Node.js runner.
+
+**Purpose of Mandatory Validation Steps:**
+1.  **Dependency Installation:** Ensures the environment has the latest required packages (`pip install`).
+2.  **Compilation Check:** Verifies Python syntax across core directories (`compileall`).
+3.  **Secret Scan:** Prevents accidental commits of sensitive credentials (`scan_secrets.py`).
+4.  **Workflow Guard:** Protects CI/CD infrastructure from unauthorized modifications (`guard_ai_workflows.py`).
+5.  **Backend Tests:** Validates core application logic and components (`pytest`).
+6.  **Frontend Tests:** Verifies client-side logic using Node.js' native runner (`node --test`).
+7.  **Artifact Cleanup:** Removes temporary coverage files to maintain repository cleanliness (`rm -rf ...`).
+8.  **JSON Syntax Check:** Validates formatting for newly changed configuration or data files (`json.tool`).
 
 ```bash
 # Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.

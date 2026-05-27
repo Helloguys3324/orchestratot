@@ -128,6 +128,7 @@ pip install -q pytest pytest-cov anyio httpx  # testing dependencies
 # 5. Configure environment
 cp .env.example .env
 # Open .env and set AUTOGEN_API_KEY (required unless using a local model)
+# IMPORTANT: Never commit the .env file to version control.
 
 # 6. Run validation commands
 python -m compileall backend skills_library run.py

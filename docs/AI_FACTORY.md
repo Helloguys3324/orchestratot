@@ -115,8 +115,8 @@ Never commit real API keys, credentials, or `.env` files to source control.
 
 **CI/CD Environments:**
 Use GitHub Actions **Repository Secrets** (navigate to **Settings -> Secrets and variables -> Actions**, then click **New repository secret**) to securely store production and testing keys. Do not use Environment Secrets or Repository Variables, as workflows expect Repository Secrets. Required secrets include:
-- `JULES_API_KEY`: Your Jules API key for the AI Factory.
-- `GH_PAT`: A GitHub Personal Access Token with repository permissions for validation auto-merge (Note: Required for auto-merge in validation workflows to trigger subsequent events; GITHUB_TOKEN is only used as a fallback in tick operations).
+- `JULES_API_KEY`: Your Jules API key to authenticate and authorize the AI Factory orchestrator during GitHub Actions workflows.
+- `GH_PAT`: A GitHub Personal Access Token with repository permissions required for the validation workflow to successfully auto-merge PRs and trigger subsequent events (GITHUB_TOKEN is only used as a fallback in tick operations).
 
 If a key was committed previously, rotate it immediately at your provider level, and close/delete the compromised branch or PR.
 
