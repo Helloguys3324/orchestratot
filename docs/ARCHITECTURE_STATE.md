@@ -84,3 +84,4 @@ The repository is structured into the following directories:
 - **Error Handling:** Enhanced `backend/skills/manager.py` with `@handle_skill_errors` decorator to seamlessly catch and map unhandled exceptions into precise, typed `SkillError` variants across core endpoints.
 - **Refactoring:** Refactored `_find_agent_by_name` in `backend/sessions/manager.py` to leverage pythonic `next()` instead of loops.
 - **Documentation:** Updated dependency installation instructions across project documentation to include `httpx` to eliminate `ModuleNotFoundError` during `pytest` execution with `TestClient`.
+- **Documentation:** Updated README.md to list explicit prerequisites (Python 3.11, Node.js v20+) and clarify environment setup steps (including Windows activation instructions), and updated docs/LOCAL_DEVELOPMENT.md to explicitly state that AUTOGEN_API_KEY is required unless using a local, unauthenticated model.
