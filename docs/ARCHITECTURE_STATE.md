@@ -88,3 +88,4 @@ The repository is structured into the following directories:
 - **Error Handling:** Improved skills error handling by applying the `@handle_skill_errors` decorator over core management endpoints and expanding the exception management test suite in `backend/tests/test_skills_manager.py`.
 
 - **Documentation:** Updated the README.md quickstart section to explicitly instruct users to open `.env` and set `AUTOGEN_API_KEY` immediately after copying the example file, ensuring developers are aware of the required runtime configuration step upfront.
+- **Refactoring:** Refactored the conversation parts extraction in `backend/llm/provider.py` to store the extracted list in `conversation_parts`, avoiding redundant list iterations and improving readability while preserving existing behavior.
