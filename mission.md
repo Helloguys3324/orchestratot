@@ -24,7 +24,7 @@ Operating rules:
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
   - `rm -rf coverage/ frontend/coverage/ .coverage`
   - `python -m json.tool <filepath> > /dev/null` (run individually on changed JSON files)
-  - (See docs/LOCAL_DEVELOPMENT.md for the complete validation suite and Troubleshooting Guide for Git errors)
+  - (See docs/LOCAL_DEVELOPMENT.md for the complete validation suite and docs/TROUBLESHOOTING.md for Git errors)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
 - Do not modify unrelated files.
 - Do not rewrite project history.
