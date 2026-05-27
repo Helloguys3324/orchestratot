@@ -81,3 +81,6 @@ The repository is structured into the following directories:
 - **Refactoring:** Added list-based JSON management helpers (`_load_list`, `_save_list`, `_delete_list_item`) to `BaseManager` to unify array file handling and replaced duplicated logic in `SkillsManager`.
 - **Testing Dependencies:** Removed `pytest-asyncio` from local development and troubleshooting instructions to reflect correct test dependencies, favoring the natively available `anyio` plugin for async testing.
 - **Documentation:** Updated documentation to ensure dependency installation commands strictly precede validation scripts, and explicitly listed comprehensive validation commands in `README.md` and `AGENTS.md` for clarity and immediate actionability.
+- **Error Handling:** Enhanced `backend/skills/manager.py` with `@handle_skill_errors` decorator to seamlessly catch and map unhandled exceptions into precise, typed `SkillError` variants across core endpoints.
+- **Refactoring:** Refactored `_find_agent_by_name` in `backend/sessions/manager.py` to leverage pythonic `next()` instead of loops.
+- **Documentation:** Updated dependency installation instructions across project documentation to include `httpx` to eliminate `ModuleNotFoundError` during `pytest` execution with `TestClient`.
