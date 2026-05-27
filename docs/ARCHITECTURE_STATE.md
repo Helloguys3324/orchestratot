@@ -89,3 +89,5 @@ The repository is structured into the following directories:
 
 - **Documentation:** Updated the README.md quickstart section to explicitly instruct users to open `.env` and set `AUTOGEN_API_KEY` immediately after copying the example file, ensuring developers are aware of the required runtime configuration step upfront.
 - **Refactoring:** Refactored the conversation parts extraction in `backend/llm/provider.py` to store the extracted list in `conversation_parts`, avoiding redundant list iterations and improving readability while preserving existing behavior.
+- **Refactoring:** Refactored the `_find_agent_by_name` method in `backend/sessions/manager.py` to consolidate exact and fuzzy matching into a single loop, preventing redundant list iterations while strictly preserving the prioritization of exact matches and fallback behavior.
+- **Documentation:** Updated local development and AI factory documentation to format environment variables as a Markdown table, clarify the roles of `JULES_API_KEY` and `GH_PAT`, explicitly document mandatory validation steps, and instruct users to never commit the `.env` file to version control.
