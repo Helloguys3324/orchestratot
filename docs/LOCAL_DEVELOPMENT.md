@@ -95,7 +95,7 @@ If you need to stop autonomous background tasks, create an empty file named `AUT
 ```bash
 touch AUTOPILOT_STOP
 ```
-This halts scheduled execution both locally and on GitHub Actions.
+This halts scheduled execution both locally and on GitHub Actions. To resume, delete the `AUTOPILOT_STOP` file.
 
 ## Starting the Application
 
