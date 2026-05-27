@@ -86,3 +86,5 @@ The repository is structured into the following directories:
 - **Documentation:** Updated dependency installation instructions across project documentation to include `httpx` to eliminate `ModuleNotFoundError` during `pytest` execution with `TestClient`.
 - **Documentation:** Replaced vague references to "Troubleshooting Guide" with precise paths to "docs/TROUBLESHOOTING.md" across local setup documentation, improving accuracy and developer experience.
 - **Error Handling:** Improved skills error handling by applying the `@handle_skill_errors` decorator over core management endpoints and expanding the exception management test suite in `backend/tests/test_skills_manager.py`.
+
+- **Documentation:** Updated the README.md quickstart section to explicitly instruct users to open `.env` and set `AUTOGEN_API_KEY` immediately after copying the example file, ensuring developers are aware of the required runtime configuration step upfront.
