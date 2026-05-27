@@ -7,7 +7,7 @@ Primary goals:
 - Keep the FastAPI backend stable, secure, and easy to operate.
 - Improve the frontend workflow for creating agents, sessions, skills, and model settings.
 - Expand test coverage around routing, sessions, skills, settings, and websocket behavior.
-- Keep secrets out of source control and move runtime credentials to environment variables (e.g. using local `.env` files).
+- Keep secrets out of source control and move runtime credentials to environment variables (e.g. using local `.env` files). When adding new configuration, always map it in `backend/config.py` and document it in `.env.example`.
 - Make every autonomous change small, reviewable, measurable, and reversible.
 - Ensure documentation accurately reflects the current state of local setup, workflows, and validation commands.
 
