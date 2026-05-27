@@ -116,7 +116,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 pip install -q -r backend/requirements.txt
 pip install -q pytest pytest-cov anyio httpx
 
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see Troubleshooting Guide for the temporary empty commit workaround.
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
 python -m compileall backend skills_library run.py
 python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py

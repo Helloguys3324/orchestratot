@@ -136,7 +136,7 @@ PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
 rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
-# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and Troubleshooting Guide for Git errors.
+# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 
 # 7. Start the application
 python run.py
