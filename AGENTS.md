@@ -3415,6 +3415,7 @@ Harden secret stringification.
 Harden config loading.
 Harden file manager input validation.
 Check logs for accidental secret exposure.
+Audit .env.example for missing credential placeholders.
 Add tests for unsafe path rejection.
 Add tests for placeholder-only secret examples.
 ```

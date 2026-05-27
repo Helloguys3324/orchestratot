@@ -43,7 +43,8 @@ pip install -q pytest pytest-cov anyio httpx
 1. Check the output of the scanner to locate the file and line containing the exposed secret.
 2. Remove the secret from the code immediately.
 3. If the file is `data/settings.json`, replace the real key with an empty string or a placeholder (note: `data/settings.json` is automatically cleared on startup as part of the migration to `.env`, so it should generally remain an empty object `{}`).
-4. Move your real credentials into your local `.env` file, which is ignored by Git.
+4. Ensure you haven't hardcoded secrets directly in test files or configuration scripts (e.g., `backend/config.py`).
+5. Move your real credentials into your local `.env` file, which is ignored by Git.
 
 ### Issue: Configuration defaults are not being overridden by environment variables
 **Symptom:** The backend starts, but it is ignoring your `.env` variables or system environment variables.
