@@ -134,7 +134,7 @@ cp .env.example .env
 # IMPORTANT: The backend utilizes pydantic-settings to safely load configuration, prioritizing environment variables over .env variables.
 
 # 6. Run validation commands
-pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
+pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && (git rm -r --cached coverage/ frontend/coverage/ .coverage || true) && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 
