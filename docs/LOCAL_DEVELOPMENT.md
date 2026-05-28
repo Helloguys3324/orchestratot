@@ -137,7 +137,7 @@ python .github/scripts/guard_ai_workflows.py
 
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
+git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*
