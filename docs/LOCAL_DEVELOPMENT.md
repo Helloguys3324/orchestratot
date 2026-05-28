@@ -127,17 +127,8 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 ```bash
 # Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
 # Install required dependencies directly into the existing environment instead:
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio httpx
-
+pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && (git rm -r --cached coverage/ frontend/coverage/ .coverage || true) && rm -rf coverage/ frontend/coverage/ .coverage
 # Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*
