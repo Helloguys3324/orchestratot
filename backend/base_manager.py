@@ -36,8 +36,7 @@ class BaseManager(abc.ABC):
 
     def _load_dict(self) -> dict:
         """Helper to load a list of items and convert to a dictionary by ID."""
-        items_list = self._load_list()
-        return {item["id"]: item for item in items_list if "id" in item}
+        return {item["id"]: item for item in self._load_list() if "id" in item}
 
     def _save_dict(self, data_dict: dict) -> None:
         """Helper to save a dictionary of items as a list."""
