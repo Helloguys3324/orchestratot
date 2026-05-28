@@ -44,7 +44,8 @@ class BaseManager(abc.ABC):
 
     def _delete_item(self, data_dict: dict, item_id: str) -> bool:
         """Delete an item from a dictionary and save."""
-        if data_dict.pop(item_id, None):
+        if item_id in data_dict:
+            del data_dict[item_id]
             self._save()
             return True
         return False
@@ -52,7 +53,7 @@ class BaseManager(abc.ABC):
     def _delete_list_item(self, items_list: list, item_id: str) -> bool:
         """Delete an item from a list by ID and save."""
         item = next((i for i in items_list if i.get("id") == item_id), None)
-        if item:
+        if item is not None:
             items_list.remove(item)
             self._save()
             return True
