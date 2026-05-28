@@ -59,6 +59,7 @@ The repository is structured into the following directories:
 - **Emergency Stop:** The `AUTOPILOT_STOP` file acts as an emergency stop signal; automation must immediately halt and the file must not be removed.
 
 ### 7. Recent Architectural Changes
+- **Testing:** Added comprehensive frontend unit tests for all JavaScript modules in `frontend/js/`, achieving 100% test coverage for the frontend application.
 - **Refactoring:** Fixed falsy value handling in `BaseManager` by replacing implicit truthiness checks with explicit `is not None` and key existence checks, ensuring empty dictionaries and lists are not mistakenly discarded.
 - **Documentation:** Expanded test artifact cleanup documentation fixes (wrapping `git rm` in parentheses to preserve short-circuit logic) to cover `docs/ARCHITECTURE_STATE.md` and `docs/TROUBLESHOOTING.md` in addition to other previously updated docs.
 - **Refactoring:** Refactored generic dict CRUD logic (`_load_dict`, `_save_dict`, `_delete_item`) into `BaseManager` to unify JSON file handling across backend domain managers.
