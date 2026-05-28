@@ -1,15 +1,12 @@
 {
   "started_at": "2026-05-16",
   "task_lifecycle": {
-    "pending": 8,
-    "claimed": 73,
-    "running": 1,
-    "completed": 69,
-    "failed": 0,
-    "blocked": 0,
-    "abandoned": 0,
-    "obsolete": 0,
-    "duplicate": 0
+    "task_started": 8,
+    "task_claimed": 73,
+    "task_running": 1,
+    "task_completed": 69,
+    "task_failed": 0,
+    "task_abandoned": 0
   },
   "pr_lifecycle": {
     "pr_created": 69,
@@ -21,17 +18,18 @@
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs.",
     "Removed root-level 'queue_size' and 'active_work' fields as they duplicate 'task_lifecycle.pending' and 'task_lifecycle.running'.",
-    "Removed task-related fields from 'pr_lifecycle' to eliminate redundancy with 'task_lifecycle'."
+    "Removed task-related fields from 'pr_lifecycle' to eliminate redundancy with 'task_lifecycle'.",
+    "Removed unsupported task status keys 'blocked', 'obsolete', and 'duplicate' to align with runtime bookkeeping events."
   ],
   "role_distribution": {
     "planner": 1,
     "architect": 0,
     "implementer": 2,
     "tester": 1,
-    "reviewer": 1,
     "refactorer": 1,
     "documenter": 1,
-    "security": 1
+    "security": 1,
+    "reviewer": 1
   },
   "lane_distribution": {
     "backend": 3,
