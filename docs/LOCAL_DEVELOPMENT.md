@@ -83,7 +83,7 @@ To ensure code reliability, run both backend and frontend validation locally bef
 The repository leverages GitHub Actions to orchestrate the continuous autonomous workflow and validate all code changes automatically.
 
 **Required GitHub Setup:**
-To configure GitHub Actions (including App Installation, API keys, Repository Secrets, and Action Permissions), see the **[Required GitHub Setup in AI Factory Operations](AI_FACTORY.md#required-github-setup)**. At a minimum, ensure `JULES_API_KEY` and `GH_PAT` are added as **Repository Secrets**.
+To configure GitHub Actions (including App Installation, API keys, Repository Secrets, and Action Permissions), see the **[Required GitHub Setup in AI Factory Operations](AI_FACTORY.md#required-github-setup)**. At a minimum, ensure `JULES_API_KEY` and `GH_PAT` (A GitHub Personal Access Token with repository permissions for the validation auto-merge step) are added as **Repository Secrets**.
 
 **Authoritative Validation:** GitHub Actions validation is the single source of truth for repository checks. The remote validation pipeline strictly runs on Python 3.11 and does not execute the Node.js frontend tests. Local validation commands mirror the remote pipeline but also include Node.js frontend test execution.
 
