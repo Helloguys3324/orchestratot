@@ -34,14 +34,7 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. Test d
 Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`. Install required dependencies directly into the existing environment instead.
 
 ```bash
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio httpx
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
+pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && (git rm -r --cached coverage/ frontend/coverage/ .coverage || true) && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
@@ -1757,14 +1750,7 @@ Agents should run relevant validation when practical.
 Recommended validation examples:
 
 ```bash
-pip install -q -r backend/requirements.txt
-pip install -q pytest pytest-cov anyio httpx
-python -m compileall backend skills_library run.py
-python .github/scripts/scan_secrets.py
-python .github/scripts/guard_ai_workflows.py
-PYTHONPATH=. python -m pytest -q
-node --experimental-test-coverage --test frontend/tests/*.test.js
-git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
+pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && (git rm -r --cached coverage/ frontend/coverage/ .coverage || true) && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
