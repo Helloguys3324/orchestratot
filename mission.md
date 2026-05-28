@@ -22,7 +22,7 @@ Operating rules:
   - `python .github/scripts/guard_ai_workflows.py`
   - `PYTHONPATH=. python -m pytest -q`
   - `node --experimental-test-coverage --test frontend/tests/*.test.js`
-  - `rm -rf coverage/ frontend/coverage/ .coverage`
+  - `git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage`
   - `python -m json.tool <filepath> > /dev/null` (run individually on changed JSON files)
   - (See docs/LOCAL_DEVELOPMENT.md for the complete validation suite and docs/TROUBLESHOOTING.md for Git errors)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.

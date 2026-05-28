@@ -41,7 +41,7 @@ python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
+git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
@@ -1764,7 +1764,7 @@ python .github/scripts/scan_secrets.py
 python .github/scripts/guard_ai_workflows.py
 PYTHONPATH=. python -m pytest -q
 node --experimental-test-coverage --test frontend/tests/*.test.js
-rm -rf coverage/ frontend/coverage/ .coverage
+git rm -r --cached coverage/ frontend/coverage/ .coverage || true && rm -rf coverage/ frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
 # See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
