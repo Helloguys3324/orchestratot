@@ -105,3 +105,5 @@ The repository is structured into the following directories:
 - **Refactoring:** Simplified `_load_dict` in `BaseManager` using direct dictionary comprehension for conciseness.
 - **Testing:** Added deterministic tests for `AgentManager`, achieving 100% test coverage for agent creation, updating, and state preservation.
 - **Metrics:** Validated and documented recent `.github/ai-factory/metrics.json` updates which aligned `task_lifecycle` keys with runtime bookkeeping events, strictly matched the ordering of keys in `role_distribution` and `lane_distribution` to those defined in `AGENTS.md`, and removed unsupported status keys to conform with factory principles.
+
+- **Testing:** Added new unit tests across the codebase, including `tests/skills_library/test_code_executor.py`, `tests/skills_library/test_file_manager.py`, and `tests/websocket/test_handler.py`, ensuring correct behavior and error handling for skill components and websocket connections.
