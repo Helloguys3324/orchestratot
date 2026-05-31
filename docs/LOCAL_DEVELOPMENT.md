@@ -50,16 +50,16 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    |---|---|---|
    | `AUTOGEN_API_KEY` | Your language model API key | (required unless local) |
    | `AUTOGEN_DEFAULT_MODEL` | The default model | `gemini-2.5-flash` |
-   | `AUTOGEN_ROUTER_MODEL` | The model to use for the orchestrator router | |
+   | `AUTOGEN_ROUTER_MODEL` | The model to use for the orchestrator router | `gemini-3-flash-live` |
    | `AUTOGEN_BASE_URL` | The base URL for the API endpoint | Google's Gemini API |
    | `AUTOGEN_ENV_FILE` | The path to the custom .env configuration file | `.env` in project root |
    | `AUTOGEN_MAX_ROUNDS` | The maximum number of conversational rounds allowed | `15` |
    | `AUTOGEN_TEMPERATURE` | The temperature parameter for model generation | `0.7` |
    | `AUTOGEN_MAX_TOKENS` | The maximum tokens parameter for model generation | `4096` |
-   | `AUTOGEN_DATA_DIR` | The directory where runtime JSON data is stored | |
-   | `AUTOGEN_SKILLS_DIR` | The directory for built-in skills | |
-   | `AUTOGEN_CUSTOM_SKILLS_DIR` | The directory for custom skills | |
-   | `AUTOGEN_WORKSPACE_DIR` | The directory for session workspace files | |
+   | `AUTOGEN_DATA_DIR` | The directory where runtime JSON data is stored | `data` |
+   | `AUTOGEN_SKILLS_DIR` | The directory for built-in skills | `skills_library` |
+   | `AUTOGEN_CUSTOM_SKILLS_DIR` | The directory for custom skills | `custom_skills` |
+   | `AUTOGEN_WORKSPACE_DIR` | The directory for session workspace files | `workspace` |
 
    **Configuration Handling Details:**
 
