@@ -1,5 +1,7 @@
 {
   "started_at": "2026-05-16",
+  "queue_size": 8,
+  "active_work": 1,
   "task_lifecycle": {
     "task_started": 8,
     "task_claimed": 73,
@@ -17,9 +19,9 @@
   },
   "notes": [
     "Metrics are intentionally conservative. Planner tasks may update this file through reviewed PRs.",
-    "Removed root-level 'queue_size' and 'active_work' fields as they duplicate 'task_lifecycle.pending' and 'task_lifecycle.running'.",
-    "Removed task-related fields from 'pr_lifecycle' to eliminate redundancy with 'task_lifecycle'.",
-    "Removed unsupported task status keys 'blocked', 'obsolete', and 'duplicate' to align with runtime bookkeeping events."
+    "Restored root-level queue_size and active_work fields to explicitly align with Section 56 observability requirements.",
+    "Removed task-related fields from pr_lifecycle to eliminate redundancy with task_lifecycle.",
+    "Removed unsupported task status keys blocked, obsolete, and duplicate to align with runtime bookkeeping events."
   ],
   "role_distribution": {
     "planner": 1,
