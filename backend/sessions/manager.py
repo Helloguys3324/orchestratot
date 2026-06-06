@@ -174,11 +174,7 @@ class SessionManager(BaseManager):
             if next_agent_name is None:
                 break
 
-            # Check if done
-            if "DONE" in next_agent_name.upper():
-                await self._sys_msg(session,
-                    f"\u2705 Task complete after {round_num + 1} rounds.",
-                    "\u2705", "#10B981")
+            if await self._handle_task_done(session, next_agent_name, round_num):
                 break
 
             # Find the agent
@@ -214,7 +210,19 @@ class SessionManager(BaseManager):
             self._save()
             await asyncio.sleep(1.5)  # Rate limit spacing
 
-        # Final summary
+        await self._send_final_summary(session, workspace)
+
+    async def _handle_task_done(self, session: dict, next_agent_name: str, round_num: int) -> bool:
+        """Check if the router marked the task as done."""
+        if "DONE" in next_agent_name.upper():
+            await self._sys_msg(session,
+                f"\u2705 Task complete after {round_num + 1} rounds.",
+                "\u2705", "#10B981")
+            return True
+        return False
+
+    async def _send_final_summary(self, session: dict, workspace: Path):
+        """Send a summary of files generated in the workspace."""
         ws_files = [f for f in workspace.rglob("*") if f.is_file()]
         if ws_files:
             file_list = "\n".join([f"  \U0001f4c4 {f.relative_to(workspace)}" for f in ws_files[:20]])
