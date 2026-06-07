@@ -15,7 +15,7 @@ Operating rules:
 
 - Prefer small pull requests with one clear purpose.
 - Run the repository validation commands (including mandatory JSON syntax validation if JSON files were changed) before opening a PR.
-  - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js && (git rm -r --cached coverage/ frontend/coverage/ .coverage || true) && rm -rf coverage/ frontend/coverage/ .coverage`
+  - `pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage`
   - `python -m json.tool <filepath> > /dev/null` (run individually on changed JSON files)
   - (See docs/LOCAL_DEVELOPMENT.md for the complete validation suite and docs/TROUBLESHOOTING.md for Git errors)
 - Do not commit API keys, tokens, credentials, `.env` files, local databases, or generated caches.
