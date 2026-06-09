@@ -124,11 +124,39 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 7.  **Artifact Cleanup:** Removes temporary coverage files to maintain repository cleanliness (`rm -rf ...`).
 8.  **JSON Syntax Check:** Validates formatting for newly changed configuration or data files (`json.tool`).
 
+### For Local Human Developers: Step-by-Step
+
+```bash
+# 1. Install dependencies
+pip install -r backend/requirements.txt
+pip install pytest pytest-cov anyio httpx
+
+# 2. Compilation check
+python -m compileall backend skills_library run.py
+
+# 3. Secret scan
+python .github/scripts/scan_secrets.py
+
+# 4. Workflow Guard
+# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
+python .github/scripts/guard_ai_workflows.py
+
+# 5. Backend Tests
+PYTHONPATH=. python -m pytest
+
+# 6. Frontend Tests
+node --experimental-test-coverage --test frontend/tests/*.test.js
+
+# 7. Artifact Cleanup
+rm -rf frontend/coverage/ .coverage
+```
+
+### For AI Agents: Single-Line Execution
+
 ```bash
 # Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
 # Install required dependencies directly into the existing environment instead:
 pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
 # python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*

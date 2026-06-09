@@ -129,14 +129,15 @@ pip install -q pytest pytest-cov anyio httpx  # testing dependencies
 
 # 5. Configure environment
 cp .env.example .env
-# Open .env and set AUTOGEN_API_KEY (required), adjust system paths, or tweak model settings.
+# Open .env and set AUTOGEN_API_KEY (required unless using a local model), adjust system paths, or tweak model settings.
 # IMPORTANT: Never commit the .env file to version control.
 # IMPORTANT: The backend utilizes pydantic-settings to safely load configuration, prioritizing environment variables over .env variables.
 
 # 6. Run validation commands
+# See docs/LOCAL_DEVELOPMENT.md for the step-by-step validation suite breakdown.
+# For AI Agents, the required single-line validation command is:
 pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
-# python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
-# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
+
 
 # 7. Start the application
 python run.py
