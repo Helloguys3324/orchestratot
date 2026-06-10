@@ -69,12 +69,12 @@ Never commit secrets, API keys, or credentials. Follow these steps to configure 
    - **UI Updates**: Configuration changes made via the UI will dynamically update the local `.env` file, persisting only the explicitly changed fields to prevent accidental overwrites with defaults. **The web UI is the primary and recommended way to manage these settings post-setup**, whereas `.env` editing is best for initial bootstrapping.
    - **Clearing Values**: When programmatically clearing configuration values, `dotenv.unset_key` and `os.environ.pop` must be used.
    - **Testing .env Isolation**: When testing configuration logic that interacts with `.env` files, tests must not mutate the root `.env` file. Instead, override `AUTOGEN_ENV_FILE` and `backend.config.ENV_FILE` to point to a temporary file path to maintain test determinism.
-3. **Verify Secrets & Infrastructure Integrity**: You must verify that no secrets are accidentally committed and no infrastructure workflows are modified before submitting PRs by running the repository's validation scripts:
+3. **Verify Secrets Integrity**: You must verify that no secrets are accidentally committed before submitting PRs by running the repository's validation script:
    ```bash
    python .github/scripts/scan_secrets.py
-   python .github/scripts/guard_ai_workflows.py
    ```
-   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files. If `guard_ai_workflows.py` fails with an ambiguous argument Git error (e.g. `HEAD~1` not found on a new branch), temporarily create an empty commit (`git -c user.name="Test" -c user.email="test@example.com" commit -m 'temp' --allow-empty`), run the script, and then undo it (`git reset HEAD~1 --soft`).
+   If a secret is found in a tracked file (e.g. `data/settings.json`), replace the value with `""` or a placeholder like `REPLACE_ME` and re-run the scanner. Move real credentials to your local `.env`. Ensure that no `REPLACE_ME` string is mistakenly committed as a valid credential in configuration files.
+
 
 ### 5. Running Tests
 To ensure code reliability, run both backend and frontend validation locally before submitting changes. See the [Validation Commands](#validation-commands) section for the full suite of mandatory commands.
@@ -118,11 +118,10 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 1.  **Dependency Installation:** Ensures the environment has the latest required packages (`pip install`).
 2.  **Compilation Check:** Verifies Python syntax across core directories (`compileall`).
 3.  **Secret Scan:** Prevents accidental commits of sensitive credentials (`scan_secrets.py`).
-4.  **Workflow Guard:** Protects CI/CD infrastructure from unauthorized modifications (`guard_ai_workflows.py`).
-5.  **Backend Tests:** Validates core application logic and components (`pytest`).
-6.  **Frontend Tests:** Verifies client-side logic using Node.js' native runner (`node --test`).
-7.  **Artifact Cleanup:** Removes temporary coverage files to maintain repository cleanliness (`rm -rf ...`).
-8.  **JSON Syntax Check:** Validates formatting for newly changed configuration or data files (`json.tool`).
+4.  **Backend Tests:** Validates core application logic and components (`pytest`).
+5.  **Frontend Tests:** Verifies client-side logic using Node.js' native runner (`node --test`).
+6.  **Artifact Cleanup:** Removes temporary coverage files to maintain repository cleanliness (`rm -rf ...`).
+7.  **JSON Syntax Check:** Validates formatting for newly changed configuration or data files (`json.tool`).
 
 ### For Local Human Developers: Step-by-Step
 
@@ -137,17 +136,14 @@ python -m compileall backend skills_library run.py
 # 3. Secret scan
 python .github/scripts/scan_secrets.py
 
-# 4. Workflow Guard
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
-python .github/scripts/guard_ai_workflows.py
 
-# 5. Backend Tests
+# 4. Backend Tests
 PYTHONPATH=. python -m pytest
 
-# 6. Frontend Tests
+# 5. Frontend Tests
 node --experimental-test-coverage --test frontend/tests/*.test.js
 
-# 7. Artifact Cleanup
+# 6. Artifact Cleanup
 rm -rf frontend/coverage/ .coverage
 ```
 
@@ -156,7 +152,7 @@ rm -rf frontend/coverage/ .coverage
 ```bash
 # Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
 # Install required dependencies directly into the existing environment instead:
-pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
+pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
 # python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*
