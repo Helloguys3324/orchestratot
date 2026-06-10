@@ -35,9 +35,14 @@ Note for AI Agents: Do not attempt to use `python -m venv` or source virtual env
 
 ```bash
 pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
-# python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
-# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
+
+Run individually on changed JSON files to check syntax:
+```bash
+python -m json.tool <filepath> > /dev/null
+```
+
+See `docs/LOCAL_DEVELOPMENT.md` for the complete mandatory validation suite and `docs/TROUBLESHOOTING.md` for Git errors.
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
 
 # Note: When exploring or verifying large JSON files, avoid using `cat` as its output may be truncated. Instead, use `jq` or a Python script.
@@ -1751,9 +1756,14 @@ Recommended validation examples:
 
 ```bash
 pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
-# python -m json.tool <filepath> > /dev/null  # Run individually on changed JSON files
-# See docs/LOCAL_DEVELOPMENT.md for the complete mandatory validation suite and docs/TROUBLESHOOTING.md for Git errors.
 ```
+
+Run individually on changed JSON files to check syntax:
+```bash
+python -m json.tool <filepath> > /dev/null
+```
+
+See `docs/LOCAL_DEVELOPMENT.md` for the complete mandatory validation suite and `docs/TROUBLESHOOTING.md` for Git errors.
 
 If validation commands exist in:
 

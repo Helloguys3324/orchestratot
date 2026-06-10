@@ -126,38 +126,54 @@ Verify Python syntax, scan for secrets, run tests, and check JSON syntax. `PYTHO
 
 ### For Local Human Developers: Step-by-Step
 
+1. **Install dependencies**
 ```bash
-# 1. Install dependencies
 pip install -r backend/requirements.txt
 pip install pytest pytest-cov anyio httpx
+```
 
-# 2. Compilation check
+2. **Compilation check**
+```bash
 python -m compileall backend skills_library run.py
+```
 
-# 3. Secret scan
+3. **Secret scan**
+```bash
 python .github/scripts/scan_secrets.py
+```
 
-# 4. Workflow Guard
-# Note: If guard_ai_workflows.py fails with an ambiguous Git error (e.g., HEAD~1 not found), see docs/TROUBLESHOOTING.md for the temporary empty commit workaround.
+4. **Workflow Guard**
+Note: If `guard_ai_workflows.py` fails with an ambiguous Git error (e.g., `HEAD~1` not found), see `docs/TROUBLESHOOTING.md` for the temporary empty commit workaround.
+```bash
 python .github/scripts/guard_ai_workflows.py
+```
 
-# 5. Backend Tests
+5. **Backend Tests**
+```bash
 PYTHONPATH=. python -m pytest
+```
 
-# 6. Frontend Tests
+6. **Frontend Tests**
+```bash
 node --experimental-test-coverage --test frontend/tests/*.test.js
+```
 
-# 7. Artifact Cleanup
+7. **Artifact Cleanup**
+```bash
 rm -rf frontend/coverage/ .coverage
 ```
 
 ### For AI Agents: Single-Line Execution
 
+Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
+Install required dependencies directly into the existing environment instead:
 ```bash
-# Note for AI Agents: Do not attempt to use `python -m venv` or source virtual environments within `run_in_bash_session`.
-# Install required dependencies directly into the existing environment instead:
 pip install -q -r backend/requirements.txt && pip install -q pytest pytest-cov anyio httpx && python -m compileall backend skills_library run.py && python .github/scripts/scan_secrets.py && python .github/scripts/guard_ai_workflows.py && PYTHONPATH=. python -m pytest -q && node --experimental-test-coverage --test frontend/tests/*.test.js > /tmp/coverage.txt 2>&1 && (git rm -r --cached frontend/coverage/ .coverage || true) && rm -rf frontend/coverage/ .coverage
-# python -m json.tool <filepath> > /dev/null  # Run on specific JSON files to check syntax
+```
+
+Run on specific JSON files to check syntax:
+```bash
+python -m json.tool <filepath> > /dev/null
 ```
 *Note: Always invoke python tests using `python -m pytest` instead of bare `pytest`. The bare command may resolve to a global installation that lacks access to installed local plugins (like `pytest-cov`), resulting in errors.*
 *(Note for AI Agents: Native Node.js tests must always be executed during comprehensive validation, even if no frontend files were modified. Always run the full suite to get accurate coverage. Running a single file will falsely report lower overall coverage. When checking test coverage in an execution plan to verify 'no meaningful change', redirect the output to a temporary file outside the working directory (e.g., `> /tmp/coverage.txt 2>&1 && tail -n 25 /tmp/coverage.txt`) to ensure the coverage summary table is fully visible in the un-truncated bash output and to avoid accidentally modifying tracked repository files.)*
